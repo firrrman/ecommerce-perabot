@@ -4,7 +4,7 @@ export default async function Home() {
   const users = await getUsers();
   return (
     <div className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">CRUD USERRRRRRRR</h1>
+      <h1 className="text-3xl font-bold mb-6">CRUD USERRRRRRRR Firmannnn</h1>
 
       {/* LIST USER */}
       <div className="space-y-6">
