@@ -51,12 +51,12 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-red-200">
+    <header className="border-b border-gray-900 absolute w-full bg-[#fcf8f0]">
       <nav
         aria-label="Global"
-        className="flex items-center justify-between p-6 lg:px-8"
+        className="flex items-center justify-between p-6 lg:px-8 z-10"
       >
-        <div className="flex lg:flex-1">
+        <div className="flex lg:flex-1 z-10">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
             <img alt="" src="/perabotan.png" className="h-8 w-auto" />
@@ -73,12 +73,12 @@ export default function Header() {
           </button>
         </div>
         <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
             Beranda
           </a>
 
           <Popover className="relative">
-            <PopoverButton className="flex cursor-pointer hover:border-0 items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+            <PopoverButton className="flex cursor-pointer hover:border-0 items-center gap-x-1 text-sm/6 font-semibold text-gray-900  focus:outline-none focus:ring-0 focus:border-0">
               Kategori
               <ChevronDownIcon
                 aria-hidden="true"
@@ -112,21 +112,21 @@ export default function Header() {
             </PopoverPanel>
           </Popover>
 
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
             Produk
           </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
             Keranjang
           </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
             Wishlist
           </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
             Kontak
           </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
             Log in <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
@@ -134,7 +134,7 @@ export default function Header() {
       <Dialog
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
-        className="lg:hidden"
+        className="lg:hidden relative z-20"
       >
         <div className="fixed inset-0 z-50" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
