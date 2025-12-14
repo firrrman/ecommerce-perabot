@@ -1,224 +1,258 @@
-"use client";
-
-import { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+// use your own icon import if react-icons is not available
 import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-} from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
+  ArrowLeftIcon,
+  ChevronLeftIcon,
+  ShoppingCartIcon,
+} from "@heroicons/react/16/solid";
 
-const kategori = [
-  {
-    name: "Ruang Tamu",
-    description: "Perabot untuk kenyamanan dan tampilan ruang tamu",
-    href: "#",
-  },
-  {
-    name: "Kamar Tidur",
-    description: "Perabot yang menunjang istirahat dan kerapihan kamar",
-    href: "#",
-  },
-  {
-    name: "Dapur & Ruang Makan",
-    description: "Perabot untuk aktivitas memasak dan makan",
-    href: "#",
-  },
-  {
-    name: "Kamar Mandi",
-    description: "Perabot untuk kerapihan dan fungsi kamar mandi",
-    href: "#",
-  },
-  {
-    name: "Outdoor / Taman",
-    description: "Perabot untuk area luar rumah dan taman",
-    href: "#",
-  },
-];
+type CardNavLink = {
+  label: string;
+  href: string;
+  ariaLabel: string;
+};
 
-export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export type CardNavItem = {
+  label: string;
+  bgColor: string;
+  textColor: string;
+  links: CardNavLink[];
+};
+
+export interface CardNavProps {
+  logo: string;
+  logoAlt?: string;
+  items: CardNavItem[];
+  className?: string;
+  ease?: string;
+  baseColor?: string;
+  menuColor?: string;
+  buttonBgColor?: string;
+  buttonTextColor?: string;
+}
+
+const CardNav: React.FC<CardNavProps> = ({
+  logo,
+  logoAlt = "Logo",
+  items,
+  className = "",
+  ease = "power3.out",
+  baseColor = "#fff",
+  menuColor,
+  buttonBgColor,
+  buttonTextColor,
+}) => {
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  const calculateHeight = () => {
+    const navEl = navRef.current;
+    if (!navEl) return 260;
+
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      const contentEl = navEl.querySelector(".card-nav-content") as HTMLElement;
+      if (contentEl) {
+        const wasVisible = contentEl.style.visibility;
+        const wasPointerEvents = contentEl.style.pointerEvents;
+        const wasPosition = contentEl.style.position;
+        const wasHeight = contentEl.style.height;
+
+        contentEl.style.visibility = "visible";
+        contentEl.style.pointerEvents = "auto";
+        contentEl.style.position = "static";
+        contentEl.style.height = "auto";
+
+        contentEl.offsetHeight;
+
+        const topBar = 60;
+        const padding = 16;
+        const contentHeight = contentEl.scrollHeight;
+
+        contentEl.style.visibility = wasVisible;
+        contentEl.style.pointerEvents = wasPointerEvents;
+        contentEl.style.position = wasPosition;
+        contentEl.style.height = wasHeight;
+
+        return topBar + contentHeight + padding;
+      }
+    }
+    return 260;
+  };
+
+  const createTimeline = () => {
+    const navEl = navRef.current;
+    if (!navEl) return null;
+
+    gsap.set(navEl, { height: 60, overflow: "hidden" });
+    gsap.set(cardsRef.current, { y: 50, opacity: 0 });
+
+    const tl = gsap.timeline({ paused: true });
+
+    tl.to(navEl, {
+      height: calculateHeight,
+      duration: 0.4,
+      ease,
+    });
+
+    tl.to(
+      cardsRef.current,
+      { y: 0, opacity: 1, duration: 0.4, ease, stagger: 0.08 },
+      "-=0.1"
+    );
+
+    return tl;
+  };
+
+  useLayoutEffect(() => {
+    const tl = createTimeline();
+    tlRef.current = tl;
+
+    return () => {
+      tl?.kill();
+      tlRef.current = null;
+    };
+  }, [ease, items]);
+
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (!tlRef.current) return;
+
+      if (isExpanded) {
+        const newHeight = calculateHeight();
+        gsap.set(navRef.current, { height: newHeight });
+
+        tlRef.current.kill();
+        const newTl = createTimeline();
+        if (newTl) {
+          newTl.progress(1);
+          tlRef.current = newTl;
+        }
+      } else {
+        tlRef.current.kill();
+        const newTl = createTimeline();
+        if (newTl) {
+          tlRef.current = newTl;
+        }
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isExpanded]);
+
+  const toggleMenu = () => {
+    const tl = tlRef.current;
+    if (!tl) return;
+    if (!isExpanded) {
+      setIsHamburgerOpen(true);
+      setIsExpanded(true);
+      tl.play(0);
+    } else {
+      setIsHamburgerOpen(false);
+      tl.eventCallback("onReverseComplete", () => setIsExpanded(false));
+      tl.reverse();
+    }
+  };
+
+  const setCardRef = (i: number) => (el: HTMLDivElement | null) => {
+    if (el) cardsRef.current[i] = el;
+  };
 
   return (
-    <header className="border-b border-[#121212] absolute w-full bg-[#eeefe9]">
+    <div
+      className={`card-nav-container absolute left-1/2 -translate-x-1/2 w-[90%] max-w-[800px] z-[99] top-[1.2em] md:top-[2em] ${className}`}
+    >
       <nav
-        aria-label="Global"
-        className="flex items-center justify-between p-6 lg:px-8 z-10"
+        ref={navRef}
+        className={`card-nav ${
+          isExpanded ? "open" : ""
+        } block h-[60px] p-0 rounded-xl shadow-md relative overflow-hidden will-change-[height]`}
+        style={{ backgroundColor: baseColor }}
       >
-        <div className="flex lg:flex-1 z-10">
-          <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
-            <img alt="" src="/perabotan.png" className="h-8 w-auto" />
-          </a>
-        </div>
-        <div className="flex lg:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-900"
+        <div className="card-nav-top absolute inset-x-0 top-0 h-[60px] flex items-center justify-between p-2 pl-[1.1rem] z-[2]">
+          <div
+            className={`hamburger-menu ${
+              isHamburgerOpen ? "open" : ""
+            } group h-full flex flex-col items-center justify-center cursor-pointer gap-[6px] order-2 md:order-none`}
+            onClick={toggleMenu}
+            role="button"
+            aria-label={isExpanded ? "Close menu" : "Open menu"}
+            tabIndex={0}
+            style={{ color: menuColor || "#000" }}
           >
-            <span className="sr-only">Open main menu</span>
-            <Bars3Icon aria-hidden="true" className="size-6" />
-          </button>
-        </div>
-        <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
-            Beranda
+            <div
+              className={`hamburger-line w-[30px] h-[2px] bg-current transition-[transform,opacity,margin] duration-300 ease-linear [transform-origin:50%_50%] ${
+                isHamburgerOpen ? "translate-y-[4px] rotate-45" : ""
+              } group-hover:opacity-75`}
+            />
+            <div
+              className={`hamburger-line w-[30px] h-[2px] bg-current transition-[transform,opacity,margin] duration-300 ease-linear [transform-origin:50%_50%] ${
+                isHamburgerOpen ? "-translate-y-[4px] -rotate-45" : ""
+              } group-hover:opacity-75`}
+            />
+          </div>
+
+          <div className="logo-container flex items-center">
+            <img
+              src={logo}
+              alt={logoAlt}
+              className="logo h-[30px] md:h-[40px]"
+            />
+          </div>
+
+          <a
+            href="#"
+            className="card-nav-cta-button hidden md:inline-flex border-0 rounded-[calc(0.75rem-0.2rem)] px-3 items-center h-full font-medium cursor-pointer transition-colors duration-300"
+            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+          >
+            <ShoppingCartIcon className="h-5 w-auto" />
           </a>
+        </div>
 
-          <Popover className="relative">
-            <PopoverButton className="flex cursor-pointer hover:border-0 items-center gap-x-1 text-sm/6 font-semibold text-gray-900  focus:outline-none focus:ring-0 focus:border-0">
-              Kategori
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="size-5 flex-none text-gray-400"
-              />
-            </PopoverButton>
-
-            <PopoverPanel
-              transition
-              className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-lg outline-1 outline-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+        <div
+          className={`card-nav-content absolute left-0 right-0 top-[60px] bottom-0 p-2 flex flex-col items-stretch gap-2 justify-start z-[1] ${
+            isExpanded
+              ? "visible pointer-events-auto"
+              : "invisible pointer-events-none"
+          } md:flex-row md:items-end md:gap-[12px]`}
+          aria-hidden={!isExpanded}
+        >
+          {(items || []).slice(0, 3).map((item, idx) => (
+            <div
+              key={`${item.label}-${idx}`}
+              className="nav-card select-none bg-black text-white relative flex flex-col gap-2 p-[12px_16px] rounded-[calc(0.75rem-0.2rem)] min-w-0 flex-[1_1_auto] h-auto min-h-[60px] md:h-full md:min-h-0 md:flex-[1_1_0%]"
+              ref={setCardRef(idx)}
             >
-              <div className="p-4">
-                {kategori.map((item) => (
-                  <div
-                    key={item.name}
-                    className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50"
+              <div className="nav-card-label font-normal tracking-[-0.5px] text-[18px] md:text-[22px]">
+                {item.label}
+              </div>
+              <div className="nav-card-links mt-auto flex flex-col gap-[2px]">
+                {item.links?.map((lnk, i) => (
+                  <a
+                    key={`${lnk.label}-${i}`}
+                    className="nav-card-link inline-flex items-center gap-[6px] no-underline cursor-pointer transition-opacity duration-300 hover:opacity-75 text-[15px] md:text-[16px]"
+                    href={lnk.href}
+                    aria-label={lnk.ariaLabel}
                   >
-                    <div className="flex-auto">
-                      <a
-                        href={item.href}
-                        className="block font-semibold text-gray-900"
-                      >
-                        {item.name}
-                        <span className="absolute inset-0" />
-                      </a>
-                      <p className="mt-1 text-gray-600">{item.description}</p>
-                    </div>
-                  </div>
+                    <ChevronLeftIcon
+                      className="nav-card-link-icon shrink-0 h-5"
+                      aria-hidden="true"
+                    />
+                    {lnk.label}
+                  </a>
                 ))}
               </div>
-            </PopoverPanel>
-          </Popover>
-
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
-            Produk
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
-            Keranjang
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
-            Wishlist
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
-            Kontak
-          </a>
-        </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-sm/6 font-semibold text-gray-900 z-10">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+            </div>
+          ))}
         </div>
       </nav>
-      <Dialog
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-        className="lg:hidden text-gray-900"
-      >
-        <div className="fixed inset-0 z-50" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#eeefe9] p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img alt="" src="/perabotan.png" className="h-8 w-auto" />
-            </a>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(false)}
-              className="-m-2.5 rounded-md p-2.5 text-gray-900"
-            >
-              <span className="sr-only">Close menu</span>
-              <XMarkIcon aria-hidden="true" className="size-6" />
-            </button>
-          </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Beranda
-                </a>
-                <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                    Kategori
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="size-5 flex-none group-data-open:rotate-180"
-                    />
-                  </DisclosureButton>
-                  <DisclosurePanel className="mt-2 space-y-2">
-                    {[...kategori].map((item) => (
-                      <DisclosureButton
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
-                      >
-                        {item.name}
-                      </DisclosureButton>
-                    ))}
-                  </DisclosurePanel>
-                </Disclosure>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Produk
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Keranjang
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Wishlist
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Kontak
-                </a>
-              </div>
-              <div className="py-6">
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </a>
-              </div>
-            </div>
-          </div>
-        </DialogPanel>
-      </Dialog>
-    </header>
+    </div>
   );
-}
+};
+
+export default CardNav;
