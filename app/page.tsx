@@ -1,5 +1,6 @@
 "use client";
 
+import Card from "./component/card";
 import Layout from "./component/layout";
 import LogoLoop from "./component/logo-loop";
 import ScrollVelocity from "./component/scroll-velocity";
@@ -78,6 +79,8 @@ export default function Home() {
           />
         </div>
       </div>
+
+      <Card />
 
       <ScrollVelocity
         texts={["Selamat Berbelanja", "Perabotan Berkualitas"]}
