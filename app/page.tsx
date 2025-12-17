@@ -10,35 +10,34 @@ export default function Home() {
   const items = [
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
+    "/foto/talenankayu.png",
+    "/foto/nampanhijau.png",
     "/foto/baskom.png",
     "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    "/foto/baskom.png",
-    "/foto/nampanabu.png",
-    // Add more items as needed
   ];
 
   const imageLogos = [
@@ -81,9 +80,9 @@ export default function Home() {
       <Card />
 
       <ScrollVelocity
-        texts={["Selamat Berbelanja", "Perabotan Berkualitas"]}
+        texts={["Selamat Berbelanja", "Perabot Berkualitas Harga Terjangkau"]}
         velocity={velocity}
-        className="custom-scroll-text text-[#2645ff] select-none"
+        className="custom-scroll-text text-5xl md:text-7xl select-none"
       />
     </Layout>
   );

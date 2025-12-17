@@ -82,6 +82,16 @@ const GridMotion: FC<GridMotionProps> = ({
             minFontSize={36}
           />
         </div>
+
+        <div className="absolute bottom-0 text-white z-10 font-extralight w-full flex justify-between p-5">
+          <p>
+            Perabot <br /> Berkualitas
+          </p>
+          <p>
+            Harga <br /> Terjangkau
+          </p>
+        </div>
+
         <div className="gap-4 flex-none relative w-[500vw] sm:w-[200vw] lg:w-[150vw] xl:w-[120vw] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-2">
           {Array.from({ length: 4 }, (_, rowIndex) => (
             <div
