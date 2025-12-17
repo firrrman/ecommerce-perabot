@@ -67,21 +67,21 @@ const GridMotion: FC<GridMotionProps> = ({
 
   return (
     <div ref={gridRef} className="h-lvh w-full overflow-hidden">
-      <div className="bg-black/70 w-full h-full absolute z-10 flex items-center justify-center p-5">
-        <TextPressure
-          text="PERABOTAN"
-          flex={true}
-          alpha={false}
-          stroke={false}
-          width={true}
-          weight={true}
-          italic={true}
-          textColor="#ffffff"
-          strokeColor="#ff0000"
-          minFontSize={36}
-        />
-      </div>
       <section className="w-full h-full overflow-hidden relative flex items-center justify-center bg-black">
+        <div className="bg-black/70 w-full h-full absolute z-10 flex items-center justify-center p-5">
+          <TextPressure
+            text="PERABOTAN"
+            flex={true}
+            alpha={false}
+            stroke={false}
+            width={true}
+            weight={true}
+            italic={true}
+            textColor="#ffffff"
+            strokeColor="#ff0000"
+            minFontSize={36}
+          />
+        </div>
         <div className="gap-4 flex-none relative w-[500vw] sm:w-[200vw] lg:w-[150vw] xl:w-[120vw] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-2">
           {Array.from({ length: 4 }, (_, rowIndex) => (
             <div
