@@ -25,13 +25,13 @@ export default function Card() {
       price: "Rp 25.000",
     },
     {
-      src: "/foto/saringan.jpeg",
+      src: "/foto/saringan.jpg",
       title: "Saringan",
       href: "https://company3.com",
       price: "Rp 25.000",
     },
     {
-      src: "/foto/toplesplastik.jpeg",
+      src: "/foto/toplesplastik.png",
       title: "Toples Plastik",
       href: "https://company3.com",
       price: "Rp 25.000",
@@ -63,13 +63,13 @@ export default function Card() {
       price: "Rp 25.000",
     },
     {
-      src: "/foto/saringan.jpeg",
+      src: "/foto/saringan.jpg",
       title: "Saringan",
       href: "https://company3.com",
       price: "Rp 25.000",
     },
     {
-      src: "/foto/toplesplastik.jpeg",
+      src: "/foto/toplesplastik.png",
       title: "Toples Plastik",
       href: "https://company3.com",
       price: "Rp 25.000",
@@ -86,7 +86,7 @@ export default function Card() {
           {produkCard.map((item, index) => (
             <div
               key={index}
-              className="group relative snap-start shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 rounded-xl overflow-hidden bg-gray-200"
+              className="group relative cursor-pointer snap-start shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 rounded-xl overflow-hidden bg-gray-200"
             >
               {/* Image */}
               <img
@@ -117,7 +117,7 @@ export default function Card() {
           {produkCard2.map((item, index) => (
             <div
               key={index}
-              className="group relative snap-start shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 rounded-xl overflow-hidden bg-gray-200"
+              className="group relative cursor-pointer snap-start shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 rounded-xl overflow-hidden bg-gray-200"
             >
               {/* Image */}
               <img
