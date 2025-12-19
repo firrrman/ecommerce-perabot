@@ -82,7 +82,7 @@ export default function Home() {
       <ScrollVelocity
         texts={["Selamat Berbelanja", "Perabot Berkualitas Harga Terjangkau"]}
         velocity={velocity}
-        className="custom-scroll-text text-5xl md:text-7xl select-none text-[#2645ff]"
+        className="custom-scroll-text text-5xl md:text-7xl select-none"
       />
 
       <div className="grid sm:grid-cols-2 my-10">
