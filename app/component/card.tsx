@@ -1,80 +1,19 @@
-export default function Card() {
-  const produkCard = [
-    {
-      src: "/foto/baskom.png",
-      title: "Baskom Merah",
-      href: "https://gantungan.com",
-      price: "Rp 25.000",
+import { prisma } from "@/lib/prisma";
+
+export default async function Card() {
+  const products = await prisma.product.findMany({
+    orderBy: {
+      createdAt: "desc",
     },
-    {
-      src: "/foto/talenankayu.png",
-      title: "Talenan Kayu",
-      href: "https://company2.com",
-      price: "Rp 25.000",
+    take: 10,
+    include: {
+      images: true,
+      colors: true,
+      sizes: true,
     },
-    {
-      src: "/foto/nampanabu.png",
-      title: "Nampan Abu",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/nampanhijau.png",
-      title: "Nampan Hijau",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/saringan.jpg",
-      title: "Saringan",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/toplesplastik.png",
-      title: "Toples Plastik",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-  ];
-  const produkCard2 = [
-    {
-      src: "/foto/nampanhijau.png",
-      title: "Nampan Hijau",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/nampanabu.png",
-      title: "Nampan Abu",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/talenankayu.png",
-      title: "Talenan Kayu",
-      href: "https://company2.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/baskom.png",
-      title: "Baskom Merah",
-      href: "https://gantungan.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/saringan.jpg",
-      title: "Saringan",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-    {
-      src: "/foto/toplesplastik.png",
-      title: "Toples Plastik",
-      href: "https://company3.com",
-      price: "Rp 25.000",
-    },
-  ];
+  });
+
+  console.log(products);
   return (
     <div className="p-2 flex flex-col gap-2 my-10">
       <div className="relative w-fit h-fit">
@@ -83,7 +22,7 @@ export default function Card() {
           <p className="text-7xl md:text-9xl">Seller</p>
         </div>
         <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
-          {produkCard.map((item, index) => (
+          {products.map((item, index) => (
             <a
               href="/detail-product"
               key={index}
@@ -91,15 +30,14 @@ export default function Card() {
             >
               {/* Image */}
               <img
-                src={item.src}
-                alt={item.title}
+                src={item.images[0].src}
                 className="w-full h-96 object-cover transition-transform duration-500 group-hover:scale-110"
               />
 
               {/* Overlay */}
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <h2 className="text-xl font-semibold mb-1 translate-y-4 group-hover:translate-y-0 transition">
-                  {item.title}
+                  {item.name}
                 </h2>
                 <p className="text-lg font-medium translate-y-4 group-hover:translate-y-0 transition delay-75">
                   {item.price}
@@ -115,7 +53,7 @@ export default function Card() {
           <p className="text-7xl md:text-9xl">Product</p>
         </div>
         <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
-          {produkCard2.map((item, index) => (
+          {products.map((item, index) => (
             <a
               href="/detail-product"
               key={index}
@@ -123,15 +61,14 @@ export default function Card() {
             >
               {/* Image */}
               <img
-                src={item.src}
-                alt={item.title}
+                src={item.images[0].src}
                 className="w-full h-96 object-cover transition-transform duration-500 group-hover:scale-110"
               />
 
               {/* Overlay */}
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <h2 className="text-xl font-semibold mb-1 translate-y-4 group-hover:translate-y-0 transition">
-                  {item.title}
+                  {item.name}
                 </h2>
                 <p className="text-lg font-medium translate-y-4 group-hover:translate-y-0 transition delay-75">
                   {item.price}

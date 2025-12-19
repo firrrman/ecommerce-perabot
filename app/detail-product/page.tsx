@@ -3,7 +3,6 @@ import Layout from "../component/layout";
 const product = {
   name: "Baskom",
   price: "10.000",
-  href: "#",
   images: [
     {
       src: "/foto/baskom.png",

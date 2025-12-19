@@ -1,11 +1,10 @@
-"use client";
-
+import { prisma } from "@/lib/prisma";
 import Card from "./component/card";
 import GridMotion from "./component/GridMotion";
 import Layout from "./component/layout";
 import ScrollVelocity from "./component/scroll-velocity";
 
-export default function Home() {
+export default async function Home() {
   const velocity = 30;
   const items = [
     "/foto/baskom.png",
@@ -72,7 +71,6 @@ export default function Home() {
       href: "https://company3.com",
     },
   ];
-
   return (
     <Layout>
       <GridMotion items={items} />

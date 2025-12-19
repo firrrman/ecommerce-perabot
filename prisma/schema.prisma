@@ -8,23 +8,108 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model Product {
+  id          String         @id @default(uuid())
+  name        String
+  slug        String         @unique
+  price       Int
+  description String?
+  details     String?
+  highlights  String[]
+  categoryId  String?
+  category    Category?      @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  colors      ProductColor[]
+  sizes       ProductSize[]
+  orderItems  OrderItem[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  src       String
+  alt       String?
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Color {
+  id         String         @id @default(uuid())
+  name       String
+  hex        String
+  products   ProductColor[]
+  orderItems OrderItem[]
+}
+
+model Size {
+  id         String        @id @default(uuid())
+  name       String
+  products   ProductSize[]
+  orderItems OrderItem[]
+}
+
+model ProductColor {
+  id        String  @id @default(uuid())
+  productId String
+  colorId   String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color     Color   @relation(fields: [colorId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, colorId])
+}
+
+model ProductSize {
+  id        String  @id @default(uuid())
+  productId String
+  sizeId    String
+  inStock   Boolean @default(true)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      Size    @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, sizeId])
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  customerName String
+  phone        String
+  address      String
+  totalPrice   Int
+  status       OrderStatus @default(PENDING)
+  items        OrderItem[]
+  createdAt    DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  sizeId    String?
+  colorId   String?
+  quantity  Int
+  price     Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+  size      Size?   @relation(fields: [sizeId], references: [id])
+  color     Color?  @relation(fields: [colorId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
 }
