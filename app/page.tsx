@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import Card from "./component/card";
 import GridMotion from "./component/GridMotion";
 import Layout from "./component/layout";
