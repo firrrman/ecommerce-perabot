@@ -1,7 +1,15 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function Card() {
-  const products = await prisma.product.findMany({
+  const bestSeller = await prisma.product.findMany({
+    take: 10,
+    include: {
+      images: true,
+      colors: true,
+      sizes: true,
+    },
+  });
+  const newProducts = await prisma.product.findMany({
     orderBy: {
       createdAt: "desc",
     },
@@ -13,7 +21,6 @@ export default async function Card() {
     },
   });
 
-  console.log(products);
   return (
     <div className="p-2 flex flex-col gap-2 my-10">
       <div className="relative w-fit h-fit">
@@ -22,7 +29,7 @@ export default async function Card() {
           <p className="text-7xl md:text-9xl">Seller</p>
         </div>
         <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
-          {products.map((item, index) => (
+          {bestSeller.map((item, index) => (
             <a
               href="/detail-product"
               key={index}
@@ -53,7 +60,7 @@ export default async function Card() {
           <p className="text-7xl md:text-9xl">Product</p>
         </div>
         <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
-          {products.map((item, index) => (
+          {newProducts.map((item, index) => (
             <a
               href="/detail-product"
               key={index}
