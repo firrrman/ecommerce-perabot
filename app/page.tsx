@@ -1,10 +1,16 @@
 export const dynamic = "force-dynamic";
-import Card from "./component/card";
 import GridMotion from "./component/GridMotion";
 import Layout from "./component/layout";
 import ScrollVelocity from "./component/scroll-velocity";
+import { bestSeller, newProducts, testcategory } from "./actions/cardProduct";
+import CategoryCard from "./component/category-card";
+import CardHomepage from "./component/card-hompage";
 
 export default async function Home() {
+  const bestProduct = await bestSeller();
+  const newProduct = await newProducts();
+  const category = await testcategory("59ba2c58-30db-4e78-af9e-405763f20ba9");
+  console.log(category);
   const velocity = 30;
   const items = [
     "/foto/baskom.png",
@@ -39,43 +45,11 @@ export default async function Home() {
     "/foto/toplesplastik.png",
   ];
 
-  const imageLogos = [
-    {
-      src: "/foto/baskommerah.jpeg",
-      alt: "Company 1",
-      href: "https://gantungan.com",
-    },
-    {
-      src: "/foto/kayu.jpeg",
-      alt: "Company 2",
-      href: "https://company2.com",
-    },
-    {
-      src: "/foto/nampanabu.jpeg",
-      alt: "Company 3",
-      href: "https://company3.com",
-    },
-    {
-      src: "/foto/nampanhijau.jpeg",
-      alt: "Company 3",
-      href: "https://company3.com",
-    },
-    {
-      src: "/foto/saringan.jpeg",
-      alt: "Company 3",
-      href: "https://company3.com",
-    },
-    {
-      src: "/foto/toplesplastik.jpeg",
-      alt: "Company 3",
-      href: "https://company3.com",
-    },
-  ];
   return (
     <Layout>
       <GridMotion items={items} />
 
-      <Card />
+      <CardHomepage bestSeller={bestProduct} newProducts={newProduct} />
 
       <ScrollVelocity
         texts={["Selamat Berbelanja", "Perabot Berkualitas Harga Terjangkau"]}
@@ -83,41 +57,7 @@ export default async function Home() {
         className="custom-scroll-text text-5xl md:text-7xl select-none"
       />
 
-      <div className="grid sm:grid-cols-2 my-10">
-        <div className="relative">
-          <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
-            Ruang Tamu
-          </div>
-          <img
-            src="/kategori/ruangtamu.jpg"
-            className="size-full object-cover"
-          />
-        </div>
-        <div className="relative">
-          <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
-            Kamar Mandi
-          </div>
-          <img
-            src="/kategori/kamarmandi.jpg"
-            className="size-full object-cover"
-          />
-        </div>
-        <div className="relative">
-          <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
-            Dapur
-          </div>
-          <img src="/kategori/dapur.jpg" className="size-full object-cover" />
-        </div>
-        <div className="relative">
-          <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
-            Luar Ruangan
-          </div>
-          <img
-            src="/kategori/luarruangan.jpg"
-            className="size-full object-cover"
-          />
-        </div>
-      </div>
+      <CategoryCard />
     </Layout>
   );
 }

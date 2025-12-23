@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 
 interface ProductDetailProps {
@@ -99,7 +98,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-gray-900">Ukuran</h3>
                 </div>
-
                 <fieldset aria-label="Choose a size" className="mt-4">
                   <div className="grid grid-cols-4 gap-3">
                     {product?.sizes.map((size) => (
@@ -139,7 +137,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
             {/* Description and details */}
             <div>
               <h3 className="sr-only">Description</h3>
-
               <div className="space-y-6">
                 <p className="text-base text-gray-900">
                   {product?.description}
@@ -149,7 +146,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
 
             <div className="mt-10">
               <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
-
               <div className="mt-4">
                 <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
                   {product?.highlights.map((highlight) => (
@@ -163,7 +159,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
 
             <div className="mt-10">
               <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
               <div className="mt-4 space-y-6">
                 <p className="text-sm text-gray-600">{product?.details}</p>
               </div>

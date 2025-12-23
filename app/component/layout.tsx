@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         },
         {
           label: "Produk",
-          href: "/about/careers",
+          href: "/produk",
           ariaLabel: "About Careers",
         },
         {
