@@ -34,22 +34,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       links: [
         {
           label: "Ruang Tamu",
-          href: "/projects/featured",
+          href: "/produk/ruang-tamu",
           ariaLabel: "Featured Projects",
         },
         {
           label: "Kamar Mandi",
-          href: "/projects/case-studies",
+          href: "/produk/kamar-mandi",
           ariaLabel: "Project Case Studies",
         },
         {
           label: "Dapur",
-          href: "/projects/case-studies",
+          href: "/produk/dapur",
           ariaLabel: "Project Case Studies",
         },
         {
           label: "Luar Ruangan",
-          href: "/projects/case-studies",
+          href: "/produk/luar-ruangan",
           ariaLabel: "Project Case Studies",
         },
       ],

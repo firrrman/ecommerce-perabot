@@ -37,10 +37,12 @@ export async function newProducts() {
   });
 }
 
-export async function testcategory(category: string) {
+export async function getCategoryProducts(category: string) {
   return await prisma.product.findMany({
     where: {
-      categoryId: category,
+      category: {
+        slug: category,
+      },
     },
     orderBy: {
       createdAt: "desc",

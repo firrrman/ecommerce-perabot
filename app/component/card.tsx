@@ -8,7 +8,7 @@ interface ProductCardProps {
   basePrice: number;
 }
 
-export default function Card({ product }: { product: ProductCardProps[] }) {
+export function Card({ product }: { product: ProductCardProps[] }) {
   return product.map((item, index) => (
     <Link
       href={`/detail-produk/${item.slug}`}
@@ -20,15 +20,25 @@ export default function Card({ product }: { product: ProductCardProps[] }) {
         src={item.images[0].src}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
+    </Link>
+  ));
+}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
-        <h2 className="text-xl font-semibold mb-1 translate-y-4 group-hover:translate-y-0 transition">
-          {item.name}
-        </h2>
-        <p className="text-lg font-medium translate-y-4 group-hover:translate-y-0 transition delay-75">
-          Rp. {item.basePrice.toLocaleString("id-ID")}
-        </p>
+export function Card2({ product }: { product: ProductCardProps[] }) {
+  return product.map((item, index) => (
+    <Link
+      href={`/detail-produk/${item.slug}`}
+      key={index}
+      className="group border border-gray-400 relative cursor-pointer rounded-xl overflow-hidden bg-gray-200"
+    >
+      {/* Image */}
+      <img
+        src={item.images[0].src}
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+      />
+      <div className="absolute bottom-0 w-full bg-black/70 p-3 text-white">
+        <p className="text-sm font-medium line-clamp-1">{item.name}</p>
+        <p className="text-sm">Rp. {item.basePrice.toLocaleString("id-ID")}</p>
       </div>
     </Link>
   ));
