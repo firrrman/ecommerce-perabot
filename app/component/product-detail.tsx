@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface ProductDetailProps {
@@ -30,12 +31,15 @@ function classNames(...classes: string[]) {
 
 export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [selectedPrice, setSelectedPrice] = useState<number>(product.basePrice);
-
+  const router = useRouter();
   return (
     <div className="bg-white mt-30 w-full px-5">
-      <a href="/" className="bg-black text-white p-3 px-5 rounded">
+      <button
+        onClick={() => router.back()}
+        className="bg-black text-white p-3 px-5 rounded cursor-pointer hover:scale-105 transition"
+      >
         Kembali
-      </a>
+      </button>
       <div className="pt-5 w-full">
         {/* Image gallery */}
         <div className="mt-5 flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar sm:grid sm:grid-cols-2">
