@@ -78,7 +78,7 @@ export default async function Produk({ searchParams }: Props) {
                 : "text-gray-300 cursor-not-allowed pointer-events-none"
             }`}
           >
-            ← Prev
+            Prev
           </a>
 
           {/* Page Numbers */}
@@ -116,7 +116,7 @@ export default async function Produk({ searchParams }: Props) {
                 : "text-gray-300 cursor-not-allowed pointer-events-none"
             }`}
           >
-            Next →
+            Next
           </a>
         </div>
       )}

@@ -92,7 +92,7 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
                 : "text-gray-300 cursor-not-allowed pointer-events-none"
             }`}
           >
-            ← Prev
+            Prev
           </a>
 
           {/* Page Numbers */}
@@ -130,7 +130,7 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
                 : "text-gray-300 cursor-not-allowed pointer-events-none"
             }`}
           >
-            Next →
+            Next
           </a>
         </div>
       )}
