@@ -123,6 +123,7 @@ enum OrderStatus {
   PENDING
   PAID
   SHIPPED
+  FINISHED
   CANCELLED
 }
 

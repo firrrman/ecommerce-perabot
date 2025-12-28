@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = "force-dynamic";
 import { TrashIcon } from "@heroicons/react/16/solid";
 import Layout from "../component/layout";
 import { useCart } from "../context/cart-context";
