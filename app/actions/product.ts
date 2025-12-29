@@ -2,6 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+
+export const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function createCategory(formData: FormData) {
   "use server";
@@ -128,6 +134,7 @@ export async function createProduct(formData: FormData) {
 
     uploadedImages.push({
       src: data.publicUrl,
+      path: fileName,
       alt: name,
     });
   }
@@ -158,4 +165,34 @@ export async function createProduct(formData: FormData) {
 
   revalidatePath("/admin/produk");
   redirect("/admin/produk");
+}
+
+export async function deleteProduct(productId: string) {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: { images: true },
+  });
+
+  if (!product) throw new Error("Produk tidak ditemukan");
+
+  const paths = product.images
+    .map((img) => img.path)
+    .filter((path): path is string => path !== null);
+
+  if (paths.length > 0) {
+    const { error } = await supabaseAdmin.storage
+      .from("products")
+      .remove(paths);
+
+    if (error) {
+      console.error(error);
+      throw new Error("Gagal hapus file storage");
+    }
+  }
+
+  await prisma.product.delete({
+    where: { id: productId },
+  });
+
+  return { success: true };
 }

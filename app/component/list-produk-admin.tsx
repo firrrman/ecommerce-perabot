@@ -25,13 +25,21 @@ export interface ProductCardProps {
 
 export default function ProdukListAdmin({
   product,
+  onDelete,
 }: {
   product: ProductCardProps[];
+  onDelete: (id: string) => void;
 }) {
   const [viewMode, setViewMode] = useState("list");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const categories = ["all", "Ruang Tamu", "Kamar Mandi", "Dapur", "Luar Ruangan"];
+  const categories = [
+    "all",
+    "Ruang Tamu",
+    "Kamar Mandi",
+    "Dapur",
+    "Luar Ruangan",
+  ];
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -40,6 +48,18 @@ export default function ProdukListAdmin({
       minimumFractionDigits: 0,
     }).format(price);
   };
+
+  async function handleDelete(id: string) {
+    if (!confirm("Yakin hapus produk ini?")) return;
+
+    try {
+      await onDelete(id); // ⬅️ PANGGIL DARI SERVER
+      alert("Produk berhasil dihapus");
+      location.reload();
+    } catch {
+      alert("Gagal menghapus produk");
+    }
+  }
 
   return (
     <main className="p-4 md:p-6 overflow-y-auto">
@@ -239,6 +259,7 @@ export default function ProdukListAdmin({
                         <button
                           className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600"
                           title="Hapus"
+                          onClick={() => handleDelete(product.id)}
                         >
                           <Trash2 size={16} />
                         </button>

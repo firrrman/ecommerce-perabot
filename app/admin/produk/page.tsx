@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { allProducts } from "@/app/actions/cardProduct";
 import LayoutAdmin from "@/app/component/layout-admin";
 import ProdukListAdmin from "@/app/component/list-produk-admin";
+import { deleteProduct } from "@/app/actions/product";
 
 type Props = {
   searchParams: Promise<{ page?: string; search?: string }>;
@@ -11,9 +12,14 @@ export default async function ProdukPage({ searchParams }: Props) {
   const { page: pageParam, search } = await searchParams;
   const page = Number(pageParam || "1");
   const product = await allProducts(page, 10, search);
+
+  async function handleDelete(id: string) {
+    "use server";
+    await deleteProduct(id);
+  }
   return (
     <LayoutAdmin activeMenuProp="products">
-      <ProdukListAdmin product={product.data} />
+      <ProdukListAdmin product={product.data} onDelete={handleDelete} />
 
       {/* Pagination */}
       {product.meta.totalPage > 1 && (
