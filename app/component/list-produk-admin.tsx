@@ -58,7 +58,6 @@ export default function ProdukListAdmin({
             href="/admin/tambah-produk"
             className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium"
           >
-            <Plus size={20} />
             Tambah Produk
           </a>
         </div>
@@ -174,7 +173,7 @@ export default function ProdukListAdmin({
       ) : (
         <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-220 md:w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
                   <th className="text-left p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
