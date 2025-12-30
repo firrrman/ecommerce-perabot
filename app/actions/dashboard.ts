@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 export async function product() {
   return await prisma.product.count({});
@@ -18,11 +19,14 @@ export async function getTotalPaidRevenue() {
     },
   });
 
+  revalidatePath("/admin/dashboard");
   return result._sum.totalPrice ?? 0;
 }
 
 export async function getOrder() {
-  return await prisma.order.count({});
+  const order = await prisma.order.count({});
+  revalidatePath("/admin/dashboard");
+  return order;
 }
 
 export async function countSoldItems() {
@@ -35,7 +39,7 @@ export async function countSoldItems() {
       },
     },
   });
-
+  revalidatePath("/admin/dashboard");
   return totalSoldItems;
 }
 
@@ -51,6 +55,7 @@ export async function orderItem() {
     },
   });
 
+  revalidatePath("/admin/dashboard");
   return orderItem;
 }
 
@@ -93,6 +98,8 @@ export async function bestSeller() {
       },
     },
   });
+
+  revalidatePath("/admin/dashboard");
 
   // 3️⃣ Gabungkan hasil
   return bestSeller.map((item) => {
