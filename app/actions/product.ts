@@ -167,6 +167,125 @@ export async function createProduct(formData: FormData) {
   redirect("/admin/produk");
 }
 
+export async function updateProduct(productId: string, formData: FormData) {
+  const name = formData.get("name") as string;
+  const slug = formData.get("slug") as string;
+  const description = formData.get("description") as string;
+  const details = formData.get("details") as string;
+  const categoryId = formData.get("categoryId") as string;
+  const images = formData.getAll("image") as File[];
+  const selectedColorIds = formData.getAll("colors") as string[];
+  const selectedSizeIds = formData.getAll("sizes") as string[];
+  const highlightsRaw = formData.get("highlights") as string;
+  const basePrice = Number(formData.get("basePrice"));
+
+  if (!name || !slug) {
+    throw new Error("Nama dan slug wajib diisi");
+  }
+
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: { images: true },
+  });
+
+  if (!product) {
+    throw new Error("Produk tidak ditemukan");
+  }
+
+  const highlights = highlightsRaw
+    ? highlightsRaw
+        .split("\n")
+        .map((h) => h.trim())
+        .filter(Boolean)
+    : [];
+
+  const sizeData = selectedSizeIds.map((sizeId) => {
+    const priceRaw = formData.get(`price-${sizeId}`);
+    const price = Number(priceRaw);
+
+    if (!priceRaw || isNaN(price)) {
+      throw new Error("Harga ukuran tidak valid");
+    }
+
+    return {
+      sizeId,
+      price,
+      inStock: true,
+    };
+  });
+
+  let uploadedImages: { src: string; alt: string; path: string }[] = [];
+
+  const hasNewImage =
+    images.length > 0 && images[0] instanceof File && images[0].size > 0;
+
+  if (hasNewImage) {
+    for (const image of images) {
+      const fileName = `${crypto.randomUUID()}-${image.name}`;
+
+      const { error } = await supabase.storage
+        .from("products")
+        .upload(fileName, image);
+
+      if (error) throw new Error("Gagal upload gambar");
+
+      const { data } = supabase.storage.from("products").getPublicUrl(fileName);
+
+      uploadedImages.push({
+        src: data.publicUrl,
+        path: fileName,
+        alt: name,
+      });
+    }
+  }
+
+  if (hasNewImage && product.images.length > 0) {
+    const paths = product.images.map((img) => img.path);
+
+    const { error } = await supabaseAdmin.storage
+      .from("products")
+      .remove(paths as string[]);
+
+    if (error) {
+      console.error(error);
+      throw new Error("Gagal menghapus gambar lama di storage");
+    }
+  }
+
+  await prisma.product.update({
+    where: { id: productId },
+    data: {
+      name,
+      slug,
+      description,
+      details,
+      highlights,
+      basePrice,
+      categoryId: categoryId || null,
+
+      colors: {
+        deleteMany: { productId },
+        create: selectedColorIds.map((colorId) => ({ colorId })),
+      },
+
+      sizes: {
+        deleteMany: { productId },
+        create: sizeData,
+      },
+
+      ...(hasNewImage && {
+        images: {
+          deleteMany: { productId },
+          create: uploadedImages,
+        },
+      }),
+    },
+  });
+
+  revalidatePath("/admin/produk");
+  redirect("/admin/produk");
+}
+
 export async function deleteProduct(productId: string) {
   const product = await prisma.product.findUnique({
     where: { id: productId },

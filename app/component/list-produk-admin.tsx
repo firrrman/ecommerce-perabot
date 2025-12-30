@@ -1,17 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Grid,
-  List,
-  ChevronDown,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  MoreVertical,
-} from "lucide-react";
+import { Grid, List, ChevronDown, Edit, Trash2 } from "lucide-react";
 import { SearchBarAdmin } from "./search-bar";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export interface ProductCardProps {
   id: string;
@@ -31,7 +24,6 @@ export default function ProdukListAdmin({
   onDelete: (id: string) => void;
 }) {
   const [viewMode, setViewMode] = useState("list");
-  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const categories = [
     "all",
@@ -60,6 +52,23 @@ export default function ProdukListAdmin({
       alert("Gagal menghapus produk");
     }
   }
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const selectedCategory = searchParams.get("search") || "all";
+
+  const handleChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value === "all") {
+      params.delete("search");
+    } else {
+      params.set("search", value);
+    }
+
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <main className="p-4 md:p-6 overflow-y-auto">
@@ -95,7 +104,7 @@ export default function ProdukListAdmin({
           <div className="relative">
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               className="appearance-none pl-4 pr-10 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white cursor-pointer text-sm"
             >
               <option value="all">Semua Kategori</option>
@@ -105,6 +114,7 @@ export default function ProdukListAdmin({
                 </option>
               ))}
             </select>
+
             <ChevronDown
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               size={18}
@@ -178,11 +188,17 @@ export default function ProdukListAdmin({
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1">
+                  <Link
+                    href={`/admin/edit-produk/${product.id}`}
+                    className="flex-1 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+                  >
                     <Edit size={14} />
                     Edit
-                  </button>
-                  <button className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors">
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(product.id)}
+                    className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors"
+                  >
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -250,12 +266,12 @@ export default function ProdukListAdmin({
                     <td className="p-4">{product.sold}</td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <button
+                        <Link
+                          href={`/admin/edit-produk/${product.id}`}
                           className="p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors text-blue-600"
-                          title="Edit"
                         >
                           <Edit size={16} />
-                        </button>
+                        </Link>
                         <button
                           className="p-2 hover:bg-red-50 rounded-lg cursor-pointer transition-colors text-red-600"
                           title="Hapus"
