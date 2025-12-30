@@ -61,7 +61,7 @@ export async function createOrderFromForm(formData: FormData) {
     },
   });
 
-  revalidatePath("/");
+  revalidatePath("/checkout");
 
   return {
     orderId: order.id,

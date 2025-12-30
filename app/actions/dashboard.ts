@@ -19,13 +19,11 @@ export async function getTotalPaidRevenue() {
     },
   });
 
-  revalidatePath("/admin/dashboard");
   return result._sum.totalPrice ?? 0;
 }
 
 export async function getOrder() {
   const order = await prisma.order.count({});
-  revalidatePath("/admin/dashboard");
   return order;
 }
 
@@ -39,7 +37,6 @@ export async function countSoldItems() {
       },
     },
   });
-  revalidatePath("/admin/dashboard");
   return totalSoldItems;
 }
 
@@ -55,7 +52,6 @@ export async function orderItem() {
     },
   });
 
-  revalidatePath("/admin/dashboard");
   return orderItem;
 }
 
@@ -98,8 +94,6 @@ export async function bestSeller() {
       },
     },
   });
-
-  revalidatePath("/admin/dashboard");
 
   // 3️⃣ Gabungkan hasil
   return bestSeller.map((item) => {
