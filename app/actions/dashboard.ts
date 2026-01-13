@@ -48,7 +48,7 @@ export async function orderItem() {
     },
     take: 5,
     orderBy: {
-      id: "desc",
+      id: "asc",
     },
   });
 

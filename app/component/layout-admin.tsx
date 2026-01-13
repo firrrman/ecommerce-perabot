@@ -8,13 +8,11 @@ import {
   ShoppingCart,
   TrendingUp,
   Settings,
-  Bell,
-  Search,
-  Sofa,
   Truck,
   Package,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Logout from "./logout";
 
 export default function LayoutAdmin({
   children,
@@ -71,7 +69,6 @@ export default function LayoutAdmin({
       >
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center space-x-2">
-            {/* <img src="/perabotan.png" alt="" className="h-7" /> */}
             <h1 className="text-xl font-extralight">Perabotan</h1>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
@@ -101,6 +98,7 @@ export default function LayoutAdmin({
               </button>
             );
           })}
+          <Logout />
         </nav>
 
         <div className="absolute bottom-0 w-full p-4 border-t border-gray-700 bg-gray-900">

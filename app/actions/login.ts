@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function adminLoginAction(email: string, password: string) {
   const admin = await prisma.admin.findUnique({
@@ -29,4 +30,14 @@ export async function adminLoginAction(email: string, password: string) {
   });
 
   return { success: true };
+}
+
+export async function adminLogoutAction() {
+  const cookieStore = await cookies();
+
+  // Hapus cookie session admin
+  cookieStore.delete("admin_session");
+
+  // Redirect ke halaman login admin
+  redirect("/admin/login");
 }
