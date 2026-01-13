@@ -60,9 +60,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       bgColor: "#271E37",
       textColor: "#fff",
       links: [
-        { label: "Email", href: "/contact/email", ariaLabel: "Email us" },
-        { label: "WhatsApp", href: "/contact/twitter", ariaLabel: "Twitter" },
-        { label: "Telegram", href: "/contact/linkedin", ariaLabel: "LinkedIn" },
+        {
+          label: "Email",
+          href: "mailto:perabotan1174@gmail.com",
+          ariaLabel: "Email us",
+        },
+        {
+          label: "WhatsApp",
+          href: "https://wa.me/6285810642529",
+          ariaLabel: "WhatsApp",
+        },
+        {
+          label: "Telegram",
+          href: "https://t.me/firmannn_11",
+          ariaLabel: "Telegram",
+        },
       ],
     },
   ];

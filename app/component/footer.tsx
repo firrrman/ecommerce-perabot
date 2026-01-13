@@ -29,7 +29,7 @@ export default function Footer() {
           <p className="text-sm">
             WhatsApp: 085810542529
             <br />
-            Email: perbaotan@gmail.com
+            Email: perabotan1174@gmail.com
           </p>
         </div>
       </div>
