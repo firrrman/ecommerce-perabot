@@ -1,4 +1,4 @@
-import { createCategory } from "../actions/product";
+import { createCategory } from "../../actions/product";
 
 export default function FormCategory() {
   return (

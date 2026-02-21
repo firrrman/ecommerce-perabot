@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { adminLoginAction } from "../actions/login";
+import { adminLoginAction } from "../../actions/login";
 import { useRouter } from "next/navigation";
 
 export default function FormLogin() {

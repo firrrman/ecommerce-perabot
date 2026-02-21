@@ -1,4 +1,4 @@
-import { createSize } from "../actions/product";
+import { createSize } from "../../actions/product";
 
 export default function FormSize() {
   return (

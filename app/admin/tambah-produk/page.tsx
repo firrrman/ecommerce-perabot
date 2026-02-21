@@ -1,9 +1,9 @@
 export const dynamic = "force-dynamic";
 import LayoutAdmin from "@/app/component/layout-admin";
-import FormCategory from "@/app/component/form-category";
-import FormColor from "@/app/component/form-color";
-import FormSize from "@/app/component/form-size";
-import FormProduct from "@/app/component/form-product";
+import FormCategory from "@/app/admin/tambah-produk/form-category";
+import FormColor from "@/app/admin/tambah-produk/form-color";
+import FormSize from "@/app/admin/tambah-produk/form-size";
+import FormProduct from "@/app/admin/tambah-produk/form-product";
 
 export default function AdminProductPage() {
   return (

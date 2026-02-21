@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import FormLogin from "@/app/component/form-login";
+import FormLogin from "@/app/admin/login/form-login";
 
 export default function LoginPage() {
   return (

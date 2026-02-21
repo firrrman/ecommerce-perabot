@@ -1,10 +1,10 @@
 export const dynamic = "force-dynamic";
-import GridMotion from "./component/GridMotion";
+import GridMotion from "./beranda/GridMotion";
 import Layout from "./component/layout";
-import ScrollVelocity from "./component/scroll-velocity";
+import ScrollVelocity from "./beranda/scroll-velocity";
 import { bestSeller, newProducts } from "./actions/cardProduct";
-import CategoryCard from "./component/category-card";
-import CardHomepage from "./component/card-hompage";
+import CategoryCard from "./beranda/category-card";
+import CardHomepage from "./beranda/card-hompage";
 
 export default async function Home() {
   const bestProduct = await bestSeller();

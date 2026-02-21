@@ -194,7 +194,7 @@ export default function EditProductForm({
                         name="colors"
                         value={color.id}
                         defaultChecked={(product.colors ?? []).some(
-                          (c: any) => c.colorId === color.id
+                          (c: any) => c.colorId === color.id,
                         )}
                         className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
                       />
@@ -234,7 +234,7 @@ export default function EditProductForm({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {sizes.map((size: any) => {
                     const existing = (product.sizes ?? []).find(
-                      (s: any) => s.sizeId === size.id
+                      (s: any) => s.sizeId === size.id,
                     );
 
                     return (

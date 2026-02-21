@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { allProducts } from "@/app/actions/cardProduct";
 import LayoutAdmin from "@/app/component/layout-admin";
-import ProdukListAdmin from "@/app/component/list-produk-admin";
+import ProdukListAdmin from "@/app/admin/produk/list-produk-admin";
 import { deleteProduct } from "@/app/actions/product";
 
 type Props = {

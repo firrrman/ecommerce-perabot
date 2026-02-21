@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Grid, List, ChevronDown, Edit, Trash2 } from "lucide-react";
-import { SearchBarAdmin } from "./search-bar";
+import { SearchBarAdmin } from "../../component/search-bar";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 

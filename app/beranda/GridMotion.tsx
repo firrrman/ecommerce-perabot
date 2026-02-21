@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, FC, ReactNode } from "react";
 import { gsap } from "gsap";
-import TextPressure from "./TextPressure";
+import TextPressure from "../component/TextPressure";
 
 interface GridMotionProps {
   items?: (string | ReactNode)[];
@@ -19,7 +19,7 @@ const GridMotion: FC<GridMotionProps> = ({
   const totalItems = 28;
   const defaultItems = Array.from(
     { length: totalItems },
-    (_, index) => `Item ${index + 1}`
+    (_, index) => `Item ${index + 1}`,
   );
   const combinedItems =
     items.length > 0 ? items.slice(0, totalItems) : defaultItems;

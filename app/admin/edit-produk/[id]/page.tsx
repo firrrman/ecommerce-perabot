@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { prisma } from "@/lib/prisma";
-import EditProductForm from "@/app/component/form-edit-product";
+import EditProductForm from "@/app/admin/edit-produk/form-edit-product";
 import { updateProduct } from "@/app/actions/product";
 import LayoutAdmin from "@/app/component/layout-admin";
 
