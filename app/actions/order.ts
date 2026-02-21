@@ -26,6 +26,7 @@ export async function createOrderFromForm(formData: FormData) {
       note: formData.get("note") as string,
       ongkir: Number(formData.get("ongkir")),
       totalPrice: Number(formData.get("totalPrice")),
+      paymentMethod: formData.get("paymentMethod") as string,
 
       items: {
         create: await Promise.all(
@@ -55,7 +56,7 @@ export async function createOrderFromForm(formData: FormData) {
             }
 
             return orderItem;
-          })
+          }),
         ),
       },
     },

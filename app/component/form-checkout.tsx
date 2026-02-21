@@ -13,6 +13,7 @@ export default function FormCheckout({ villages }: Props) {
   const { cart, clearCart } = useCart();
   const [village, setVillage] = useState("");
   const [shippingCost, setShippingCost] = useState(10000);
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("cod");
 
   useEffect(() => {
     setShippingCost(village === "Ciaruteun Udik" ? 0 : 10000);
@@ -26,32 +27,42 @@ export default function FormCheckout({ villages }: Props) {
 
     const formData = new FormData(e.currentTarget);
     formData.append("cart", JSON.stringify(cart));
+    formData.append("paymentMethod", paymentMethod);
 
     try {
       // 1️⃣ Buat order di DB
       const result = await createOrderFromForm(formData);
 
-      // 2️⃣ Buat Snap token
-      const token = await createPayment(result.paymentOrderId);
+      // ===== COD =====
+      if (paymentMethod === "cod") {
+        clearCart();
+        localStorage.removeItem("cart");
 
-      // 3️⃣ PANGGIL SNAP DI SINI 👇
-      window.snap.pay(token, {
-        onSuccess: function (result: any) {
-          clearCart();
-          localStorage.removeItem("cart"); // Hapus dari localStorage juga
-          window.location.href = `/payment/finish?order_id=${result.order_id}`;
-        },
-        onPending: function (result: any) {
-          console.log("Pending:", result);
-        },
-        onError: function (result: any) {
-          console.error("Error:", result);
-          alert("Pembayaran gagal");
-        },
-        onClose: function () {
-          alert("Kamu menutup popup tanpa menyelesaikan pembayaran");
-        },
-      });
+        window.location.href = `/payment/cod-finish?order_id=${result.orderId}`;
+        return;
+      }
+
+      // ===== MIDTRANS =====
+      if (paymentMethod === "midtrans") {
+        const token = await createPayment(result.paymentOrderId);
+
+        window.snap.pay(token, {
+          onSuccess: function (result: any) {
+            clearCart();
+            localStorage.removeItem("cart");
+            window.location.href = `/payment/finish?order_id=${result.order_id}`;
+          },
+          onPending: function () {
+            window.location.href = `/payment/pending?order_id=${result.paymentOrderId}`;
+          },
+          onError: function () {
+            alert("Pembayaran gagal");
+          },
+          onClose: function () {
+            alert("Popup ditutup tanpa pembayaran");
+          },
+        });
+      }
     } catch (err) {
       console.error(err);
       alert("Gagal memproses checkout");
@@ -121,6 +132,30 @@ export default function FormCheckout({ villages }: Props) {
           className="border p-2 w-full"
         />
 
+        <h1 className="text-2xl font-semibold mt-5">Metode Pembayaran</h1>
+
+        <label className="flex items-center gap-2">
+          <input
+            type="radio"
+            name="paymentMethod"
+            value="cod"
+            checked={paymentMethod === "cod"}
+            onChange={() => setPaymentMethod("cod")}
+          />
+          Bayar di Tempat (COD)
+        </label>
+
+        <label className="flex items-center gap-2">
+          <input
+            type="radio"
+            name="paymentMethod"
+            value="midtrans"
+            checked={paymentMethod === "midtrans"}
+            onChange={() => setPaymentMethod("midtrans")}
+          />
+          Transfer / E-Wallet
+        </label>
+
         <h1 className="text-2xl font-semibold mt-5">Kontak</h1>
         <input
           name="gmail"
@@ -140,6 +175,7 @@ export default function FormCheckout({ villages }: Props) {
         <input type="hidden" name="ongkir" value={shippingCost} />
         <input type="hidden" name="totalPrice" value={total} />
         <input type="hidden" name="cart" value={JSON.stringify(cart)} />
+        <input type="hidden" name="paymentMethod" value={paymentMethod} />
       </div>
 
       {/* ================= RIGHT ================= */}
