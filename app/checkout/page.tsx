@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import FormCheckout from "../component/form-checkout";
+import FormCheckout from "./form-checkout";
 import Layout from "../component/layout";
 import { Villages } from "../actions/wilayah";
 

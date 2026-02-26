@@ -21,7 +21,7 @@ type Props = {
 export default async function Produk({ searchParams }: Props) {
   const { page: pageParam, search } = await searchParams;
   const page = Number(pageParam || "1");
-  const product = await allProducts(page, 2, search);
+  const product = await allProducts(page, 12, search);
 
   return (
     <Layout>
