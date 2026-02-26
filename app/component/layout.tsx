@@ -56,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       ],
     },
     {
-      label: "Contact",
+      label: "Kontak",
       bgColor: "#271E37",
       textColor: "#fff",
       links: [

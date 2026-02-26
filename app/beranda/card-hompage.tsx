@@ -26,8 +26,8 @@ export default async function CardHomepage({
     <div className=" flex flex-col gap-2 my-10">
       <div className="relative w-fit h-fit">
         <div className="text-2xl md:text-3xl px-5">
-          <h1>Best</h1>
-          <p className="text-7xl md:text-9xl">Seller</p>
+          <h1>Produk</h1>
+          <p className="text-7xl md:text-9xl">Terlaris</p>
         </div>
         <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
           <Card product={bestSeller} />
@@ -35,8 +35,8 @@ export default async function CardHomepage({
       </div>
       <div className="relative w-fit h-fit">
         <div className="text-2xl md:text-3xl px-5">
-          <h1>New</h1>
-          <p className="text-7xl md:text-9xl">Product</p>
+          <h1>Produk</h1>
+          <p className="text-7xl md:text-9xl">Terbaru</p>
         </div>
         <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
           <Card product={newProducts} />

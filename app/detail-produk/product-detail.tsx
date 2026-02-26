@@ -35,7 +35,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedColorName, setSelectedColorName] = useState<string | null>(
-    null
+    null,
   );
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedSizeName, setSelectedSizeName] = useState<string | null>(null);
@@ -156,7 +156,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                             aria-label={color.color.name}
                             style={{ backgroundColor: color.color.hex }}
                             className={classNames(
-                              `size-8 appearance-none cursor-pointer rounded-full forced-color-adjust-none checked:outline-2 checked:outline-offset-2 focus-visible:outline-3 focus-visible:outline-offset-3`
+                              `size-8 appearance-none cursor-pointer rounded-full forced-color-adjust-none checked:outline-2 checked:outline-offset-2 focus-visible:outline-3 focus-visible:outline-offset-3`,
                             )}
                           />
                         </div>
@@ -216,7 +216,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
           <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pr-8 lg:pb-16">
             {/* Description and details */}
             <div>
-              <h3 className="sr-only">Description</h3>
               <div className="space-y-6">
                 <p className="text-base text-gray-900">
                   {product?.description}
@@ -225,7 +224,9 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
             </div>
 
             <div className="mt-10">
-              <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
+              <h3 className="text-sm font-medium text-gray-900">
+                Spesifikasi Produk
+              </h3>
               <div className="mt-4">
                 <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
                   {product?.highlights.map((highlight) => (
@@ -238,7 +239,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
             </div>
 
             <div className="mt-10">
-              <h2 className="text-sm font-medium text-gray-900">Details</h2>
+              <h2 className="text-sm font-medium text-gray-900">Detail</h2>
               <div className="mt-4 space-y-6">
                 <p className="text-sm text-gray-600">{product?.details}</p>
               </div>
