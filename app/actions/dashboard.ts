@@ -1,7 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 
 export async function product() {
   return await prisma.product.count({});
@@ -106,4 +105,31 @@ export async function bestSeller() {
       totalTerjual: item._sum.quantity ?? 0,
     };
   });
+}
+
+// chartjs
+export async function getOrderGrafik(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const orders = await prisma.order.findMany({
+    where: {
+      createdAt: {
+        gte: start,
+        lt: end,
+      },
+    },
+    select: {
+      createdAt: true,
+    },
+  });
+
+  const monthly = Array(12).fill(0);
+
+  orders.forEach((o) => {
+    const month = new Date(o.createdAt).getMonth();
+    monthly[month]++;
+  });
+
+  return monthly;
 }

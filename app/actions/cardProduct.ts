@@ -1,6 +1,14 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 
+export async function getKategori() {
+  return await prisma.category.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+}
+
 export async function bestSeller() {
   return await prisma.product.findMany({
     orderBy: {
@@ -42,20 +50,27 @@ import { OrderStatus } from "@prisma/client";
 export async function allProducts(
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  category?: string,
 ) {
   const validPage = Math.max(1, page);
   const validLimit = Math.min(Math.max(1, limit), 100);
   const skip = (validPage - 1) * validLimit;
 
-  const whereCondition = search
-    ? {
-        OR: [
-          { name: { contains: search, mode: "insensitive" as const } },
-          { description: { contains: search, mode: "insensitive" as const } },
-        ],
-      }
-    : {};
+  const whereCondition = {
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: "insensitive" as const } },
+        { description: { contains: search, mode: "insensitive" as const } },
+      ],
+    }),
+
+    ...(category && {
+      category: {
+        slug: category, // bisa juga name atau id tergantung schema
+      },
+    }),
+  };
 
   try {
     const [products, total] = await Promise.all([
@@ -95,7 +110,7 @@ export async function allProducts(
     const data = products.map((product) => {
       const sold = product.orderItems.reduce(
         (sum, item) => sum + item.quantity,
-        0
+        0,
       );
 
       const { orderItems, ...rest } = product;
@@ -114,6 +129,7 @@ export async function allProducts(
         total,
         totalPage: Math.ceil(total / validLimit),
         search: search || null,
+        category: category || null,
       },
     };
   } catch (error) {
@@ -126,7 +142,7 @@ export async function getCategoryProducts(
   category: string,
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
 ) {
   const validPage = Math.max(1, page);
   const validLimit = Math.min(Math.max(1, limit), 100);

@@ -5,6 +5,7 @@ import { Grid, List, ChevronDown, Edit, Trash2 } from "lucide-react";
 import { SearchBarAdmin } from "../../component/search-bar";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import Pagination from "@/app/component/pagination";
 
 export interface ProductCardProps {
   id: string;
@@ -16,22 +17,29 @@ export interface ProductCardProps {
   sold: number;
 }
 
+interface Kategori {
+  name: string;
+  slug: string;
+}
+
 export default function ProdukListAdmin({
+  categories,
   product,
   onDelete,
+  page,
+  search,
+  category,
+  produk,
 }: {
+  categories: Kategori[];
   product: ProductCardProps[];
   onDelete: (id: string) => void;
+  page: number;
+  search: string;
+  category: string;
+  produk: any;
 }) {
   const [viewMode, setViewMode] = useState("list");
-
-  const categories = [
-    "all",
-    "Ruang Tamu",
-    "Kamar Mandi",
-    "Dapur",
-    "Luar Ruangan",
-  ];
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -56,15 +64,15 @@ export default function ProdukListAdmin({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const selectedCategory = searchParams.get("search") || "all";
+  const selectedCategory = searchParams.get("category") || "all";
 
-  const handleChange = (value: string) => {
+  const handleCategoryChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (value === "all") {
-      params.delete("search");
+      params.delete("category");
     } else {
-      params.set("search", value);
+      params.set("category", value);
     }
 
     router.push(`?${params.toString()}`, { scroll: false });
@@ -104,13 +112,13 @@ export default function ProdukListAdmin({
           <div className="relative">
             <select
               value={selectedCategory}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="appearance-none pl-4 pr-10 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white cursor-pointer text-sm"
             >
               <option value="all">Semua Kategori</option>
-              {categories.slice(1).map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+              {categories.map((cat, index) => (
+                <option key={index} value={cat.slug}>
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -288,6 +296,12 @@ export default function ProdukListAdmin({
           </div>
         </div>
       )}
+      <Pagination
+        product={produk}
+        page={page}
+        search={search}
+        category={category}
+      />
     </main>
   );
 }

@@ -16,16 +16,28 @@ import {
   getOrder,
   orderItem,
   bestSeller,
+  getOrderGrafik,
 } from "@/app/actions/dashboard";
+import Link from "next/link";
+import ChartJs from "./chartjs";
 
-export default async function Dashboard() {
+type Props = {
+  searchParams: Promise<{ year?: number }>;
+};
+
+export default async function Dashboard({ searchParams }: Props) {
   const products = await product();
   const totalRevenue = await getTotalPaidRevenue();
   const paidOrder = await countSoldItems();
   const orders = await getOrder();
   const orderItems = await orderItem();
   const bestSellers = await bestSeller();
-  console.log(bestSellers);
+  const year = (await searchParams).year;
+  console.log("year", year);
+
+  const orderGrafik = await getOrderGrafik(
+    Number(year) || Number(new Date().getFullYear() || 0),
+  );
 
   const stats = [
     {
@@ -97,6 +109,8 @@ export default async function Dashboard() {
           })}
         </div>
 
+        <ChartJs key={year} order={orderGrafik} year={Number(year)} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Orders - 2 kolom */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
@@ -104,9 +118,12 @@ export default async function Dashboard() {
               <h3 className="text-lg font-bold text-gray-800">
                 Pesanan Terbaru
               </h3>
-              <button className="text-amber-600 text-sm font-semibold hover:text-amber-700">
+              <Link
+                href="/admin/pesanan"
+                className="text-amber-600 text-sm font-semibold hover:text-amber-700"
+              >
                 Lihat Semua
-              </button>
+              </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -187,30 +204,39 @@ export default async function Dashboard() {
 
         {/* Quick Actions */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2">
+          <Link
+            href={"/admin/tambah-produk"}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
+          >
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <Package className="text-blue-600" size={24} />
             </div>
             <span className="text-sm font-semibold text-gray-800">
               Tambah Produk
             </span>
-          </button>
-          <button className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2">
+          </Link>
+          <Link
+            href={"/admin/pesanan"}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
+          >
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <ShoppingCart className="text-purple-600" size={24} />
             </div>
             <span className="text-sm font-semibold text-gray-800">
               Kelola Pesanan
             </span>
-          </button>
-          <button className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2">
+          </Link>
+          <Link
+            href={"/admin/laporan"}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
+          >
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <TrendingUp className="text-green-600" size={24} />
             </div>
             <span className="text-sm font-semibold text-gray-800">
               Lihat Laporan
             </span>
-          </button>
+          </Link>
         </div>
       </main>
     </LayoutAdmin>

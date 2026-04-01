@@ -45,14 +45,15 @@ export default async function Produk({ searchParams }: Props) {
       {/* Search Bar */}
       <SearchBar />
 
-      {/* Grid Produk */}
       {product.data.length > 0 ? (
         <>
+          {/* Produk */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-5 gap-5 mb-10">
             <Card2 product={product.data} />
           </div>
         </>
       ) : (
+        // Tampilan ketika tidak ada produk ditemukan
         <div className="flex flex-col items-center justify-center py-20 px-5">
           <p className="text-gray-400 text-lg mb-2">
             {search ? "Produk tidak ditemukan" : "Tidak ada produk"}

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 export async function Order(
   page: number = 1,
   limit: number = 10,
-  status?: string
+  status?: string,
 ) {
   const validPage = Math.max(1, page);
   const validLimit = Math.min(Math.max(1, limit), 100);
@@ -57,6 +57,8 @@ export async function getOrderDetail(orderId: string) {
     include: {
       items: {
         include: {
+          color: true,
+          size: true,
           product: {
             include: {
               images: true,

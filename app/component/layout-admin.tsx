@@ -40,22 +40,10 @@ export default function LayoutAdmin({
       router: "/admin/pesanan",
     },
     {
-      id: "shipping",
-      name: "Pengiriman",
-      icon: Truck,
-      router: "/admin/pengiriman",
-    },
-    {
       id: "analytics",
       name: "Laporan",
       icon: TrendingUp,
       router: "/admin/laporan",
-    },
-    {
-      id: "settings",
-      name: "Pengaturan",
-      icon: Settings,
-      router: "/admin/pengaturan",
     },
   ];
 

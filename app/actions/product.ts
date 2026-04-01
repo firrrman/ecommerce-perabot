@@ -6,9 +6,10 @@ import { createClient } from "@supabase/supabase-js";
 
 export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
+// tambah kategori
 export async function createCategory(formData: FormData) {
   "use server";
 
@@ -29,6 +30,7 @@ export async function createCategory(formData: FormData) {
   revalidatePath("/admin/tambah-produk");
 }
 
+// tambah warna
 export async function createColor(formData: FormData) {
   "use server";
 
@@ -49,6 +51,7 @@ export async function createColor(formData: FormData) {
   revalidatePath("/admin/tambah-produk");
 }
 
+// tambah ukuran
 export async function createSize(formData: FormData) {
   "use server";
 
@@ -67,6 +70,7 @@ export async function createSize(formData: FormData) {
   revalidatePath("/admin/tambah-produk");
 }
 
+// CRUD Produk
 export async function createProduct(formData: FormData) {
   "use server";
 

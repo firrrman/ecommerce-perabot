@@ -10,6 +10,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
   params: {
@@ -54,7 +55,7 @@ export default async function OrderDetailPage({ params }: Props) {
 
   const subtotal = order.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   return (
@@ -73,7 +74,7 @@ export default async function OrderDetailPage({ params }: Props) {
             <div className="sm:text-right">
               <span
                 className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(
-                  order.status
+                  order.status,
                 )}`}
               >
                 {order.status.toUpperCase()}
@@ -178,6 +179,8 @@ export default async function OrderDetailPage({ params }: Props) {
                             </span>
                           </span>
                           <span> Rp {item.price.toLocaleString("id-ID")}</span>
+                          <span>{item.color?.name}</span>
+                          <span>{item.size?.name}</span>
                         </div>
                       </div>
                       <div className="text-right">
