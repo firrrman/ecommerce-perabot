@@ -1,9 +1,15 @@
-export default function Pagination({ product, page, search, category }: any) {
+export default function Pagination({
+  product,
+  page,
+  search,
+  category,
+  status,
+}: any) {
   if (!product?.meta?.totalPage || product.meta.totalPage <= 1) return null;
 
   const query = `${search ? `&search=${search}` : ""}${
     category ? `&category=${category}` : ""
-  }`;
+  }${status ? `&status=${status}` : ""}`;
 
   return (
     <div className="flex justify-center items-center gap-2 mb-20 px-5 flex-wrap text-sm mt-10">

@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   DollarSign,
 } from "lucide-react";
+import Pagination from "@/app/component/pagination";
 
 interface Props {
   searchParams: {
@@ -18,7 +19,7 @@ interface Props {
 export default async function PengirimanPage({ searchParams }: Props) {
   const { page: pageParam, status } = await searchParams;
   const page = Number(pageParam || "1");
-  const orders = await Order(page, 10, status);
+  const orders = await Order(page, 2, status);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -137,7 +138,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                   <div className="flex items-center gap-3">
                     <span
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(
-                        order.status
+                        order.status,
                       )}`}
                     >
                       {getStatusText(order.status)}
@@ -212,53 +213,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
         )}
 
         {/* Pagination */}
-        {orders.meta.totalPage > 1 && (
-          <div className="flex justify-center items-center gap-2 mb-20 px-5 mt-5 flex-wrap">
-            {/* Previous Button */}
-            <a
-              href={page > 1 ? `?page=${page - 1}` : "#"}
-              className={`px-4 py-2 border rounded-md transition-colors ${
-                page > 1
-                  ? "hover:bg-gray-100 cursor-pointer"
-                  : "text-gray-300 cursor-not-allowed pointer-events-none"
-              }`}
-            >
-              Prev
-            </a>
-
-            {/* Page Numbers */}
-            <div className="flex gap-2">
-              {Array.from({ length: orders.meta.totalPage }).map((_, i) => {
-                const pageNumber = i + 1;
-                return (
-                  <a
-                    key={pageNumber}
-                    href={`?page=${pageNumber}`}
-                    className={`px-4 py-2 border rounded-md min-w-11 text-center transition-colors ${
-                      page === pageNumber
-                        ? "bg-black text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    {pageNumber}
-                  </a>
-                );
-              })}
-            </div>
-
-            {/* Next Button */}
-            <a
-              href={page < orders.meta.totalPage ? `?page=${page + 1}` : "#"}
-              className={`px-4 py-2 border rounded-md transition-colors ${
-                page < orders.meta.totalPage
-                  ? "hover:bg-gray-100 cursor-pointer"
-                  : "text-gray-300 cursor-not-allowed pointer-events-none"
-              }`}
-            >
-              Next
-            </a>
-          </div>
-        )}
+        <Pagination product={orders} page={page} status={status} />
       </main>
     </LayoutAdmin>
   );
