@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getOrderDetail } from "@/app/actions/pesanan";
 import LayoutAdmin from "@/app/component/layout-admin";
 import {
@@ -10,7 +12,6 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import Link from "next/link";
 
 type Props = {
   params: {

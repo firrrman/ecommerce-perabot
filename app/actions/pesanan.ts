@@ -1,4 +1,8 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function Order(
   page: number = 1,
@@ -70,4 +74,28 @@ export async function getOrderDetail(orderId: string) {
   });
 
   return order;
+}
+
+export async function updateOrderStatus(formData: FormData) {
+  const orderId = formData.get("orderId") as string;
+  const newStatus = formData.get("status") as string;
+
+  if (!orderId || !newStatus) return;
+
+  const data: any = {
+    status: newStatus,
+  };
+
+  // jika status PAID maka isi paidAt
+  if (newStatus === "PAID") {
+    data.paidAt = new Date();
+  }
+
+  await prisma.order.update({
+    where: { id: orderId },
+    data,
+  });
+
+  revalidatePath("/admin/pesanan");
+  redirect("/admin/pesanan");
 }

@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic";
+
 import LayoutAdmin from "@/app/component/layout-admin";
-import { Order } from "@/app/actions/pesanan";
+import { Order, updateOrderStatus } from "@/app/actions/pesanan";
 import {
   Package,
   Calendar,
@@ -19,7 +21,9 @@ interface Props {
 export default async function PengirimanPage({ searchParams }: Props) {
   const { page: pageParam, status } = await searchParams;
   const page = Number(pageParam || "1");
-  const orders = await Order(page, 2, status);
+  const orders = await Order(page, 12, status);
+
+  console.log("orders", orders);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -136,13 +140,26 @@ export default async function PengirimanPage({ searchParams }: Props) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(
-                        order.status,
-                      )}`}
-                    >
-                      {getStatusText(order.status)}
-                    </span>
+                    <form action={updateOrderStatus}>
+                      <input type="hidden" name="orderId" value={order.id} />
+                      <select
+                        name="status"
+                        defaultValue={order.status}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="PENDING">Pending</option>
+                        <option value="PAID">Dibayar</option>
+                        <option value="SHIPPED">Dikirim</option>
+                        <option value="FINISHED">Selesai</option>
+                        <option value="CANCELLED">Dibatalkan</option>
+                      </select>
+                      <button
+                        type="submit"
+                        className="bg-blue-600 text-white p-2 rounded-lg ml-3 hover:bg-blue-700 text-sm cursor-pointer"
+                      >
+                        Ubah Status
+                      </button>
+                    </form>
                     <a
                       href={`/admin/pesanan/${order.id}`}
                       className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
