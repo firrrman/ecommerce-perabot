@@ -3,13 +3,24 @@ export const dynamic = "force-dynamic";
 import { TrashIcon } from "@heroicons/react/16/solid";
 import Layout from "../component/layout";
 import { useCart } from "../context/cart-context";
+import { toast } from "react-toastify";
 
 export default function CartPage() {
   const { cart, removeFromCart } = useCart();
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
+    0,
   );
+
+  const handleRemove = (produk: any) => {
+    removeFromCart({
+      productId: produk.productId,
+      sizeId: produk.sizeId,
+      colorId: produk.colorId,
+    });
+
+    toast.success("Produk dihapus dari keranjang");
+  };
 
   return (
     <Layout>
@@ -86,13 +97,7 @@ export default function CartPage() {
                           </p>
 
                           <button
-                            onClick={() =>
-                              removeFromCart({
-                                productId: produk.productId,
-                                sizeId: produk.sizeId,
-                                colorId: produk.colorId,
-                              })
-                            }
+                            onClick={() => handleRemove(produk)}
                             className="mt-2 bg-red-500 text-white flex gap-1 p-1 px-2 rounded cursor-pointer"
                           >
                             Hapus <TrashIcon className="w-5" />

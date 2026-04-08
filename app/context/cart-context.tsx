@@ -51,22 +51,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [cart]);
 
   /* ================= ACTIONS ================= */
-  const addToCart = (item: CartItem) => {
-    setCart((prev) => {
-      const existing = prev.find(
-        (p) =>
-          p.productId === item.productId &&
-          p.sizeId === item.sizeId &&
-          p.colorId === item.colorId
+  const addToCart = (newItem: CartItem) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find(
+        (cartItem) =>
+          cartItem.productId === newItem.productId &&
+          cartItem.colorId === newItem.colorId &&
+          cartItem.sizeId === newItem.sizeId,
       );
 
-      if (existing) {
-        return prev.map((p) =>
-          p === existing ? { ...p, quantity: p.quantity + item.quantity } : p
+      if (existingItem) {
+        return prevCart.map((cartItem) =>
+          cartItem.productId === newItem.productId &&
+          cartItem.colorId === newItem.colorId &&
+          cartItem.sizeId === newItem.sizeId
+            ? {
+                ...cartItem,
+                quantity: cartItem.quantity + newItem.quantity,
+              }
+            : cartItem,
         );
       }
 
-      return [...prev, item];
+      return [...prevCart, newItem];
     });
   };
 
@@ -78,8 +85,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             item.productId === productId &&
             item.sizeId === sizeId &&
             item.colorId === colorId
-          )
-      )
+          ),
+      ),
     );
   };
 

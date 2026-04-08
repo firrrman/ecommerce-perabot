@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "../context/cart-context";
+import { toast } from "react-toastify";
 
 interface ProductDetailProps {
   product: {
@@ -53,12 +54,12 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
 
   const handleAddToCart = () => {
     if (product.colors.length > 0 && !selectedColor) {
-      alert("Pilih warna");
-      return;
+      toast.error("Pilih warna");
+      return; 
     }
 
     if (product.sizes.length > 0 && !selectedSize) {
-      alert("Pilih ukuran");
+      toast.error("Pilih ukuran");
       return;
     }
 
@@ -73,6 +74,8 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
       colorName: selectedColorName,
       quantity,
     });
+
+    toast.success("Produk ditambahkan ke keranjang");
   };
 
   return (

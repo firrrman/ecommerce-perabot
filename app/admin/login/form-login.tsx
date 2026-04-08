@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { adminLoginAction } from "../../actions/login";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function FormLogin() {
   const [email, setEmail] = useState("");
@@ -12,14 +13,21 @@ export default function FormLogin() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const res = await adminLoginAction(email, password);
+    try {
+      const res = await toast.promise(adminLoginAction(email, password), {
+        pending: "Memverifikasi akun...",
+      });
 
-    if (!res.success) {
-      alert(res.message);
-      return;
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      toast.success("Login berhasil");
+      router.push("/admin/dashboard");
+    } catch (error) {
+      toast.error("Terjadi kesalahan");
     }
-
-    router.push("/admin/dashboard");
   }
   return (
     <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>

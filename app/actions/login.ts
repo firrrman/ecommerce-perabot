@@ -10,13 +10,13 @@ export async function adminLoginAction(email: string, password: string) {
   });
 
   if (!admin) {
-    return { success: false, message: "Email tidak ditemukan" };
+    return { success: false, message: "Email / Password salah" };
   }
 
   const valid = await bcrypt.compare(password, admin.password);
 
   if (!valid) {
-    return { success: false, message: "Password salah" };
+    return { success: false, message: "Email / Password salah" };
   }
 
   // ✅ SET COOKIE SESSION
