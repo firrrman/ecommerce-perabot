@@ -5,9 +5,7 @@ import {
   DollarSign,
   Package,
   ShoppingCart,
-  Tag,
   TrendingUp,
-  Users,
 } from "lucide-react";
 import {
   product,
@@ -33,8 +31,6 @@ export default async function Dashboard({ searchParams }: Props) {
   const orderItems = await orderItem();
   const bestSellers = await bestSeller();
   const year = (await searchParams).year;
-  console.log("year", year);
-
   const orderGrafik = await getOrderGrafik(
     Number(year) || Number(new Date().getFullYear() || 0),
   );
@@ -48,7 +44,7 @@ export default async function Dashboard({ searchParams }: Props) {
       icon: Package,
     },
     {
-      label: "Total Penjualan",
+      label: "Total Pendapatan",
       value: `Rp ${totalRevenue.toLocaleString()}`,
       change: "",
       color: "bg-emerald-500",

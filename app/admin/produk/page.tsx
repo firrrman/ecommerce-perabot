@@ -12,7 +12,7 @@ type Props = {
 export default async function ProdukPage({ searchParams }: Props) {
   const { page: pageParam, search, category } = await searchParams;
   const page = Number(pageParam || "1");
-  const product = await allProducts(page, 2, search, category);
+  const product = await allProducts(page, 12, search, category);
   const categories = await getKategori();
 
   async function handleDelete(id: string) {

@@ -22,7 +22,13 @@ export async function getTotalPaidRevenue() {
 }
 
 export async function getOrder() {
-  const order = await prisma.order.count({});
+  const order = await prisma.order.count({
+    where: {
+      status: {
+        not: OrderStatus.CANCELLED,
+      },
+    },
+  });
   return order;
 }
 
@@ -117,6 +123,9 @@ export async function getOrderGrafik(year: number) {
       createdAt: {
         gte: start,
         lt: end,
+      },
+      status: {
+        not: OrderStatus.CANCELLED,
       },
     },
     select: {

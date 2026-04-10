@@ -247,7 +247,7 @@ export default function ProdukListAdmin({
                     key={product.id}
                     className="hover:bg-slate-50 transition-colors"
                   >
-                    <td className="p-4">{index + 1}</td>
+                    <td className="p-4">{(page - 1) * 12 + index + 1}</td>
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <img

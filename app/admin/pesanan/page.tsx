@@ -15,13 +15,14 @@ interface Props {
   searchParams: {
     page?: string;
     status?: string;
+    date?: string;
   };
 }
 
 export default async function PengirimanPage({ searchParams }: Props) {
-  const { page: pageParam, status } = await searchParams;
+  const { page: pageParam, status, date } = await searchParams;
   const page = Number(pageParam || "1");
-  const orders = await Order(page, 12, status);
+  const orders = await Order(page, 12, status, date);
 
   console.log("orders", orders);
 
@@ -79,37 +80,79 @@ export default async function PengirimanPage({ searchParams }: Props) {
           </p>
         </div>
 
-        {/* Filter Bar */}
-        <div className="bg-white rounded-lg border border-slate-200 p-4 mb-6">
-          <form method="GET" className="flex flex-wrap gap-3">
-            <select
-              name="status"
-              defaultValue={searchParams.status || ""}
-              className="px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Semua Status</option>
-              <option value="PENDING">Pending</option>
-              <option value="PAID">Dibayar</option>
-              <option value="SHIPPED">Dikirim</option>
-              <option value="FINISHED">Selesai</option>
-              <option value="CANCELLED">Dibatalkan</option>
-            </select>
-
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-            >
-              Terapkan
-            </button>
-
-            {searchParams.status && (
-              <a
-                href="/admin/pesanan"
-                className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
+        {/* FILTER */}
+        <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6 shadow-sm">
+          <form
+            method="GET"
+            className="flex flex-col md:flex-row md:items-center gap-3 justify-between"
+          >
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              {/* STATUS */}
+              <select
+                name="status"
+                defaultValue={status || ""}
+                className="px-4 py-2 border border-slate-300 rounded-lg text-sm"
               >
-                Reset
-              </a>
-            )}
+                <option value="">Semua Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="PAID">Dibayar</option>
+                <option value="SHIPPED">Dikirim</option>
+                <option value="FINISHED">Selesai</option>
+                <option value="CANCELLED">Dibatalkan</option>
+              </select>
+
+              {/* TANGGAL */}
+              <input
+                type="date"
+                name="date"
+                defaultValue={date || ""}
+                className="px-4 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+
+              {/* BUTTON */}
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+              >
+                Terapkan
+              </button>
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              {/* QUICK FILTER */}
+              <div className="flex gap-2 flex-wrap">
+                <a
+                  href={`/admin/pesanan?date=${new Date().toISOString().slice(0, 10)}`}
+                  className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
+                >
+                  Hari Ini
+                </a>
+
+                <a
+                  href="/admin/pesanan?date=last7"
+                  className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"
+                >
+                  7 Hari
+                </a>
+
+                <a
+                  href="/admin/pesanan?date=month"
+                  className="px-3 py-2 bg-orange-600 text-white rounded-lg text-sm hover:bg-orange-700"
+                >
+                  Bulan Ini
+                </a>
+              </div>
+
+              {/* RESET */}
+              {(status || date) && (
+                <a
+                  href="/admin/pesanan"
+                  className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm hover:bg-slate-50"
+                >
+                  Reset
+                </a>
+              )}
+            </div>
           </form>
         </div>
 
@@ -230,7 +273,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
         )}
 
         {/* Pagination */}
-        <Pagination product={orders} page={page} status={status} />
+        <Pagination product={orders} page={page} status={status} date={date} />
       </main>
     </LayoutAdmin>
   );

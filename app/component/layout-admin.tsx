@@ -40,7 +40,7 @@ export default function LayoutAdmin({
       router: "/admin/pesanan",
     },
     {
-      id: "analytics",
+      id: "report",
       name: "Laporan",
       icon: TrendingUp,
       router: "/admin/laporan",

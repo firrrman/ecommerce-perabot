@@ -8,16 +8,63 @@ export async function Order(
   page: number = 1,
   limit: number = 10,
   status?: string,
+  date?: string,
 ) {
   const validPage = Math.max(1, page);
   const validLimit = Math.min(Math.max(1, limit), 100);
   const skip = (validPage - 1) * validLimit;
 
-  const whereCondition = status
-    ? {
-        status: status.toUpperCase() as any,
-      }
-    : {};
+  const whereCondition: any = {};
+
+  // FILTER STATUS
+  if (status) {
+    whereCondition.status = status.toUpperCase();
+  }
+
+  // FILTER TANGGAL
+  if (date) {
+    // ================= 7 HARI TERAKHIR =================
+    if (date === "last7") {
+      const start = new Date();
+      start.setDate(start.getDate() - 7);
+
+      whereCondition.createdAt = {
+        gte: start,
+      };
+    }
+
+    // ================= BULAN INI =================
+    else if (date === "month") {
+      const now = new Date();
+
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+      );
+
+      whereCondition.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
+
+    // ================= TANGGAL BIASA =================
+    else {
+      const start = new Date(date);
+      const end = new Date(date);
+      end.setHours(23, 59, 59, 999);
+
+      whereCondition.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
+  }
 
   try {
     const [orders, total] = await Promise.all([
@@ -44,7 +91,6 @@ export async function Order(
         limit: validLimit,
         total,
         totalPage: Math.ceil(total / validLimit),
-        status: status || "ALL",
       },
     };
   } catch (error) {

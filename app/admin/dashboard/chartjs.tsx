@@ -69,7 +69,7 @@ export default function ChartJs({
       },
       title: {
         display: true,
-        text: `Grafik Order Bulanan ${year}`,
+        text: `Grafik Order Bulanan ${year || currentYear}`,
         font: {
           size: 18,
           weight: "bold" as const,
