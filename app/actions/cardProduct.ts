@@ -10,20 +10,54 @@ export async function getKategori() {
 }
 
 export async function bestSeller() {
-  return await prisma.product.findMany({
-    orderBy: {
-      createdAt: "asc",
-    },
-    take: 10,
-    include: {
-      images: true,
-      colors: true,
-      sizes: {
-        include: {
-          size: true,
+  // 1️⃣ Ambil productId + total terjual
+  const bestSeller = await prisma.orderItem.groupBy({
+    by: ["productId"],
+    where: {
+      order: {
+        status: {
+          in: [OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.FINISHED],
         },
       },
     },
+    _sum: {
+      quantity: true,
+    },
+    orderBy: {
+      _sum: {
+        quantity: "desc",
+      },
+    },
+    take: 5,
+  });
+
+  // 2️⃣ Ambil data produk (nama, harga)
+  const products = await prisma.product.findMany({
+    where: {
+      id: {
+        in: bestSeller.map((item) => item.productId),
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      images: true,
+      slug: true,
+      basePrice: true,
+    },
+  });
+
+  // 3️⃣ Gabungkan hasil
+  return bestSeller.map((item) => {
+    const product = products.find((p) => p.id === item.productId);
+
+    return {
+      id: item.productId,
+      name: product?.name ?? "-",
+      slug: product?.slug ?? "-",
+      images: product?.images?.slice(0, 2) ?? [],
+      basePrice: product?.basePrice ?? 0,
+    };
   });
 }
 

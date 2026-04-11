@@ -53,7 +53,7 @@ export default function FormCheckout({ villages }: Props) {
             window.location.href = `/payment/finish?order_id=${result.order_id}`;
           },
           onPending: function () {
-            window.location.href = `/payment/pending?order_id=${result.paymentOrderId}`;
+            window.location.href = `/payment/finish?order_id=${result.paymentOrderId}`;
           },
           onError: function () {
             alert("Pembayaran gagal");

@@ -4,14 +4,44 @@ import {
   getTotalPaidRevenue,
   countSoldItems,
   getOrder,
+  getOrderGrafik,
 } from "@/app/actions/dashboard";
+import {
+  getOrderPending,
+  getOrderPaid,
+  getOrderShipped,
+  getOrderFinished,
+  getOrderCancelled,
+} from "@/app/actions/laporan";
 import { DollarSign, Package, ShoppingCart } from "lucide-react";
+import ChartJs from "./chartjs";
 
-export default async function LaporanPage() {
+type Props = {
+  searchParams: Promise<{ year?: number }>;
+};
+
+export default async function LaporanPage({ searchParams }: Props) {
   const products = await product();
   const totalRevenue = await getTotalPaidRevenue();
   const paidOrder = await countSoldItems();
   const orders = await getOrder();
+
+  const year = (await searchParams).year;
+  const orderPending = await getOrderPending(
+    Number(year) || Number(new Date().getFullYear() || 0),
+  );
+  const orderPaid = await getOrderPaid(
+    Number(year) || Number(new Date().getFullYear() || 0),
+  );
+  const orderShipped = await getOrderShipped(
+    Number(year) || Number(new Date().getFullYear() || 0),
+  );
+  const orderFinished = await getOrderFinished(
+    Number(year) || Number(new Date().getFullYear() || 0),
+  );
+  const orderCancelled = await getOrderCancelled(
+    Number(year) || Number(new Date().getFullYear() || 0),
+  );
 
   const stats = [
     {
@@ -41,7 +71,7 @@ export default async function LaporanPage() {
   ];
   return (
     <LayoutAdmin activeMenuProp="report">
-      <main className="p-4 md:p-6">
+      <main className="flex-1 overflow-y-auto p-4 md:p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-slate-800">Daftar Pesanan</h1>
           <p className="text-slate-500 text-sm mt-1">
@@ -71,6 +101,17 @@ export default async function LaporanPage() {
             );
           })}
         </div>
+
+        {/* Chart */}
+        <ChartJs
+          key={year}
+          pending={orderPending}
+          paid={orderPaid}
+          shipped={orderShipped}
+          finished={orderFinished}
+          cancelled={orderCancelled}
+          year={Number(year)}
+        />
       </main>
     </LayoutAdmin>
   );

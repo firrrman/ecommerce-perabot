@@ -33,16 +33,18 @@ export async function getOrder() {
 }
 
 export async function countSoldItems() {
-  const totalSoldItems = await prisma.orderItem.count({
+  const result = await prisma.orderItem.aggregate({
     where: {
       order: {
-        status: {
-          in: [OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.FINISHED],
-        },
+        status: OrderStatus.FINISHED,
       },
     },
+    _sum: {
+      quantity: true,
+    },
   });
-  return totalSoldItems;
+
+  return result._sum.quantity ?? 0;
 }
 
 export async function orderItem() {

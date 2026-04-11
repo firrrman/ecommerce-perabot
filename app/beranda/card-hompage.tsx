@@ -1,13 +1,6 @@
 import { Card } from "../component/card";
 
-interface bestSeller {
-  id: string;
-  name: string;
-  slug: string;
-  images: { src: string }[];
-  basePrice: number;
-}
-interface newProducts {
+interface productCard {
   id: string;
   name: string;
   slug: string;
@@ -19,8 +12,8 @@ export default async function CardHomepage({
   bestSeller,
   newProducts,
 }: {
-  bestSeller: bestSeller[];
-  newProducts: newProducts[];
+  bestSeller: productCard[];
+  newProducts: productCard[];
 }) {
   return (
     <div className=" flex flex-col gap-2 my-10">
