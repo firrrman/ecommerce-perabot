@@ -100,7 +100,6 @@ export async function createProduct(formData: FormData) {
     return {
       sizeId,
       price,
-      inStock: true,
     };
   });
 
@@ -217,7 +216,6 @@ export async function updateProduct(productId: string, formData: FormData) {
     return {
       sizeId,
       price,
-      inStock: true,
     };
   });
 

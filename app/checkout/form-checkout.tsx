@@ -32,7 +32,7 @@ export default function FormCheckout() {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("cod");
 
   const totalWeight = cart.reduce(
-    (sum, item) => sum + item.berat * item.quantity,
+    (sum, item) => sum + item.weight * item.quantity,
     0,
   );
 

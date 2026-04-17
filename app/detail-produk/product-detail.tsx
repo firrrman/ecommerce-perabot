@@ -11,7 +11,7 @@ interface ProductDetailProps {
     slug: string;
     description: string | null;
     basePrice: number;
-    berat: number;
+    weight: number;
     highlights: string[];
     details: string | null;
     images: { src: string }[];
@@ -74,7 +74,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
       sizeName: selectedSizeName,
       colorId: selectedColor,
       colorName: selectedColorName,
-      berat: product.berat,
+      weight: product.weight,
       quantity,
     });
 
