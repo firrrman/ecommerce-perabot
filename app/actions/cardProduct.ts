@@ -44,7 +44,7 @@ export async function bestSeller() {
       images: true,
       slug: true,
       basePrice: true,
-      berat: true,
+      weight: true,
     },
   });
 
@@ -58,7 +58,7 @@ export async function bestSeller() {
       slug: product?.slug ?? "-",
       images: product?.images?.slice(0, 2) ?? [],
       basePrice: product?.basePrice ?? 0,
-      berat: product?.berat ?? 0,
+      weight: product?.weight ?? 0,
     };
   });
 }

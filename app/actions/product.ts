@@ -84,7 +84,7 @@ export async function createProduct(formData: FormData) {
   const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
-  const berat = Number(formData.get("berat"));
+  const weight = Number(formData.get("weight"));
 
   const sizeData = selectedSizeIds.map((sizeId) => {
     const price = Number(formData.get(`price-${sizeId}`));
@@ -165,7 +165,7 @@ export async function createProduct(formData: FormData) {
         create: sizeData, // ⬅ harga per size
       },
       basePrice,
-      berat,
+      weight,
     },
   });
 
@@ -185,7 +185,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
-  const berat = Number(formData.get("berat"));
+  const weight = Number(formData.get("weight"));
   if (!name || !slug) {
     throw new Error("Nama dan slug wajib diisi");
   }
@@ -268,7 +268,7 @@ export async function updateProduct(productId: string, formData: FormData) {
       details,
       highlights,
       basePrice,
-      berat,
+      weight,
       categoryId: categoryId || null,
 
       colors: {

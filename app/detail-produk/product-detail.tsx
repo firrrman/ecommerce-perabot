@@ -22,7 +22,6 @@ interface ProductDetailProps {
     sizes: {
       id: string;
       size: { id: string; name: string };
-      inStock: boolean;
       price: number;
     }[];
   };
@@ -193,7 +192,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                             checked={selectedSize === size.size.id}
                             name="size"
                             type="radio"
-                            disabled={!size.inStock}
                             onChange={() => {
                               setSelectedSize(size.size.id);
                               setSelectedSizeName(size.size.name);

@@ -75,7 +75,7 @@ export default async function FormProduct() {
               Berat Produk <span className="text-red-500">*</span>
             </label>
             <input
-              name="berat"
+              name="weight"
               type="number"
               placeholder="1000=1kg"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
