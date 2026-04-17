@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { useCart } from "../context/cart-context";
 import { createOrderFromForm } from "../actions/order";
