@@ -71,7 +71,7 @@ export default async function LaporanPage({ searchParams }: Props) {
   ];
   return (
     <LayoutAdmin activeMenuProp="report">
-      <main className="flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-slate-800">
             Laporan Penjualan
@@ -114,7 +114,7 @@ export default async function LaporanPage({ searchParams }: Props) {
           cancelled={orderCancelled}
           year={Number(year)}
         />
-      </main>
+      </div>
     </LayoutAdmin>
   );
 }

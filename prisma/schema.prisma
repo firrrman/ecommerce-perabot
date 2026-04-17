@@ -28,6 +28,7 @@ model Product {
   description String?
   details     String?
   highlights  String[]
+  berat       Int            @default(0)
   categoryId  String?
   category    Category?      @relation(fields: [categoryId], references: [id])
   images      ProductImage[]

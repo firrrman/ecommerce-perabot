@@ -11,6 +11,7 @@ interface ProductDetailProps {
     slug: string;
     description: string | null;
     basePrice: number;
+    berat: number;
     highlights: string[];
     details: string | null;
     images: { src: string }[];
@@ -41,6 +42,8 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedSizeName, setSelectedSizeName] = useState<string | null>(null);
 
+  console.log(product);
+
   const { addToCart } = useCart();
   const router = useRouter();
 
@@ -55,7 +58,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const handleAddToCart = () => {
     if (product.colors.length > 0 && !selectedColor) {
       toast.error("Pilih warna");
-      return; 
+      return;
     }
 
     if (product.sizes.length > 0 && !selectedSize) {
@@ -72,6 +75,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
       sizeName: selectedSizeName,
       colorId: selectedColor,
       colorName: selectedColorName,
+      berat: product.berat,
       quantity,
     });
 

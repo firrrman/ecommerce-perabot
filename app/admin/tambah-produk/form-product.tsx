@@ -72,6 +72,19 @@ export default async function FormProduct() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
+              Berat Produk <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="berat"
+              type="number"
+              placeholder="1000=1kg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Kategori
             </label>
             <select

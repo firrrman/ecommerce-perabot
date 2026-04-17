@@ -70,7 +70,7 @@ export async function createSize(formData: FormData) {
   revalidatePath("/admin/tambah-produk");
 }
 
-// CRUD Produk
+// tambah Produk
 export async function createProduct(formData: FormData) {
   "use server";
 
@@ -84,6 +84,7 @@ export async function createProduct(formData: FormData) {
   const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
+  const berat = Number(formData.get("berat"));
 
   const sizeData = selectedSizeIds.map((sizeId) => {
     const price = Number(formData.get(`price-${sizeId}`));
@@ -164,6 +165,7 @@ export async function createProduct(formData: FormData) {
         create: sizeData, // ⬅ harga per size
       },
       basePrice,
+      berat,
     },
   });
 
@@ -171,6 +173,7 @@ export async function createProduct(formData: FormData) {
   redirect("/admin/produk");
 }
 
+// update produk
 export async function updateProduct(productId: string, formData: FormData) {
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
@@ -182,7 +185,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
-
+  const berat = Number(formData.get("berat"));
   if (!name || !slug) {
     throw new Error("Nama dan slug wajib diisi");
   }
@@ -265,6 +268,7 @@ export async function updateProduct(productId: string, formData: FormData) {
       details,
       highlights,
       basePrice,
+      berat,
       categoryId: categoryId || null,
 
       colors: {
@@ -290,6 +294,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   redirect("/admin/produk");
 }
 
+// hapus produk
 export async function deleteProduct(productId: string) {
   const product = await prisma.product.findUnique({
     where: { id: productId },

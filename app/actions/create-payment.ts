@@ -22,12 +22,20 @@ export async function createPayment(paymentOrderId: string) {
     "base64",
   );
 
-  const itemDetails = order.items.map((item) => ({
-    id: item.id,
-    price: item.price,
-    quantity: item.quantity,
-    name: item.product.name,
-  }));
+  const itemDetails = [
+    ...order.items.map((item) => ({
+      id: item.id,
+      price: item.price,
+      quantity: item.quantity,
+      name: item.product.name,
+    })),
+    {
+      id: "ONGKIR",
+      price: order.ongkir,
+      quantity: 1,
+      name: "Ongkos Kirim",
+    },
+  ];
 
   const res = await fetch("https://app.midtrans.com/snap/v1/transactions", {
     method: "POST",
@@ -53,5 +61,9 @@ export async function createPayment(paymentOrderId: string) {
 
   const data = await res.json();
 
+  console.log("MIDTRANS RESPONSE:", data);
+  if (!data.token) {
+    throw new Error(JSON.stringify(data));
+  }
   return data.token;
 }

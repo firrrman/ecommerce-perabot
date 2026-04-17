@@ -69,7 +69,7 @@ export default async function Dashboard({ searchParams }: Props) {
   return (
     <LayoutAdmin activeMenuProp="dashboard">
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6">
         <div className="mb-6">
           <h2 className="text-3xl font-bold text-gray-800 mb-1">
             Dashboard E-Commerce
@@ -234,7 +234,7 @@ export default async function Dashboard({ searchParams }: Props) {
             </span>
           </Link>
         </div>
-      </main>
+      </div>
     </LayoutAdmin>
   );
 }

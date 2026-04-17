@@ -1,14 +1,26 @@
 export const dynamic = "force-dynamic";
 import FormCheckout from "./form-checkout";
 import Layout from "../component/layout";
-import { Villages } from "../actions/wilayah";
 
-export default async function Checkout() {
-  const village = await Villages();
+type Props = {
+  searchParams: Promise<{
+    province?: string;
+    city?: string;
+    subdistrict?: string;
+    kodepos?: string;
+    totalWeight?: string;
+  }>;
+};
+
+export default async function Checkout({ searchParams }: Props) {
+  const provinceQuery = (await searchParams).province;
+  const cityQuery = (await searchParams).city;
+  const subdistrictQuery = (await searchParams).subdistrict;
 
   return (
     <Layout>
-      <FormCheckout villages={village} />
+      <FormCheckout
+      />
     </Layout>
   );
 }

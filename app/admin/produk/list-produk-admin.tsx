@@ -80,7 +80,7 @@ export default function ProdukListAdmin({
   };
 
   return (
-    <main className="p-4 md:p-6 overflow-y-auto">
+    <div className="p-4 md:p-6 overflow-y-auto">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
@@ -303,6 +303,6 @@ export default function ProdukListAdmin({
         search={search}
         category={category}
       />
-    </main>
+    </div>
   );
 }
