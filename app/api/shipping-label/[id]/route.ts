@@ -3,13 +3,10 @@ import { NextResponse } from "next/server";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { prisma } from "@/lib/prisma";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export async function GET(req: Request, { params }: Props) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
 
   const order = await prisma.order.findUnique({
