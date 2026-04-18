@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 export async function Order(
   page: number = 1,
   limit: number = 10,
+  search?: string,
   status?: string,
   date?: string,
 ) {
@@ -15,6 +16,14 @@ export async function Order(
   const skip = (validPage - 1) * validLimit;
 
   const whereCondition: any = {};
+
+  // ================= SEARCH CUSTOMER =================
+  if (search) {
+    whereCondition.customerName = {
+      contains: search,
+      mode: "insensitive", // biar tidak case sensitive
+    };
+  }
 
   // FILTER STATUS
   if (status) {

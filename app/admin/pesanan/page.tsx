@@ -10,19 +10,25 @@ import {
   DollarSign,
 } from "lucide-react";
 import Pagination from "@/app/component/pagination";
+import { DocumentArrowDownIcon, DocumentIcon } from "@heroicons/react/16/solid";
+import {
+  SearchBarAdmin,
+  SearchBarAdminOrder,
+} from "@/app/component/search-bar";
 
 interface Props {
   searchParams: {
     page?: string;
+    search?: string;
     status?: string;
     date?: string;
   };
 }
 
 export default async function PengirimanPage({ searchParams }: Props) {
-  const { page: pageParam, status, date } = await searchParams;
+  const { page: pageParam, status, date, search } = await searchParams;
   const page = Number(pageParam || "1");
-  const orders = await Order(page, 12, status, date);
+  const orders = await Order(page, 12, search, status, date);
 
   console.log("orders", orders);
 
@@ -44,31 +50,6 @@ export default async function PengirimanPage({ searchParams }: Props) {
     }).format(date);
   };
 
-  const getStatusColor = (status: string) => {
-    const statusColors: { [key: string]: string } = {
-      pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
-      processing: "bg-blue-100 text-blue-700 border-blue-200",
-      shipped: "bg-purple-100 text-purple-700 border-purple-200",
-      delivered: "bg-green-100 text-green-700 border-green-200",
-      cancelled: "bg-red-100 text-red-700 border-red-200",
-    };
-    return (
-      statusColors[status.toLowerCase()] ||
-      "bg-gray-100 text-gray-700 border-gray-200"
-    );
-  };
-
-  const getStatusText = (status: string) => {
-    const statusText: { [key: string]: string } = {
-      pending: "Menunggu",
-      paid: "Dibayar",
-      shipped: "Dikirim",
-      delivered: "Selesai",
-      cancelled: "Dibatalkan",
-    };
-    return statusText[status.toLowerCase()] || status;
-  };
-
   return (
     <LayoutAdmin activeMenuProp="orders">
       <div className="p-4 md:p-6 overflow-y-auto">
@@ -82,6 +63,13 @@ export default async function PengirimanPage({ searchParams }: Props) {
 
         {/* FILTER */}
         <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6 shadow-sm">
+          {/* Search */}
+          <div className="flex-1 min-w-70 mb-3">
+            <div className="relative">
+              <SearchBarAdminOrder />
+            </div>
+          </div>
+
           <form
             method="GET"
             className="flex flex-col md:flex-row md:items-center gap-3 justify-between"
@@ -108,6 +96,8 @@ export default async function PengirimanPage({ searchParams }: Props) {
                 defaultValue={date || ""}
                 className="px-4 py-2 border border-slate-300 rounded-lg text-sm"
               />
+              <input type="hidden" name="search" value={search || ""} />
+              <input type="hidden" name="page" value={page || ""} />
 
               {/* BUTTON */}
               <button
@@ -122,21 +112,21 @@ export default async function PengirimanPage({ searchParams }: Props) {
               {/* QUICK FILTER */}
               <div className="flex gap-2 flex-wrap">
                 <a
-                  href={`/admin/pesanan?date=${new Date().toISOString().slice(0, 10)}`}
+                  href={`/admin/pesanan?status=${status || ""}&date=${new Date().toISOString().slice(0, 10)}&search=${search || ""}&page=${page || ""}`}
                   className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
                 >
                   Hari Ini
                 </a>
 
                 <a
-                  href="/admin/pesanan?date=last7"
+                  href={`/admin/pesanan?status=${status || ""}&date=last7&search=${search || ""}&page=${page || ""}`}
                   className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"
                 >
                   7 Hari
                 </a>
 
                 <a
-                  href="/admin/pesanan?date=month"
+                  href={`/admin/pesanan?status=${status || ""}&date=month&search=${search || ""}&page=${page || ""}`}
                   className="px-3 py-2 bg-orange-600 text-white rounded-lg text-sm hover:bg-orange-700"
                 >
                   Bulan Ini
@@ -182,7 +172,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <form action={updateOrderStatus}>
                       <input type="hidden" name="orderId" value={order.id} />
                       <select
@@ -203,6 +193,15 @@ export default async function PengirimanPage({ searchParams }: Props) {
                         Ubah Status
                       </button>
                     </form>
+                    {order.status === "SHIPPED" && (
+                      <a
+                        href={`/api/shipping-label/${order.id}`}
+                        target="_blank"
+                        className="flex items-center gap-2 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition"
+                      >
+                        <DocumentArrowDownIcon className="w-5 h-5" />
+                      </a>
+                    )}
                     <a
                       href={`/admin/pesanan/${order.id}`}
                       className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
@@ -213,7 +212,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                 </div>
 
                 {/* Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0">
                       <User className="w-5 h-5 text-slate-600" />
@@ -253,6 +252,15 @@ export default async function PengirimanPage({ searchParams }: Props) {
                       </p>
                     </div>
                   </div>
+
+                  <div className="flex items-start gap-3">
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">
+                        Metode Pembayaran
+                      </p>
+                      <p className="text-sm font-bold">{order.paymentMethod}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -273,7 +281,13 @@ export default async function PengirimanPage({ searchParams }: Props) {
         )}
 
         {/* Pagination */}
-        <Pagination product={orders} page={page} status={status} date={date} />
+        <Pagination
+          product={orders}
+          page={page}
+          status={status}
+          date={date}
+          search={search}
+        />
       </div>
     </LayoutAdmin>
   );
