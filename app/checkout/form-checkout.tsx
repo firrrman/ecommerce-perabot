@@ -1,35 +1,44 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useCart } from "../context/cart-context";
 import { createOrderFromForm } from "../actions/order";
 import { createPayment } from "../actions/create-payment";
 import { toast } from "react-toastify";
-import {
-  getProvinces,
-  getCities,
-  getDistricts,
-  getVillages,
-} from "../actions/wilayah";
 
 export default function FormCheckout() {
   const { cart, clearCart } = useCart();
 
+  const [search, setSearch] = useState("");
+  const [destinations, setDestinations] = useState<any[]>([]);
+
+  console.log("destinasi", destinations);
+  console.log("search", search);
+
+  const [alamat, setAlamat] = useState("");
+  console.log("alamat", alamat);
+
+  const [detailAlamat, setDetailAlamat] = useState("");
   const [province, setProvince] = useState("");
-  const [dataProvinsi, setDataProvinsi] = useState<any[]>([]);
-
   const [city, setCity] = useState("");
-  const [dataKota, setDataKota] = useState<any[]>([]);
-
-  const [district, setDistrict] = useState("");
-  const [dataKecamatan, setDataKecamatan] = useState<any[]>([]);
-
+  const [subDistrict, setSubDistrict] = useState("");
   const [village, setVillage] = useState("");
-  const [dataDesa, setDataDesa] = useState<any[]>([]);
-
   const [kodepos, setKodepos] = useState("");
+
+  console.log("province", province);
+  console.log("city", city);
+  console.log("subdistrict", subDistrict);
+  console.log("village", village);
+  console.log("kodepos", kodepos);
+
   const [shippingCost, setShippingCost] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("cod");
+
+  const fullAlamat = `${detailAlamat}, ${alamat}`;
+
+  const filteredDestination = destinations.filter((item) =>
+    item.label.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const totalWeight = cart.reduce(
     (sum, item) => sum + item.weight * item.quantity,
@@ -39,78 +48,39 @@ export default function FormCheckout() {
   console.log("Total berat:", totalWeight);
   console.log("Payment method:", paymentMethod);
 
-  // data provinsi
-  useEffect(() => {
-    async function loadProvinces() {
-      const data = await getProvinces();
-      setDataProvinsi(data);
-    }
-
-    loadProvinces();
-  }, [province]);
-
-  // data kota
-  useEffect(() => {
-    if (!province) return;
-
-    async function loadCity() {
-      const data = await getCities(province);
-      setDataKota(data);
-    }
-
-    loadCity();
-  }, [province]);
-
-  // data kecamatan
-  useEffect(() => {
-    if (!city) return;
-
-    async function loadDistrict() {
-      const data = await getDistricts(city);
-      setDataKecamatan(data);
-    }
-
-    loadDistrict();
-  }, [city]);
-
-  // data desa
-  useEffect(() => {
-    if (!district) return;
-
-    async function loadVillage() {
-      const data = await getVillages(district);
-      setDataDesa(data);
-    }
-
-    loadVillage();
-  }, [district]);
-
-  // hitung ongkir
-  useEffect(() => {
-    if (!province || !city || !district || !village || kodepos.length !== 5)
-      return;
-
-    if (village === "Ciaruteun Udik") {
-      setShippingCost(0);
+  const handleSearchAddress = async () => {
+    if (!search) {
+      toast.info("Masukkan kecamatan atau desa untuk mencari alamat");
       return;
     }
 
-    async function fetchOngkir() {
-      const res = await fetch("/api/ongkir", {
-        method: "POST",
-        body: JSON.stringify({
-          kodepos,
-          weight: totalWeight,
-        }),
-      });
+    const res = await fetch("/api/ongkir", {
+      method: "POST",
+      body: JSON.stringify({
+        search,
+      }),
+    });
 
-      const data = await res.json();
-      setShippingCost(data.ongkir[0].cost);
-      console.log("Ongkir dari API:", data);
-    }
+    const data = await res.json();
 
-    fetchOngkir();
-  }, [province, city, district, village, kodepos, totalWeight]);
+    setDestinations(data.destination || []);
+    console.log("Destinations:", data.destination);
+  };
+
+  const handleCheckOngkir = async (id: string) => {
+    const res = await fetch("/api/ongkir", {
+      method: "POST",
+      body: JSON.stringify({
+        idAlamat: id,
+        weight: totalWeight,
+      }),
+    });
+
+    const data = await res.json();
+
+    setShippingCost(data.ongkir?.[0]?.cost || 0);
+    console.log("Ongkir:", data.ongkir);
+  };
 
   const subtotal = cart.reduce((t, i) => t + i.price * i.quantity, 0);
   const total = subtotal + shippingCost;
@@ -122,19 +92,10 @@ export default function FormCheckout() {
     formData.append("cart", JSON.stringify(cart));
     formData.append("paymentMethod", paymentMethod);
 
-    function isValidKodePos(kodepos: string) {
-      return /^[0-9]{5}$/.test(kodepos);
-    }
-
     try {
-      if (!isValidKodePos(kodepos)) {
-        toast.info("Kode pos harus 5 digit");
-        return;
-      }
-
       if (
         !shippingCost &&
-        !(village === "Ciaruteun Udik" && kodepos === "16630")
+        !(alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630")
       ) {
         toast.error(
           "Ongkir tidak dapat dihitung. Silakan coba lagi beberapa saat.",
@@ -188,122 +149,121 @@ export default function FormCheckout() {
       className="grid lg:grid-cols-2 gap-10 px-5 mt-30"
     >
       {/* ================= LEFT ================= */}
-      <div className="space-y-3">
+      <div className="space-y-4 border rounded-xl p-6 shadow-sm bg-white">
         <h1 className="text-2xl font-semibold">Alamat Pengiriman</h1>
 
-        <input
-          name="customerName"
-          placeholder="Nama Lengkap"
-          className="border p-2 w-full"
-          required
-        />
+        {/* Nama */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Nama Lengkap</label>
+          <input
+            name="customerName"
+            placeholder="Masukkan nama lengkap"
+            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+            required
+          />
+        </div>
 
-        <select
-          name="province"
-          value={province}
-          onChange={(e) => setProvince(e.target.value)}
-          className="border p-2 w-full"
-          required
-        >
-          <option value="">Pilih Provinsi</option>
+        {/* Search alamat */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Kecamatan/Desa
+          </label>
 
-          {dataProvinsi.map((p) => (
-            <option key={p.code} value={p.code}>
-              {p.name}
-            </option>
-          ))}
-        </select>
+          <div className="flex w-full gap-2">
+            <input
+              type="text"
+              placeholder="Contoh: Ciaruteun Udik Lalu Klik Cari"
+              className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              required
+            />
 
-        <select
-          name="city"
-          value={city}
-          disabled={!province}
-          onChange={(e) => setCity(e.target.value)}
-          className="border p-2 w-full"
-        >
-          <option value="">Pilih Kota</option>
+            <button
+              type="button"
+              onClick={handleSearchAddress}
+              className="bg-black text-white px-4 rounded-lg hover:bg-gray-800 transition cursor-pointer"
+            >
+              Cari
+            </button>
+          </div>
 
-          {dataKota.map((c) => (
-            <option key={c.code} value={c.code}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          {filteredDestination.length > 0 && (
+            <ul className="border border-gray-200 rounded-lg mt-2 max-h-40 overflow-auto shadow-sm">
+              {filteredDestination.map((item) => (
+                <li
+                  key={item.id}
+                  className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                  onClick={() => {
+                    setAlamat(item.label);
+                    setSearch(item.label);
+                    setKodepos(item.zip_code);
+                    setDestinations([]);
+                    setProvince(item.province_name);
+                    setCity(item.city_name);
+                    setSubDistrict(item.district_name);
+                    setVillage(item.subdistrict_name);
 
-        <select
-          name="subdistrict"
-          value={district}
-          disabled={!city}
-          onChange={(e) => setDistrict(e.target.value)}
-          className="border p-2 w-full"
-        >
-          <option value="">Pilih Kecamatan</option>
+                    handleCheckOngkir(item.id);
+                  }}
+                >
+                  {item.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-          {dataKecamatan.map((d) => (
-            <option key={d.code} value={d.code}>
-              {d.name}
-            </option>
-          ))}
-        </select>
+        {/* Detail alamat */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Detail Alamat
+          </label>
 
-        <select
-          name="village"
-          value={village}
-          disabled={!district}
-          onChange={(e) => setVillage(e.target.value)}
-          className="border p-2 w-full"
-        >
-          <option value="">Pilih Desa</option>
+          <textarea
+            name="address"
+            placeholder="Jalan, RT/RW, No. Rumah"
+            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+            value={detailAlamat}
+            onChange={(e) => setDetailAlamat(e.target.value)}
+            required
+          />
+        </div>
 
-          {dataDesa.map((v) => (
-            <option key={v.code} value={v.name}>
-              {v.name}
-            </option>
-          ))}
-        </select>
+        {/* Preview alamat */}
+        <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+          <p className="text-sm text-gray-500 mb-1">Preview Alamat</p>
 
-        <input
-          name="portalCode"
-          type="number"
-          placeholder="Kode Pos"
-          className="border p-2 w-full"
-          required
-          onChange={(e) => {
-            const value = e.target.value;
+          <div className="text-sm text-gray-800 leading-relaxed">
+            {detailAlamat && <div>{detailAlamat}</div>}
+            {alamat && <div className="font-medium">{alamat}</div>}
+          </div>
+        </div>
 
-            setKodepos(e.target.value);
-          }}
-        />
+        <input type="hidden" value={fullAlamat} />
 
-        <textarea
-          name="address"
-          placeholder="Alamat Lengkap"
-          className="border p-2 w-full"
-          required
-        />
+        {/* Catatan */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Catatan Tambahan
+          </label>
 
-        <textarea
-          name="note"
-          placeholder="Catatan Tambahan"
-          className="border p-2 w-full"
-        />
+          <textarea
+            name="note"
+            placeholder="Catatan untuk penjual (opsional)"
+            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
 
-        <h1 className="text-2xl font-semibold mt-5">Metode Pembayaran</h1>
+        <h1 className="text-2xl font-semibold mt-6">Metode Pembayaran</h1>
 
-        {!province ||
-        !city ||
-        !district ||
-        !village ||
-        (province === "32" &&
-          city === "32.01" &&
-          district === "32.01.16" &&
-          village === "Ciaruteun Udik") ? (
-          <label className="flex items-center gap-2">
+        {/* COD */}
+        {alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
+          <label className="flex items-center gap-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
             <input
               type="radio"
               name="paymentMethod"
               value="cod"
-              required
               checked={paymentMethod === "cod"}
               onChange={() => setPaymentMethod("cod")}
             />
@@ -311,43 +271,56 @@ export default function FormCheckout() {
           </label>
         ) : null}
 
-        <label className="flex items-center gap-2">
+        {/* Transfer */}
+        <label className="flex items-center gap-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
           <input
             type="radio"
             name="paymentMethod"
             value="midtrans"
-            required
             checked={paymentMethod === "midtrans"}
             onChange={() => setPaymentMethod("midtrans")}
           />
           Transfer / E-Wallet
         </label>
 
-        <h1 className="text-2xl font-semibold mt-5">Kontak</h1>
-        <input
-          name="gmail"
-          type="email"
-          placeholder="Email"
-          className="border p-2 w-full"
-          required
-        />
-        <input
-          name="phone"
-          placeholder="No Telepon"
-          className="border p-2 w-full"
-          required
-        />
+        <h1 className="text-2xl font-semibold mt-6">Kontak</h1>
 
-        {/* ===== HIDDEN DATA ===== */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <input
+            name="gmail"
+            type="email"
+            placeholder="email@email.com"
+            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">No Telepon</label>
+          <input
+            name="phone"
+            placeholder="08xxxxxxxxxx"
+            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+            required
+          />
+        </div>
+
+        {/* Hidden */}
+        <input type="hidden" name="province" value={province} />
+        <input type="hidden" name="city" value={city} />
+        <input type="hidden" name="subdistrict" value={subDistrict} />
+        <input type="hidden" name="village" value={village} />
+        <input type="hidden" name="portalCode" value={kodepos} />
         <input type="hidden" name="ongkir" value={shippingCost} />
         <input type="hidden" name="totalPrice" value={total} />
-        <input type="hidden" name="cart" value={JSON.stringify(cart)} />
+        {/* <input type="hidden" name="cart" value={JSON.stringify(cart)} /> */}
         <input type="hidden" name="paymentMethod" value={paymentMethod} />
       </div>
 
       {/* ================= RIGHT ================= */}
       <div>
-        <h2 className="font-semibold mb-3">Ringkasan</h2>
+        <h2 className="font-semibold mb-3 text-2xl">Ringkasan</h2>
 
         {cart.map((i, idx) => (
           <div key={idx} className="flex gap-3 mb-2">

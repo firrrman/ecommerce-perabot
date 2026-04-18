@@ -1,10 +1,18 @@
 import { getDestination, checkOngkir } from "@/app/actions/wilayah";
 
 export async function POST(req: Request) {
-  const { kodepos, weight } = await req.json();
+  const { search, idAlamat, weight } = await req.json();
 
-  const destination = await getDestination(kodepos);
-  const ongkir = await checkOngkir(destination?.[0]?.id || "1", weight);
+  let destination = null;
+  let ongkir = null;
 
-  return Response.json({ ongkir });
+  if (search) {
+    destination = await getDestination(search);
+  }
+
+  if (idAlamat && weight) {
+    ongkir = await checkOngkir(idAlamat, weight);
+  }
+
+  return Response.json({ destination, ongkir });
 }
