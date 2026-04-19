@@ -32,6 +32,9 @@ export default function FormCheckout() {
   console.log("kodepos", kodepos);
 
   const [shippingCost, setShippingCost] = useState(0);
+  const [getOngkir, setGetOngkir] = useState<any[]>([]);
+  const [selectedOngkir, setSelectedOngkir] = useState(0);
+  console.log("ongkir", getOngkir);
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("cod");
 
   const fullAlamat = `${detailAlamat}, ${alamat}`;
@@ -77,9 +80,7 @@ export default function FormCheckout() {
     });
 
     const data = await res.json();
-
-    setShippingCost(data.ongkir?.[0]?.cost || 0);
-    console.log("Ongkir:", data.ongkir);
+    setGetOngkir(data.ongkir);
   };
 
   const subtotal = cart.reduce((t, i) => t + i.price * i.quantity, 0);
@@ -255,8 +256,67 @@ export default function FormCheckout() {
           />
         </div>
 
-        <h1 className="text-2xl font-semibold mt-6">Metode Pembayaran</h1>
+        {alamat && (
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-semibold mt-6 mb-2">Metode Pengiriman</h1>
 
+            {alamat ===
+            "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
+              <label className="flex items-start gap-3 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 mb-3">
+                <input
+                  type="radio"
+                  name="ongkir"
+                  value={0}
+                  checked={selectedOngkir === 0}
+                  required
+                  onChange={() => {
+                    setSelectedOngkir(0);
+                    setShippingCost(0);
+                  }}
+                  className="mt-1"
+                />
+
+                <div>
+                  <p className="font-medium">Gratis Ongkir - Rp {0}</p>
+                  <p className="text-sm text-gray-500">
+                    Pengiriman gratis untuk wilayah ini
+                  </p>
+                </div>
+              </label>
+            ) : null}
+            {getOngkir.map((ongkirdata: any, index: number) => (
+              <label
+                key={index}
+                className="flex items-start gap-3 border p-3 rounded-lg cursor-pointer hover:bg-gray-50"
+              >
+                <input
+                  type="radio"
+                  name="ongkir"
+                  value={ongkirdata.cost}
+                  checked={selectedOngkir === ongkirdata.cost}
+                  required
+                  onChange={() => {
+                    (setSelectedOngkir(ongkirdata.cost),
+                      setShippingCost(ongkirdata.cost));
+                  }}
+                  className="mt-1"
+                />
+
+                <div>
+                  <p className="font-medium">
+                    {ongkirdata.name} {ongkirdata.service} - Rp{" "}
+                    {ongkirdata.cost.toLocaleString("id-ID")}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {ongkirdata.description}
+                  </p>
+                </div>
+              </label>
+            ))}
+          </div>
+        )}
+
+        <h1 className="text-2xl font-semibold mt-6">Metode Pembayaran</h1>
         {/* COD */}
         {alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
           <label className="flex items-center gap-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
