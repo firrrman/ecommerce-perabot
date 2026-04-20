@@ -5,6 +5,7 @@ import ScrollVelocity from "./beranda/scroll-velocity";
 import { newProducts, bestSeller } from "./actions/cardProduct";
 import CategoryCard from "./beranda/category-card";
 import CardHomepage from "./beranda/card-hompage";
+import ShoppingMethod from "./beranda/shopping-method";
 
 export default async function Home() {
   const bestProduct = await bestSeller();
@@ -55,8 +56,8 @@ export default async function Home() {
         velocity={velocity}
         className="custom-scroll-text text-5xl md:text-7xl select-none"
       />
-
       <CategoryCard />
+      <ShoppingMethod />
     </Layout>
   );
 }
