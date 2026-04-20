@@ -26,7 +26,7 @@ export default async function CodFinishPage({ searchParams }: Props) {
     <div className="flex justify-center items-center h-lvh px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center max-w-xl">
         <h1 className="mt-4 text-4xl font-semibold text-gray-900 sm:text-6xl">
-          Pesanan Berhasil 🎉
+          Pesanan Berhasil
         </h1>
 
         <p className="mt-6 text-lg text-gray-600">
@@ -35,9 +35,6 @@ export default async function CodFinishPage({ searchParams }: Props) {
         </p>
 
         <div className="mt-8 space-y-2 text-gray-700">
-          <div>
-            <span className="font-semibold">Nomor Pesanan:</span> {order.id}
-          </div>
           <div>
             <span className="font-semibold">Total:</span> Rp{" "}
             {order.totalPrice.toLocaleString("id-ID")}
