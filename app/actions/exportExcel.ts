@@ -2,6 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import * as XLSX from "xlsx";
+import {
+  getMonthlyRevenue,
+  getMonthlyCost,
+  getMonthlyProfit,
+  getTotalRevenueByYear,
+  getTotalCostByYear
+} from "./laporan";
 
 export async function exportOrderExcel(year: number) {
   const orders = await prisma.order.findMany({
@@ -24,7 +31,7 @@ export async function exportOrderExcel(year: number) {
   });
 
   /* =============================
-     HITUNG STATISTIK
+     HITUNG STATISTIK (ORDERS)
   ============================= */
 
   const totalOrders = orders.filter(
@@ -33,7 +40,7 @@ export async function exportOrderExcel(year: number) {
 
   const totalRevenue = orders.reduce((sum, order) => {
     if (order.status === "FINISHED" || order.status === "PAID") {
-      return sum + order.totalPrice;
+      return sum + (order.totalPrice) - (order.ongkir);
     }
     return sum;
   }, 0);
@@ -47,6 +54,26 @@ export async function exportOrderExcel(year: number) {
       });
     }
   });
+
+  /* =============================
+     FINANCIAL DATA
+  ============================= */
+
+  const [monthlyRevenue, monthlyCost, monthlyProfit, yearlyTotalRevenue, yearlyTotalCost] = await Promise.all([
+    getMonthlyRevenue(year),
+    getMonthlyCost(year),
+    getMonthlyProfit(year),
+    getTotalRevenueByYear(year),
+    getTotalCostByYear(year),
+  ]);
+
+  const yearlyTotalProfit = yearlyTotalRevenue - yearlyTotalCost;
+  const yearlyMargin = yearlyTotalRevenue > 0 ? (yearlyTotalProfit / yearlyTotalRevenue) * 100 : 0;
+
+  const monthsArr = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
 
   /* =============================
      SHEET 1 : RINGKASAN
@@ -179,7 +206,41 @@ export async function exportOrderExcel(year: number) {
   statistikSheet["!cols"] = [{ wch: 25 }, { wch: 20 }];
 
   /* =============================
-     WORKBOOK
+     SHEET 4 : ANALISIS KEUANGAN
+  ============================= */
+  const financialHeader = [["Bulan", "Pendapatan", "Modal", "Laba"]];
+  const financialDataArrArr = monthsArr.map((month, i) => [
+    month,
+    monthlyRevenue[i],
+    monthlyCost[i],
+    monthlyProfit[i]
+  ]);
+
+  const financialSheetObj = XLSX.utils.aoa_to_sheet([
+    [`ANALISIS KEUANGAN BULAN - ${year}`],
+    [],
+    ...financialHeader,
+    ...financialDataArrArr
+  ]);
+  financialSheetObj["!cols"] = [{ wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }];
+
+  /* =============================
+     SHEET 5 : RINGKASAN KEUANGAN
+  ============================= */
+  const financialSummaryDataArr = [
+    [`RINGKASAN KEUANGAN TAHUN ${year}`],
+    [],
+    ["Total Pendapatan", yearlyTotalRevenue],
+    ["Total Modal", yearlyTotalCost],
+    ["Total Laba", yearlyTotalProfit],
+    ["Margin Keuntungan", `${yearlyMargin.toFixed(2)}%`],
+  ];
+
+  const financialSummarySheetObj = XLSX.utils.aoa_to_sheet(financialSummaryDataArr);
+  financialSummarySheetObj["!cols"] = [{ wch: 25 }, { wch: 20 }];
+
+  /* =============================
+     WORKBOOK ASSEMBLY
   ============================= */
 
   const workbook = XLSX.utils.book_new();
@@ -187,6 +248,8 @@ export async function exportOrderExcel(year: number) {
   XLSX.utils.book_append_sheet(workbook, summarySheet, "Ringkasan");
   XLSX.utils.book_append_sheet(workbook, detailSheet, "Detail Transaksi");
   XLSX.utils.book_append_sheet(workbook, statistikSheet, "Statistik");
+  XLSX.utils.book_append_sheet(workbook, financialSheetObj, "Analisis Keuangan");
+  XLSX.utils.book_append_sheet(workbook, financialSummarySheetObj, "Ringkasan Keuangan");
 
   const buffer = XLSX.write(workbook, {
     bookType: "xlsx",

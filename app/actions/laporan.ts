@@ -150,6 +150,7 @@ export async function getTotalRevenueByYear(year: number) {
   const result = await prisma.order.aggregate({
     _sum: {
       totalPrice: true,
+      ongkir: true,
     },
     where: {
       status: {
@@ -162,7 +163,7 @@ export async function getTotalRevenueByYear(year: number) {
     },
   });
 
-  return result._sum.totalPrice ?? 0;
+  return (result._sum.totalPrice ?? 0) - (result._sum.ongkir ?? 0);
 }
 
 export async function getOrderCountByYear(year: number) {
@@ -202,4 +203,98 @@ export async function getSoldItemsByYear(year: number) {
   });
 
   return result._sum.quantity ?? 0;
+}
+
+// ============ Laporan Keuangan ============
+
+export async function getMonthlyRevenue(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const orders = await prisma.order.findMany({
+    where: {
+      createdAt: { gte: start, lt: end },
+      status: { in: [OrderStatus.FINISHED] },
+    },
+    select: {
+      createdAt: true,
+      totalPrice: true,
+      ongkir: true,
+    },
+  });
+
+  const monthly = Array(12).fill(0);
+  orders.forEach((o) => {
+    const month = new Date(o.createdAt).getMonth();
+    monthly[month] += o.totalPrice - o.ongkir;
+  });
+
+  return monthly;
+}
+
+export async function getMonthlyCost(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const orders = await prisma.order.findMany({
+    where: {
+      createdAt: { gte: start, lt: end },
+      status: { in: [OrderStatus.FINISHED] },
+    },
+    select: {
+      createdAt: true,
+      totalCost: true,
+    },
+  });
+
+  const monthly = Array(12).fill(0);
+  orders.forEach((o) => {
+    const month = new Date(o.createdAt).getMonth();
+    monthly[month] += o.totalCost;
+  });
+
+  return monthly;
+}
+
+export async function getMonthlyProfit(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const orders = await prisma.order.findMany({
+    where: {
+      createdAt: { gte: start, lt: end },
+      status: { in: [OrderStatus.FINISHED] },
+    },
+    select: {
+      createdAt: true,
+      totalPrice: true,
+      totalCost: true,
+      ongkir: true,
+    },
+  });
+
+  const monthly = Array(12).fill(0);
+  orders.forEach((o) => {
+    const month = new Date(o.createdAt).getMonth();
+    monthly[month] += (o.totalPrice - o.ongkir) - o.totalCost;
+  });
+
+  return monthly;
+}
+
+export async function getTotalCostByYear(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const result = await prisma.order.aggregate({
+    _sum: {
+      totalCost: true,
+    },
+    where: {
+      status: { in: [OrderStatus.FINISHED] },
+      createdAt: { gte: start, lt: end },
+    },
+  });
+
+  return result._sum.totalCost ?? 0;
 }
