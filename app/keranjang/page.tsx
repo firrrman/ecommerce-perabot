@@ -74,6 +74,7 @@ export default function CartPage() {
                           src={produk.image}
                           alt={produk.name}
                           className="w-40 sm:w-50 object-cover rounded-md bg-gray-100"
+                          loading="lazy"
                         />
 
                         <div className="flex flex-col h-full justify-center items-start md:gap-2">

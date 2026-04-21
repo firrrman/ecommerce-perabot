@@ -95,10 +95,12 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
           <img
             src={product?.images[0].src}
             className="row-span-2 aspect-square size-full object-cover"
+            loading="lazy"
           />
           <img
             src={product?.images[1].src}
             className="row-span-2 aspect-square size-full object-cover"
+            loading="lazy"
           />
         </div>
 

@@ -176,7 +176,7 @@ const CardNav: React.FC<CardNavProps> = ({
       >
         <div className="card-nav-top absolute inset-x-0 top-0 h-15 flex items-center justify-between p-3 z-2">
           <a href="/" className="logo-container flex items-center">
-            <img src={logo} alt={logoAlt} className="logo h-7.5 md:h-10" />
+            <img src={logo} alt={logoAlt} className="logo h-7.5 md:h-10" loading="lazy" />
           </a>
 
           <div className="flex justify-center gap-5 items-center h-full">

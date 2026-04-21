@@ -127,6 +127,7 @@ const GridMotion: FC<GridMotionProps> = ({
                           src={content}
                           alt=""
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       ) : (
                         content

@@ -384,7 +384,7 @@ export default function FormCheckout() {
 
         {cart.map((i, idx) => (
           <div key={idx} className="flex gap-3 mb-2">
-            <img src={i.image} className="w-16 h-16 object-cover rounded" />
+            <img src={i.image} className="w-16 h-16 object-cover rounded" loading="lazy" />
             <div>
               <div>{i.name}</div>
               <div className="text-sm text-gray-500">

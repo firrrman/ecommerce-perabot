@@ -312,6 +312,7 @@ export default function EditProductForm({
                           src={img.src}
                           alt={img.alt}
                           className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
+                          loading="lazy"
                         />
                       </div>
                     ))}

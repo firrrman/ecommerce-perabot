@@ -179,6 +179,7 @@ export default function ProdukListAdmin({
                   src={product.images[0].src}
                   alt={product.name}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
               <div className="p-4">
@@ -254,6 +255,7 @@ export default function ProdukListAdmin({
                           src={product.images[0].src}
                           alt={product.name}
                           className="w-12 h-12 rounded-lg object-cover"
+                          loading="lazy"
                         />
                         <div>
                           <p className="font-medium text-slate-800">

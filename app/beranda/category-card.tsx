@@ -5,7 +5,7 @@ export default async function CategoryCard() {
         <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
           Ruang Tamu
         </div>
-        <img src="/kategori/ruangtamu.jpg" className="size-full object-cover" />
+        <img src="/kategori/ruangtamu.jpg" className="size-full object-cover" loading="lazy" />
       </a>
       <a href="/produk/kamar-mandi" className="relative">
         <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
@@ -14,13 +14,14 @@ export default async function CategoryCard() {
         <img
           src="/kategori/kamarmandi.jpg"
           className="size-full object-cover"
+          loading="lazy"
         />
       </a>
       <a href="/produk/dapur" className="relative">
         <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
           Dapur
         </div>
-        <img src="/kategori/dapur.jpg" className="size-full object-cover" />
+        <img src="/kategori/dapur.jpg" className="size-full object-cover" loading="lazy" />
       </a>
       <a href="/produk/luar-ruangan" className="relative">
         <div className="absolute bg-black/50 z-10 w-full h-full flex items-center justify-center text-white text-2xl md:text-3xl font-extralight">
@@ -29,6 +30,7 @@ export default async function CategoryCard() {
         <img
           src="/kategori/luarruangan.jpg"
           className="size-full object-cover"
+          loading="lazy"
         />
       </a>
     </div>

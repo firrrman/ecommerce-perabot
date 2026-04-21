@@ -35,6 +35,7 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
       <img
         src={item.images[0].src}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        loading="lazy"
       />
       <div className="absolute bottom-0 w-full bg-black/70 p-3 text-white">
         <p className="text-sm font-medium line-clamp-1">{item.name}</p>
