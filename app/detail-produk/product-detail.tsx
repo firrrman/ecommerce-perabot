@@ -11,6 +11,7 @@ interface ProductDetailProps {
     slug: string;
     description: string | null;
     basePrice: number;
+    costPrice: number;
     weight: number;
     highlights: string[];
     details: string | null;
@@ -23,6 +24,8 @@ interface ProductDetailProps {
       id: string;
       size: { id: string; name: string };
       price: number;
+      weight: number;
+      costPrice: number;
     }[];
   };
 }
@@ -33,6 +36,8 @@ function classNames(...classes: string[]) {
 
 export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [selectedPrice, setSelectedPrice] = useState<number>(product.basePrice);
+  const [selectedWeight, setSelectedWeight] = useState<number>(product.weight);
+  const [selectedCostPrice, setSelectedCostPrice] = useState<number>(product.costPrice);
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedColorName, setSelectedColorName] = useState<string | null>(
@@ -74,7 +79,8 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
       sizeName: selectedSizeName,
       colorId: selectedColor,
       colorName: selectedColorName,
-      weight: product.weight,
+      costPrice: selectedCostPrice,
+      weight: selectedWeight,
       quantity,
     });
 
@@ -198,6 +204,8 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                               setSelectedSize(size.size.id);
                               setSelectedSizeName(size.size.name);
                               setSelectedPrice(size.price);
+                              setSelectedWeight(size.weight);
+                              setSelectedCostPrice(size.costPrice)
                             }}
                             className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed cursor-pointer"
                           />

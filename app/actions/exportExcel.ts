@@ -27,7 +27,9 @@ export async function exportOrderExcel(year: number) {
      HITUNG STATISTIK
   ============================= */
 
-  const totalOrders = orders.length;
+  const totalOrders = orders.filter(
+    (order) => order.status !== "CANCELLED"
+  ).length;
 
   const totalRevenue = orders.reduce((sum, order) => {
     if (order.status === "FINISHED" || order.status === "PAID") {
@@ -39,9 +41,11 @@ export async function exportOrderExcel(year: number) {
   let totalProductsSold = 0;
 
   orders.forEach((order) => {
-    order.items.forEach((item) => {
-      totalProductsSold += item.quantity;
-    });
+    if (order.status === "FINISHED") {
+      order.items.forEach((item) => {
+        totalProductsSold += item.quantity;
+      });
+    }
   });
 
   /* =============================

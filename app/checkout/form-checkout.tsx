@@ -85,6 +85,7 @@ export default function FormCheckout() {
 
   const subtotal = cart.reduce((t, i) => t + i.price * i.quantity, 0);
   const total = subtotal + shippingCost;
+  const totalCost = cart.reduce((t, i) => t + i.costPrice * i.quantity, 0)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,6 +95,11 @@ export default function FormCheckout() {
     formData.append("paymentMethod", paymentMethod);
 
     try {
+      if (cart.length === 0) {
+        toast.error("Keranjang kosong");
+        return;
+      }
+
       if (
         !shippingCost &&
         !(alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630")
@@ -150,233 +156,245 @@ export default function FormCheckout() {
       className="grid lg:grid-cols-2 gap-10 px-5 mt-30"
     >
       {/* ================= LEFT ================= */}
-      <div className="space-y-4 border rounded-xl p-6 shadow-sm bg-white">
-        <h1 className="text-2xl font-semibold">Alamat Pengiriman</h1>
-
-        {/* Nama */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Nama Lengkap</label>
-          <input
-            name="customerName"
-            placeholder="Masukkan nama lengkap"
-            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
-            required
-          />
+      {cart.length === 0 ? (
+        <div className="text-center py-10">
+          <p className="text-gray-500 text-lg">Keranjang belanja kamu masih kosong 🛒</p>
+          <p className="text-sm text-gray-400 mt-2">
+            Silakan pilih produk terlebih dahulu sebelum melakukan checkout.
+          </p>
         </div>
+      ) : (
+        <div className="space-y-4 border rounded-xl p-6 shadow-sm bg-white">
+          <h1 className="text-2xl font-semibold">Alamat Pengiriman</h1>
 
-        {/* Search alamat */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Kecamatan/Desa
-          </label>
-
-          <div className="flex w-full gap-2">
+          {/* Nama */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Nama Lengkap</label>
             <input
-              type="text"
-              placeholder="Contoh: Ciaruteun Udik Lalu Klik Cari"
+              name="customerName"
+              placeholder="Masukkan nama lengkap"
               className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
               required
             />
-
-            <button
-              type="button"
-              onClick={handleSearchAddress}
-              className="bg-black text-white px-4 rounded-lg hover:bg-gray-800 transition cursor-pointer"
-            >
-              Cari
-            </button>
           </div>
 
-          {filteredDestination.length > 0 && (
-            <ul className="border border-gray-200 rounded-lg mt-2 max-h-40 overflow-auto shadow-sm">
-              {filteredDestination.map((item) => (
-                <li
-                  key={item.id}
-                  className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
-                  onClick={() => {
-                    setAlamat(item.label);
-                    setSearch(item.label);
-                    setKodepos(item.zip_code);
-                    setDestinations([]);
-                    setProvince(item.province_name);
-                    setCity(item.city_name);
-                    setSubDistrict(item.district_name);
-                    setVillage(item.subdistrict_name);
+          {/* Search alamat */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Kecamatan/Desa
+            </label>
 
-                    handleCheckOngkir(item.id);
-                  }}
-                >
-                  {item.label}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+            <div className="flex w-full gap-2">
+              <input
+                type="text"
+                placeholder="Contoh: Ciaruteun Udik Lalu Klik Cari"
+                className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                required
+              />
 
-        {/* Detail alamat */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Detail Alamat
-          </label>
-
-          <textarea
-            name="address"
-            placeholder="Jalan, RT/RW, No. Rumah"
-            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
-            value={detailAlamat}
-            onChange={(e) => setDetailAlamat(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* Preview alamat */}
-        <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
-          <p className="text-sm text-gray-500 mb-1">Preview Alamat</p>
-
-          <div className="text-sm text-gray-800 leading-relaxed">
-            {detailAlamat && <div>{detailAlamat}</div>}
-            {alamat && <div className="font-medium">{alamat}</div>}
-          </div>
-        </div>
-
-        <input type="hidden" value={fullAlamat} />
-
-        {/* Catatan */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Catatan Tambahan
-          </label>
-
-          <textarea
-            name="note"
-            placeholder="Catatan untuk penjual (opsional)"
-            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
-          />
-        </div>
-
-        {alamat && (
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold mt-6 mb-2">Metode Pengiriman</h1>
-
-            {alamat ===
-            "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
-              <label className="flex items-start gap-3 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 mb-3">
-                <input
-                  type="radio"
-                  name="ongkir"
-                  value={0}
-                  checked={selectedOngkir === 0}
-                  required
-                  onChange={() => {
-                    setSelectedOngkir(0);
-                    setShippingCost(0);
-                  }}
-                  className="mt-1"
-                />
-
-                <div>
-                  <p className="font-medium">Gratis Ongkir - Rp {0}</p>
-                  <p className="text-sm text-gray-500">
-                    Pengiriman gratis untuk wilayah ini
-                  </p>
-                </div>
-              </label>
-            ) : null}
-            {getOngkir.map((ongkirdata: any, index: number) => (
-              <label
-                key={index}
-                className="flex items-start gap-3 border p-3 rounded-lg cursor-pointer hover:bg-gray-50"
+              <button
+                type="button"
+                onClick={handleSearchAddress}
+                className="bg-black text-white px-4 rounded-lg hover:bg-gray-800 transition cursor-pointer"
               >
-                <input
-                  type="radio"
-                  name="ongkir"
-                  value={ongkirdata.cost}
-                  checked={selectedOngkir === ongkirdata.cost}
-                  required
-                  onChange={() => {
-                    (setSelectedOngkir(ongkirdata.cost),
-                      setShippingCost(ongkirdata.cost));
-                  }}
-                  className="mt-1"
-                />
+                Cari
+              </button>
+            </div>
 
-                <div>
-                  <p className="font-medium">
-                    {ongkirdata.name} {ongkirdata.service} - Rp{" "}
-                    {ongkirdata.cost.toLocaleString("id-ID")}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {ongkirdata.description}
-                  </p>
-                </div>
-              </label>
-            ))}
+            {filteredDestination.length > 0 && (
+              <ul className="border border-gray-200 rounded-lg mt-2 max-h-40 overflow-auto shadow-sm">
+                {filteredDestination.map((item) => (
+                  <li
+                    key={item.id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    onClick={() => {
+                      setAlamat(item.label);
+                      setSearch(item.label);
+                      setKodepos(item.zip_code);
+                      setDestinations([]);
+                      setProvince(item.province_name);
+                      setCity(item.city_name);
+                      setSubDistrict(item.district_name);
+                      setVillage(item.subdistrict_name);
+
+                      handleCheckOngkir(item.id);
+                    }}
+                  >
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        )}
 
-        <h1 className="text-2xl font-semibold mt-6">Metode Pembayaran</h1>
-        {/* COD */}
-        {alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
+          {/* Detail alamat */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Detail Alamat
+            </label>
+
+            <textarea
+              name="address"
+              placeholder="Jalan, RT/RW, No. Rumah"
+              className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+              value={detailAlamat}
+              onChange={(e) => setDetailAlamat(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Preview alamat */}
+          <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+            <p className="text-sm text-gray-500 mb-1">Preview Alamat</p>
+
+            <div className="text-sm text-gray-800 leading-relaxed">
+              {detailAlamat && <div>{detailAlamat}</div>}
+              {alamat && <div className="font-medium">{alamat}</div>}
+            </div>
+          </div>
+
+          <input type="hidden" value={fullAlamat} />
+
+          {/* Catatan */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Catatan Tambahan
+            </label>
+
+            <textarea
+              name="note"
+              placeholder="Catatan untuk penjual (opsional)"
+              className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+            />
+          </div>
+
+          {alamat && (
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl font-semibold mt-6 mb-2">Metode Pengiriman</h1>
+
+              {alamat ===
+                "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
+                <label className="flex items-start gap-3 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 mb-3">
+                  <input
+                    type="radio"
+                    name="ongkir"
+                    value={0}
+                    checked={selectedOngkir === 0}
+                    required
+                    onChange={() => {
+                      setSelectedOngkir(0);
+                      setShippingCost(0);
+                    }}
+                    className="mt-1"
+                  />
+
+                  <div>
+                    <p className="font-medium">Gratis Ongkir - Rp {0}</p>
+                    <p className="text-sm text-gray-500">
+                      Pengiriman gratis untuk wilayah ini
+                    </p>
+                  </div>
+                </label>
+              ) : null}
+              {getOngkir.map((ongkirdata: any, index: number) => (
+                <label
+                  key={index}
+                  className="flex items-start gap-3 border p-3 rounded-lg cursor-pointer hover:bg-gray-50"
+                >
+                  <input
+                    type="radio"
+                    name="ongkir"
+                    value={ongkirdata.cost}
+                    checked={selectedOngkir === ongkirdata.cost}
+                    required
+                    onChange={() => {
+                      (setSelectedOngkir(ongkirdata.cost),
+                        setShippingCost(ongkirdata.cost));
+                    }}
+                    className="mt-1"
+                  />
+
+                  <div>
+                    <p className="font-medium">
+                      {ongkirdata.name} {ongkirdata.service} - Rp{" "}
+                      {ongkirdata.cost.toLocaleString("id-ID")}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {ongkirdata.description}
+                    </p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          )}
+
+          <h1 className="text-2xl font-semibold mt-6">Metode Pembayaran</h1>
+          {/* COD */}
+          {alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630" ? (
+            <label className="flex items-center gap-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="cod"
+                checked={paymentMethod === "cod"}
+                onChange={() => setPaymentMethod("cod")}
+              />
+              Bayar di Tempat (COD)
+            </label>
+          ) : null}
+
+          {/* Transfer */}
           <label className="flex items-center gap-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
             <input
               type="radio"
               name="paymentMethod"
-              value="cod"
-              checked={paymentMethod === "cod"}
-              onChange={() => setPaymentMethod("cod")}
+              value="midtrans"
+              checked={paymentMethod === "midtrans"}
+              onChange={() => setPaymentMethod("midtrans")}
             />
-            Bayar di Tempat (COD)
+            Transfer / E-Wallet
           </label>
-        ) : null}
 
-        {/* Transfer */}
-        <label className="flex items-center gap-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
-          <input
-            type="radio"
-            name="paymentMethod"
-            value="midtrans"
-            checked={paymentMethod === "midtrans"}
-            onChange={() => setPaymentMethod("midtrans")}
-          />
-          Transfer / E-Wallet
-        </label>
+          <h1 className="text-2xl font-semibold mt-6">Kontak</h1>
 
-        <h1 className="text-2xl font-semibold mt-6">Kontak</h1>
+          <div>
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <input
+              name="gmail"
+              type="email"
+              placeholder="email@email.com"
+              className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+              required
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            name="gmail"
-            type="email"
-            placeholder="email@email.com"
-            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium mb-1">No Telepon</label>
+            <input
+              name="phone"
+              placeholder="08xxxxxxxxxx"
+              className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
+              required
+            />
+          </div>
+
+          {/* Hidden */}
+          <input type="hidden" name="province" value={province} />
+          <input type="hidden" name="city" value={city} />
+          <input type="hidden" name="subdistrict" value={subDistrict} />
+          <input type="hidden" name="village" value={village} />
+          <input type="hidden" name="portalCode" value={kodepos} />
+          <input type="hidden" name="ongkir" value={shippingCost} />
+          <input type="hidden" name="totalPrice" value={total} />
+          <input type="hidden" name="totalCost" value={totalCost} />
+          {/* <input type="hidden" name="cart" value={JSON.stringify(cart)} /> */}
+          <input type="hidden" name="paymentMethod" value={paymentMethod} />
         </div>
+      )
 
-        <div>
-          <label className="block text-sm font-medium mb-1">No Telepon</label>
-          <input
-            name="phone"
-            placeholder="08xxxxxxxxxx"
-            className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-black outline-none"
-            required
-          />
-        </div>
-
-        {/* Hidden */}
-        <input type="hidden" name="province" value={province} />
-        <input type="hidden" name="city" value={city} />
-        <input type="hidden" name="subdistrict" value={subDistrict} />
-        <input type="hidden" name="village" value={village} />
-        <input type="hidden" name="portalCode" value={kodepos} />
-        <input type="hidden" name="ongkir" value={shippingCost} />
-        <input type="hidden" name="totalPrice" value={total} />
-        {/* <input type="hidden" name="cart" value={JSON.stringify(cart)} /> */}
-        <input type="hidden" name="paymentMethod" value={paymentMethod} />
-      </div>
+      }
 
       {/* ================= RIGHT ================= */}
       <div>

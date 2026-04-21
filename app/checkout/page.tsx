@@ -13,10 +13,6 @@ type Props = {
 };
 
 export default async function Checkout({ searchParams }: Props) {
-  const provinceQuery = (await searchParams).province;
-  const cityQuery = (await searchParams).city;
-  const subdistrictQuery = (await searchParams).subdistrict;
-
   return (
     <Layout>
       <FormCheckout

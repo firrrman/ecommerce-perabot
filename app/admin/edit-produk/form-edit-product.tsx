@@ -69,12 +69,25 @@ export default function EditProductForm({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Harga Dasar <span className="text-red-500">*</span>
+                    Harga Jual <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
                     name="basePrice"
                     defaultValue={product.basePrice}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Harga Modal / Cost Price <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="costPrice"
+                    defaultValue={product.costPrice ?? 0}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
@@ -245,7 +258,7 @@ export default function EditProductForm({
               </h2>
 
               <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {sizes.map((size: any) => {
                     const existing = (product.sizes ?? []).find(
                       (s: any) => s.sizeId === size.id,
@@ -266,13 +279,29 @@ export default function EditProductForm({
                         <span className="font-medium text-gray-700 min-w-17.5">
                           {size.name}
                         </span>
-                        <input
-                          type="number"
-                          name={`price-${size.id}`}
-                          defaultValue={existing?.price ?? ""}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="Harga"
-                        />
+                        <div className="flex gap-2 w-full">
+                          <input
+                            type="number"
+                            name={`price-${size.id}`}
+                            defaultValue={existing?.price ?? ""}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Harga Jual"
+                          />
+                          <input
+                            type="number"
+                            name={`costPrice-${size.id}`}
+                            defaultValue={existing?.costPrice ?? ""}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Modal"
+                          />
+                          <input
+                            type="number"
+                            name={`weight-${size.id}`}
+                            defaultValue={existing?.weight ?? ""}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Berat Produk"
+                          />
+                        </div>
                       </div>
                     );
                   })}

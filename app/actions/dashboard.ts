@@ -13,7 +13,7 @@ export async function getTotalPaidRevenue() {
     },
     where: {
       status: {
-        in: [OrderStatus.PAID, OrderStatus.FINISHED],
+        in: [OrderStatus.FINISHED],
       },
     },
   });

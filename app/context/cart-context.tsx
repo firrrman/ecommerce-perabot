@@ -8,6 +8,7 @@ export type CartItem = {
   name: string;
   price: number;
   weight: number;
+  costPrice: number;
   image: string;
   sizeId?: string | null;
   sizeName: string | null;

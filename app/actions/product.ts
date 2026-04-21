@@ -84,10 +84,13 @@ export async function createProduct(formData: FormData) {
   const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
+  const costPrice = Number(formData.get("costPrice")) || 0;
   const weight = Number(formData.get("weight"));
 
   const sizeData = selectedSizeIds.map((sizeId) => {
     const price = Number(formData.get(`price-${sizeId}`));
+    const costPrice = Number(formData.get(`costPrice-${sizeId}`)) || 0;
+    const weight = Number(formData.get(`weight-${sizeId}`)) || 0;
 
     if (images.length === 0) {
       throw new Error("Minimal 1 gambar harus diupload");
@@ -100,14 +103,16 @@ export async function createProduct(formData: FormData) {
     return {
       sizeId,
       price,
+      costPrice,
+      weight,
     };
   });
 
   const highlights = highlightsRaw
     ? highlightsRaw
-        .split("\n") // split berdasarkan baris
-        .map((h) => h.trim()) // hapus spasi di awal/akhir
-        .filter(Boolean) // hilangkan baris kosong
+      .split("\n") // split berdasarkan baris
+      .map((h) => h.trim()) // hapus spasi di awal/akhir
+      .filter(Boolean) // hilangkan baris kosong
     : [];
 
   if (!name || !slug || !images) {
@@ -164,6 +169,7 @@ export async function createProduct(formData: FormData) {
         create: sizeData, // ⬅ harga per size
       },
       basePrice,
+      costPrice,
       weight,
     },
   });
@@ -184,6 +190,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
+  const costPrice = Number(formData.get("costPrice")) || 0;
   const weight = Number(formData.get("weight"));
   if (!name || !slug) {
     throw new Error("Nama dan slug wajib diisi");
@@ -200,14 +207,16 @@ export async function updateProduct(productId: string, formData: FormData) {
 
   const highlights = highlightsRaw
     ? highlightsRaw
-        .split("\n")
-        .map((h) => h.trim())
-        .filter(Boolean)
+      .split("\n")
+      .map((h) => h.trim())
+      .filter(Boolean)
     : [];
 
   const sizeData = selectedSizeIds.map((sizeId) => {
     const priceRaw = formData.get(`price-${sizeId}`);
     const price = Number(priceRaw);
+    const costPrice = Number(formData.get(`costPrice-${sizeId}`)) || 0;
+    const weight = Number(formData.get(`weight-${sizeId}`)) || 0;
 
     if (!priceRaw || isNaN(price)) {
       throw new Error("Harga ukuran tidak valid");
@@ -216,6 +225,8 @@ export async function updateProduct(productId: string, formData: FormData) {
     return {
       sizeId,
       price,
+      costPrice,
+      weight
     };
   });
 
@@ -266,6 +277,7 @@ export async function updateProduct(productId: string, formData: FormData) {
       details,
       highlights,
       basePrice,
+      costPrice,
       weight,
       categoryId: categoryId || null,
 

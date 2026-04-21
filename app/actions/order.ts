@@ -26,6 +26,7 @@ export async function createOrderFromForm(formData: FormData) {
       note: formData.get("note") as string,
       ongkir: Number(formData.get("ongkir")),
       totalPrice: Number(formData.get("totalPrice")),
+      totalCost: Number(formData.get("totalCost")),
       paymentMethod: formData.get("paymentMethod") as string,
 
       items: {
@@ -36,6 +37,26 @@ export async function createOrderFromForm(formData: FormData) {
               quantity: item.quantity,
               price: item.price,
             };
+
+            // Fetch the current cost price to lock it in
+            let costPrice = 0;
+            if (item.sizeId) {
+              const productSize = await prisma.productSize.findUnique({
+                where: {
+                  productId_sizeId: {
+                    productId: item.productId,
+                    sizeId: item.sizeId,
+                  },
+                },
+              });
+              costPrice = productSize?.costPrice || 0;
+            } else {
+              const product = await prisma.product.findUnique({
+                where: { id: item.productId },
+              });
+              costPrice = product?.costPrice || 0;
+            }
+            orderItem.costPrice = costPrice;
 
             // VALIDASI SIZE
             if (item.sizeId) {

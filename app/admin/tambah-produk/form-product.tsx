@@ -59,12 +59,25 @@ export default async function FormProduct() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Harga Dasar <span className="text-red-500">*</span>
+              Harga Jual <span className="text-red-500">*</span>
             </label>
             <input
               name="basePrice"
               type="number"
               placeholder="50000"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Harga Modal / Cost Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="costPrice"
+              type="number"
+              placeholder="35000"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               required
             />
@@ -149,7 +162,7 @@ export default async function FormProduct() {
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Ukuran & Harga Varian
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {sizes.map((size) => (
               <div
                 key={size.id}
@@ -164,12 +177,26 @@ export default async function FormProduct() {
                 <span className="font-medium text-gray-700 min-w-15">
                   {size.name}
                 </span>
-                <input
-                  type="number"
-                  name={`price-${size.id}`}
-                  placeholder="Harga"
-                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
+                <div className="flex gap-2 w-full">
+                  <input
+                    type="number"
+                    name={`price-${size.id}`}
+                    placeholder="Harga Jual"
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="number"
+                    name={`costPrice-${size.id}`}
+                    placeholder="Modal"
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="number"
+                    name={`weight-${size.id}`}
+                    placeholder="Berat Produk"
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </div>
               </div>
             ))}
           </div>
