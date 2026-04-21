@@ -12,7 +12,6 @@ import {
 } from "chart.js";
 
 import { Bar } from "react-chartjs-2";
-import { useRouter } from "next/navigation";
 
 ChartJS.register(
   CategoryScale,
@@ -38,12 +37,7 @@ export default function ChartJs({
   cancelled: number[];
   year: number;
 }) {
-  const router = useRouter();
   const currentYear = new Date().getFullYear();
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    router.push(`/admin/laporan?year=${e.target.value}`);
-  };
 
   const data = {
     labels: [
@@ -117,26 +111,8 @@ export default function ChartJs({
 
   return (
     <div className="bg-white shadow rounded-xl p-6 mb-6">
-      <div className="flex justify-end gap-2">
-        <select
-          value={year || ""}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 text-xs"
-        >
-          <option value={currentYear}>{currentYear}</option>
-          <option value={currentYear - 1}>{currentYear - 1}</option>
-          <option value={currentYear - 2}>{currentYear - 2}</option>
-        </select>
-
-        <a
-          href={`/api/export-laporan?year=${year || currentYear}`}
-          className="bg-green-600 text-white px-3 py-2 rounded text-xs"
-        >
-          Unduh Excel
-        </a>
-      </div>
-
       <Bar data={data} options={options} />
     </div>
   );
 }
+

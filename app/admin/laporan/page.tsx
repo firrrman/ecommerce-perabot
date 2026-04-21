@@ -1,10 +1,6 @@
 import LayoutAdmin from "@/app/component/layout-admin";
 import {
   product,
-  getTotalPaidRevenue,
-  countSoldItems,
-  getOrder,
-  getOrderGrafik,
 } from "@/app/actions/dashboard";
 import {
   getOrderPending,
@@ -12,36 +8,36 @@ import {
   getOrderShipped,
   getOrderFinished,
   getOrderCancelled,
+  getTotalRevenueByYear,
+  getOrderCountByYear,
+  getSoldItemsByYear,
 } from "@/app/actions/laporan";
 import { DollarSign, Package, ShoppingCart } from "lucide-react";
 import ChartJs from "./chartjs";
+import YearSelector from "./year-selector";
 
 type Props = {
   searchParams: Promise<{ year?: number }>;
 };
 
 export default async function LaporanPage({ searchParams }: Props) {
-  const products = await product();
-  const totalRevenue = await getTotalPaidRevenue();
-  const paidOrder = await countSoldItems();
-  const orders = await getOrder();
+  const year = Number((await searchParams).year) || new Date().getFullYear();
 
-  const year = (await searchParams).year;
-  const orderPending = await getOrderPending(
-    Number(year) || Number(new Date().getFullYear() || 0),
-  );
-  const orderPaid = await getOrderPaid(
-    Number(year) || Number(new Date().getFullYear() || 0),
-  );
-  const orderShipped = await getOrderShipped(
-    Number(year) || Number(new Date().getFullYear() || 0),
-  );
-  const orderFinished = await getOrderFinished(
-    Number(year) || Number(new Date().getFullYear() || 0),
-  );
-  const orderCancelled = await getOrderCancelled(
-    Number(year) || Number(new Date().getFullYear() || 0),
-  );
+  const [products, totalRevenue, paidOrder, orders] = await Promise.all([
+    product(),
+    getTotalRevenueByYear(year),
+    getSoldItemsByYear(year),
+    getOrderCountByYear(year),
+  ]);
+
+  const [orderPending, orderPaid, orderShipped, orderFinished, orderCancelled] =
+    await Promise.all([
+      getOrderPending(year),
+      getOrderPaid(year),
+      getOrderShipped(year),
+      getOrderFinished(year),
+      getOrderCancelled(year),
+    ]);
 
   const stats = [
     {
@@ -72,13 +68,17 @@ export default async function LaporanPage({ searchParams }: Props) {
   return (
     <LayoutAdmin activeMenuProp="report">
       <div className="flex-1 overflow-y-auto p-4 md:p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">
-            Laporan Penjualan
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Menampilkan data penjualan berdasarkan periode tertentu
-          </p>
+        {/* Header with Year Selector */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">
+              Laporan Penjualan
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">
+              Menampilkan data penjualan tahun {year}
+            </p>
+          </div>
+          <YearSelector year={year} />
         </div>
 
         {/* Stats Grid */}
@@ -112,7 +112,7 @@ export default async function LaporanPage({ searchParams }: Props) {
           shipped={orderShipped}
           finished={orderFinished}
           cancelled={orderCancelled}
-          year={Number(year)}
+          year={year}
         />
       </div>
     </LayoutAdmin>

@@ -141,3 +141,65 @@ export async function getOrderCancelled(year: number) {
 
   return monthly;
 }
+
+// Year-filtered stats for laporan page
+export async function getTotalRevenueByYear(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const result = await prisma.order.aggregate({
+    _sum: {
+      totalPrice: true,
+    },
+    where: {
+      status: {
+        in: [OrderStatus.FINISHED],
+      },
+      createdAt: {
+        gte: start,
+        lt: end,
+      },
+    },
+  });
+
+  return result._sum.totalPrice ?? 0;
+}
+
+export async function getOrderCountByYear(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  return await prisma.order.count({
+    where: {
+      status: {
+        not: OrderStatus.CANCELLED,
+      },
+      createdAt: {
+        gte: start,
+        lt: end,
+      },
+    },
+  });
+}
+
+export async function getSoldItemsByYear(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 1);
+
+  const result = await prisma.orderItem.aggregate({
+    where: {
+      order: {
+        status: OrderStatus.FINISHED,
+        createdAt: {
+          gte: start,
+          lt: end,
+        },
+      },
+    },
+    _sum: {
+      quantity: true,
+    },
+  });
+
+  return result._sum.quantity ?? 0;
+}
