@@ -9,7 +9,6 @@ import ShoppingMethod from "./beranda/shopping-method";
 
 export default async function Home() {
   const bestProduct = await bestSeller();
-  console.log(bestProduct);
   const newProduct = await newProducts();
   const velocity = 30;
   const items = [

@@ -32,7 +32,7 @@ export async function recreatePayment(oldPaymentOrderId: string) {
     data: {
       paymentOrderId: newPaymentOrderId,
       // kita set status PENDING lagi in case sebelumnya CANCELLED
-      status: "PENDING", 
+      status: "PENDING",
     },
   });
 
@@ -80,12 +80,10 @@ export async function recreatePayment(oldPaymentOrderId: string) {
   });
 
   const data = await res.json();
-
-  console.log("MIDTRANS RECREATE RESPONSE:", data);
   if (!data.token) {
     throw new Error(JSON.stringify(data));
   }
-  
+
   return {
     token: data.token,
     newOrderId: updatedOrder.paymentOrderId,

@@ -60,8 +60,6 @@ export async function createPayment(paymentOrderId: string) {
   });
 
   const data = await res.json();
-
-  console.log("MIDTRANS RESPONSE:", data);
   if (!data.token) {
     throw new Error(JSON.stringify(data));
   }

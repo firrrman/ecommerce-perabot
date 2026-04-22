@@ -30,8 +30,6 @@ export default async function PengirimanPage({ searchParams }: Props) {
   const page = Number(pageParam || "1");
   const orders = await Order(page, 12, search, status, date);
 
-  console.log("orders", orders);
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",

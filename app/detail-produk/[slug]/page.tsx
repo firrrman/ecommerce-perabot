@@ -13,8 +13,6 @@ export default async function DetailProduk({ params }: Props) {
   const { slug } = await params;
   const productDetail = await getProductBySlug(slug);
 
-  console.log(productDetail);
-
   if (!productDetail) {
     return <div>Produk tidak ditemukan</div>;
   }

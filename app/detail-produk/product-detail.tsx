@@ -46,8 +46,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedSizeName, setSelectedSizeName] = useState<string | null>(null);
 
-  console.log(product);
-
   const { addToCart } = useCart();
   const router = useRouter();
 

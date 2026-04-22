@@ -15,9 +15,6 @@ export async function POST(req: Request) {
   if (signature !== body.signature_key) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
-
-  console.log("STATUS DARI MIDTRANS:", body.transaction_status);
-
   // jika pembayaran berhasil
   if (
     body.transaction_status === "settlement" ||

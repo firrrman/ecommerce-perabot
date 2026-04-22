@@ -23,8 +23,6 @@ export default async function OrderDetailPage({ params }: Props) {
   const { id } = await params;
   const order = await getOrderDetail(id);
 
-  console.log("Order detail:", order);
-
   if (!order) {
     return (
       <LayoutAdmin activeMenuProp="orders">

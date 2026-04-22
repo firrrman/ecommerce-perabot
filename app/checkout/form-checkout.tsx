@@ -8,33 +8,18 @@ import { toast } from "react-toastify";
 
 export default function FormCheckout() {
   const { cart, clearCart } = useCart();
-
   const [search, setSearch] = useState("");
   const [destinations, setDestinations] = useState<any[]>([]);
-
-  console.log("destinasi", destinations);
-  console.log("search", search);
-
   const [alamat, setAlamat] = useState("");
-  console.log("alamat", alamat);
-
   const [detailAlamat, setDetailAlamat] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [subDistrict, setSubDistrict] = useState("");
   const [village, setVillage] = useState("");
   const [kodepos, setKodepos] = useState("");
-
-  console.log("province", province);
-  console.log("city", city);
-  console.log("subdistrict", subDistrict);
-  console.log("village", village);
-  console.log("kodepos", kodepos);
-
   const [shippingCost, setShippingCost] = useState(0);
   const [getOngkir, setGetOngkir] = useState<any[]>([]);
   const [selectedOngkir, setSelectedOngkir] = useState(0);
-  console.log("ongkir", getOngkir);
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("cod");
 
   const fullAlamat = `${detailAlamat}, ${alamat}`;
@@ -47,9 +32,6 @@ export default function FormCheckout() {
     (sum, item) => sum + item.weight * item.quantity,
     0,
   );
-
-  console.log("Total berat:", totalWeight);
-  console.log("Payment method:", paymentMethod);
 
   const handleSearchAddress = async () => {
     if (!search) {
@@ -67,7 +49,6 @@ export default function FormCheckout() {
     const data = await res.json();
 
     setDestinations(data.destination || []);
-    console.log("Destinations:", data.destination);
   };
 
   const handleCheckOngkir = async (id: string) => {
@@ -125,8 +106,6 @@ export default function FormCheckout() {
       // ===== MIDTRANS =====
       if (paymentMethod === "midtrans") {
         const token = await createPayment(result.paymentOrderId);
-        console.log("Snap token:", token);
-
         window.snap.pay(token, {
           onSuccess: function (result: any) {
             clearCart();
@@ -146,7 +125,7 @@ export default function FormCheckout() {
       }
     } catch (err) {
       console.error(err);
-      alert("Gagal memproses checkout");
+      toast.error("Gagal memproses checkout");
     }
   };
 
