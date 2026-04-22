@@ -85,6 +85,8 @@ export default function ChartJs({
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
+
     plugins: {
       legend: {
         position: "top" as const,
@@ -111,8 +113,9 @@ export default function ChartJs({
 
   return (
     <div className="bg-white shadow rounded-xl p-6 mb-6">
-      <Bar data={data} options={options} />
-    </div>
+      <div className="h-[400px]">
+        <Bar data={data} options={options} />
+      </div>    </div>
   );
 }
 
