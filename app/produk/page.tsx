@@ -48,7 +48,7 @@ export default async function Produk({ searchParams }: Props) {
       {product.data.length > 0 ? (
         <>
           {/* Produk */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-5 gap-5 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-5 gap-5 mb-10">
             <Card2 product={product.data} />
           </div>
         </>

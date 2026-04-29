@@ -6,6 +6,7 @@ interface productCard {
   slug: string;
   images: { src: string }[];
   basePrice: number;
+  sold?: number;
 }
 
 export default async function CardHomepage({
@@ -17,21 +18,21 @@ export default async function CardHomepage({
 }) {
   return (
     <div className=" flex flex-col gap-2 my-10">
-      <div id="produk-terlaris" className="relative w-fit h-fit pt-4">
-        <div className="text-2xl md:text-3xl px-5">
+      <div id="produk-terlaris" className="relative w-full h-fit pt-4 overflow-hidden">
+        <div className="text-xl md:text-2xl px-5">
           <h1>Produk</h1>
-          <p className="text-7xl md:text-9xl">Terlaris</p>
+          <p className="text-4xl md:text-6xl">Terlaris</p>
         </div>
-        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
           <Card product={bestSeller} />
         </div>
       </div>
-      <div className="relative w-fit h-fit">
-        <div className="text-2xl md:text-3xl px-5">
+      <div className="relative w-full h-fit overflow-hidden">
+        <div className="text-xl md:text-2xl px-5 mt-6">
           <h1>Produk</h1>
-          <p className="text-7xl md:text-9xl">Terbaru</p>
+          <p className="text-4xl md:text-6xl">Terbaru</p>
         </div>
-        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2 no-scrollbar">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
           <Card product={newProducts} />
         </div>
       </div>

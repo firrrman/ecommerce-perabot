@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import GridMotion from "./beranda/GridMotion";
 import Layout from "./component/layout";
-import ScrollVelocity from "./beranda/scroll-velocity";
+import SearchProduk from "./beranda/search-produk";
 import { newProducts, bestSeller } from "./actions/cardProduct";
 import CategoryCard from "./beranda/category-card";
 import CardHomepage from "./beranda/card-hompage";
@@ -10,7 +10,6 @@ import ShoppingMethod from "./beranda/shopping-method";
 export default async function Home() {
   const bestProduct = await bestSeller();
   const newProduct = await newProducts();
-  const velocity = 30;
   const items = [
     "/foto/baskom.png",
     "/foto/nampanabu.png",
@@ -50,11 +49,7 @@ export default async function Home() {
 
       <CardHomepage bestSeller={bestProduct} newProducts={newProduct} />
 
-      <ScrollVelocity
-        texts={["Selamat Berbelanja", "Perabot Berkualitas Harga Terjangkau"]}
-        velocity={velocity}
-        className="custom-scroll-text text-5xl md:text-7xl select-none"
-      />
+      <SearchProduk />
       <CategoryCard />
       <ShoppingMethod />
     </Layout>

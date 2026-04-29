@@ -59,6 +59,7 @@ export async function bestSeller() {
       images: product?.images?.slice(0, 2) ?? [],
       basePrice: product?.basePrice ?? 0,
       weight: product?.weight ?? 0,
+      sold: item._sum.quantity ?? 0,
     };
   });
 }

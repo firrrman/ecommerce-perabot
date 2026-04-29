@@ -67,7 +67,7 @@ export default async function OrderDetailPage({ params }: Props) {
               <h1 className="text-2xl font-bold mb-2">Detail Pesanan</h1>
               <p className="text-blue-100 text-sm">
                 Order ID:{" "}
-                <span className="font-mono font-semibold">{order.id}</span>
+                <span className="font-mono font-semibold">{order.paymentOrderId}</span>
               </p>
             </div>
             <div className="sm:text-right">

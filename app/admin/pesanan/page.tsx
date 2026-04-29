@@ -160,7 +160,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                         Order ID:
                       </span>
                       <span className="text-sm font-bold text-slate-800">
-                        #{order.id}
+                        #{order.paymentOrderId}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-slate-600">
