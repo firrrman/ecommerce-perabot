@@ -300,7 +300,7 @@ export default function FormCheckout() {
                   <div className="flex flex-col gap-3">
                     {/* Free shipping option */}
                     {isFreeShipping && (
-                      <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-[:checked]:border-black has-[:checked]:bg-gray-50">
+                      <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
                         <input
                           type="radio"
                           name="ongkir"
@@ -322,7 +322,7 @@ export default function FormCheckout() {
                     {getOngkir.map((ongkirdata: any, index: number) => (
                       <label
                         key={index}
-                        className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-[:checked]:border-black has-[:checked]:bg-gray-50"
+                        className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50"
                       >
                         <input
                           type="radio"
@@ -364,7 +364,7 @@ export default function FormCheckout() {
                 <div className="flex flex-col gap-3">
                   {/* COD — only available for specific address */}
                   {isFreeShipping && (
-                    <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-[:checked]:border-black has-[:checked]:bg-gray-50">
+                    <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
                       <input
                         type="radio"
                         name="paymentMethod"
@@ -384,7 +384,7 @@ export default function FormCheckout() {
                   )}
 
                   {/* Transfer / E-Wallet */}
-                  <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-[:checked]:border-black has-[:checked]:bg-gray-50">
+                  <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
                     <input
                       type="radio"
                       name="paymentMethod"
