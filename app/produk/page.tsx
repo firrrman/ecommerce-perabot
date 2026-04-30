@@ -31,11 +31,10 @@ export default async function Produk({ searchParams }: Props) {
           <a
             key={category.href}
             href={category.href}
-            className={`whitespace-nowrap pb-2 transition-colors ${
-              category.slug === null
-                ? "border-b-2 border-black font-medium"
-                : "hover:text-gray-600"
-            }`}
+            className={`whitespace-nowrap pb-2 transition-colors ${category.slug === null
+              ? "border-b-2 border-black font-medium"
+              : "hover:text-gray-600"
+              }`}
           >
             {category.name}
           </a>
