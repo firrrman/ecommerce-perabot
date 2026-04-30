@@ -11,10 +11,10 @@ interface productCard {
 
 export default async function CardHomepage({
   bestSeller,
-  newProducts,
+  featuredProducts,
 }: {
   bestSeller: productCard[];
-  newProducts: productCard[];
+  featuredProducts: productCard[];
 }) {
   return (
     <div className=" flex flex-col gap-2 my-10">
@@ -23,17 +23,17 @@ export default async function CardHomepage({
           <h1>Produk</h1>
           <p className="text-4xl md:text-6xl">Terlaris</p>
         </div>
-        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
           <Card product={bestSeller} />
         </div>
       </div>
       <div className="relative w-full h-fit overflow-hidden">
         <div className="text-xl md:text-2xl px-5 mt-6">
           <h1>Produk</h1>
-          <p className="text-4xl md:text-6xl">Terbaru</p>
+          <p className="text-4xl md:text-6xl">Unggulan</p>
         </div>
-        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
-          <Card product={newProducts} />
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
+          <Card product={featuredProducts} />
         </div>
       </div>
       <div className="flex justify-center mt-8 mb-4 w-full">

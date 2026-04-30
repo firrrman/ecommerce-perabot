@@ -115,6 +115,21 @@ export default async function FormProduct() {
           </div>
         </div>
 
+        {/* Produk Unggulan */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="is_featured"
+              value="true"
+              className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+            />
+            <span className="text-sm font-medium text-gray-700">
+              Jadikan Produk Unggulan
+            </span>
+          </label>
+        </div>
+
         {/* Deskripsi */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

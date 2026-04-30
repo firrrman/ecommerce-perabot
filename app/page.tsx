@@ -2,14 +2,14 @@ export const dynamic = "force-dynamic";
 import GridMotion from "./beranda/GridMotion";
 import Layout from "./component/layout";
 import SearchProduk from "./beranda/search-produk";
-import { newProducts, bestSeller } from "./actions/cardProduct";
+import { featuredProducts, bestSeller } from "./actions/cardProduct";
 import CategoryCard from "./beranda/category-card";
 import CardHomepage from "./beranda/card-hompage";
 import ShoppingMethod from "./beranda/shopping-method";
 
 export default async function Home() {
   const bestProduct = await bestSeller();
-  const newProduct = await newProducts();
+  const featuredProduct = await featuredProducts();
   const items = [
     "/foto/baskom.png",
     "/foto/nampanabu.png",
@@ -47,7 +47,7 @@ export default async function Home() {
     <Layout>
       <GridMotion items={items} />
 
-      <CardHomepage bestSeller={bestProduct} newProducts={newProduct} />
+      <CardHomepage bestSeller={bestProduct} featuredProducts={featuredProduct} />
 
       <SearchProduk />
       <CategoryCard />

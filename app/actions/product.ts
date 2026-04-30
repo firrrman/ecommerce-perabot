@@ -86,6 +86,7 @@ export async function createProduct(formData: FormData) {
   const basePrice = Number(formData.get("basePrice"));
   const costPrice = Number(formData.get("costPrice")) || 0;
   const weight = Number(formData.get("weight"));
+  const is_featured = formData.get("is_featured") === "true";
 
   const sizeData = selectedSizeIds.map((sizeId) => {
     const price = Number(formData.get(`price-${sizeId}`));
@@ -171,6 +172,7 @@ export async function createProduct(formData: FormData) {
       basePrice,
       costPrice,
       weight,
+      is_featured,
     },
   });
 
@@ -192,6 +194,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   const basePrice = Number(formData.get("basePrice"));
   const costPrice = Number(formData.get("costPrice")) || 0;
   const weight = Number(formData.get("weight"));
+  const is_featured = formData.get("is_featured") === "true";
   if (!name || !slug) {
     throw new Error("Nama dan slug wajib diisi");
   }
@@ -279,6 +282,7 @@ export async function updateProduct(productId: string, formData: FormData) {
       basePrice,
       costPrice,
       weight,
+      is_featured,
       categoryId: categoryId || null,
 
       colors: {

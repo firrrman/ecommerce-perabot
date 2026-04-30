@@ -64,10 +64,13 @@ export async function bestSeller() {
   });
 }
 
-export async function newProducts() {
+export async function featuredProducts() {
   return await prisma.product.findMany({
+    where: {
+      is_featured: true,
+    },
     orderBy: {
-      createdAt: "desc",
+      updatedAt: "desc",
     },
     take: 10,
     include: {

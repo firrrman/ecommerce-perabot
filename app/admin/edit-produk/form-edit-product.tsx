@@ -126,6 +126,22 @@ export default function EditProductForm({
               </div>
             </div>
 
+            {/* Produk Unggulan */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="is_featured"
+                  value="true"
+                  defaultChecked={product.is_featured}
+                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Jadikan Produk Unggulan
+                </span>
+              </label>
+            </div>
+
             {/* Deskripsi */}
             <div className="border-b border-gray-200 pb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">

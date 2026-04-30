@@ -26,6 +26,7 @@ model Product {
   slug        String         @unique
   basePrice    Int           @default(0)
   costPrice    Int           @default(0)
+  is_featured  Boolean       @default(false)
   description String?
   details     String?
   highlights  String[]
