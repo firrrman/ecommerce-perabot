@@ -45,6 +45,7 @@ export async function bestSeller() {
       slug: true,
       basePrice: true,
       weight: true,
+      stock: true,
     },
   });
 
@@ -59,6 +60,7 @@ export async function bestSeller() {
       images: product?.images?.slice(0, 2) ?? [],
       basePrice: product?.basePrice ?? 0,
       weight: product?.weight ?? 0,
+      stock: product?.stock ?? 0,
       sold: item._sum.quantity ?? 0,
     };
   });

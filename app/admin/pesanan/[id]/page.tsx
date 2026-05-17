@@ -168,7 +168,7 @@ export default async function OrderDetailPage({ params }: Props) {
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
                         <p className="font-semibold text-gray-800 mb-2">
-                          {item.product.name}
+                          {item.product?.name || "Produk Dihapus"}
                         </p>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <span className="bg-gray-100 px-3 py-1 rounded-full">

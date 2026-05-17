@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { adjustOrderStock } from "@/lib/stock";
 
 export async function Order(
   page: number = 1,
@@ -137,6 +138,14 @@ export async function updateOrderStatus(formData: FormData) {
 
   if (!orderId || !newStatus) return;
 
+  const order = await prisma.order.findUnique({
+    where: { id: orderId }
+  });
+
+  if (!order) return;
+
+  const oldStatus = order.status;
+
   const data: any = {
     status: newStatus,
   };
@@ -150,6 +159,16 @@ export async function updateOrderStatus(formData: FormData) {
     where: { id: orderId },
     data,
   });
+
+  // STOCK ADJUSTMENT LOGIC
+  const deductedStatuses = ["PENDING", "PAID", "SHIPPED", "FINISHED"];
+  const nonDeductedStatuses = ["CANCELLED"];
+
+  if (nonDeductedStatuses.includes(oldStatus) && deductedStatuses.includes(newStatus)) {
+    await adjustOrderStock(orderId, "DEDUCT");
+  } else if (deductedStatuses.includes(oldStatus) && nonDeductedStatuses.includes(newStatus)) {
+    await adjustOrderStock(orderId, "RESTORE");
+  }
 
   revalidatePath("/admin/pesanan");
   redirect("/admin/pesanan");

@@ -82,6 +82,19 @@ export default function EditProductForm({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Stok <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="stock"
+                    defaultValue={product.stock ?? 0}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Harga Modal / Cost Price <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -230,23 +243,32 @@ export default function EditProductForm({
                   {colors.map((color: any) => (
                     <label
                       key={color.id}
-                      className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer hover:border-pink-300 transition-colors"
+                      className="flex flex-col gap-2 bg-white p-3 rounded-lg border border-gray-200"
                     >
+                      <div className="flex items-center gap-2 cursor-pointer hover:border-pink-300 transition-colors">
+                        <input
+                          type="checkbox"
+                          name="colors"
+                          value={color.id}
+                          defaultChecked={(product.colors ?? []).some(
+                            (c: any) => c.colorId === color.id,
+                          )}
+                          className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
+                        />
+                        <span className="text-sm font-medium text-gray-700">
+                          {color.name}
+                        </span>
+                        <div
+                          className="w-6 h-6 rounded border-2 border-gray-300"
+                          style={{ backgroundColor: color.hex }}
+                        />
+                      </div>
                       <input
-                        type="checkbox"
-                        name="colors"
-                        value={color.id}
-                        defaultChecked={(product.colors ?? []).some(
-                          (c: any) => c.colorId === color.id,
-                        )}
-                        className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        {color.name}
-                      </span>
-                      <div
-                        className="w-6 h-6 rounded border-2 border-gray-300"
-                        style={{ backgroundColor: color.hex }}
+                        type="number"
+                        name={`stockColor-${color.id}`}
+                        defaultValue={(product.colors ?? []).find((c: any) => c.colorId === color.id)?.stock ?? ""}
+                        placeholder="Stok"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                       />
                     </label>
                   ))}
@@ -316,6 +338,13 @@ export default function EditProductForm({
                             defaultValue={existing?.weight ?? ""}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Berat Produk"
+                          />
+                          <input
+                            type="number"
+                            name={`stockSize-${size.id}`}
+                            defaultValue={existing?.stock ?? ""}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Stok"
                           />
                         </div>
                       </div>

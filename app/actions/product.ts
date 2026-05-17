@@ -86,12 +86,14 @@ export async function createProduct(formData: FormData) {
   const basePrice = Number(formData.get("basePrice"));
   const costPrice = Number(formData.get("costPrice")) || 0;
   const weight = Number(formData.get("weight"));
+  let stock = Number(formData.get("stock")) || 0;
   const is_featured = formData.get("is_featured") === "true";
 
   const sizeData = selectedSizeIds.map((sizeId) => {
     const price = Number(formData.get(`price-${sizeId}`));
     const costPrice = Number(formData.get(`costPrice-${sizeId}`)) || 0;
     const weight = Number(formData.get(`weight-${sizeId}`)) || 0;
+    const stockSize = Number(formData.get(`stockSize-${sizeId}`)) || 0;
 
     if (images.length === 0) {
       throw new Error("Minimal 1 gambar harus diupload");
@@ -106,6 +108,7 @@ export async function createProduct(formData: FormData) {
       price,
       costPrice,
       weight,
+      stock: stockSize,
     };
   });
 
@@ -118,6 +121,12 @@ export async function createProduct(formData: FormData) {
 
   if (!name || !slug || !images) {
     throw new Error("Data belum lengkap");
+  }
+
+  if (sizeData.length > 0 || selectedColorIds.length > 0) {
+    const sizeStock = sizeData.reduce((sum, size) => sum + size.stock, 0);
+    const colorStock = selectedColorIds.reduce((sum, colorId) => sum + (Number(formData.get(`stockColor-${colorId}`)) || 0), 0);
+    stock = sizeStock + colorStock;
   }
 
   /* =====================
@@ -160,11 +169,15 @@ export async function createProduct(formData: FormData) {
       details,
       highlights,
       categoryId: categoryId || null,
+      stock,
       images: {
         create: uploadedImages, // array { src, alt }
       },
       colors: {
-        create: selectedColorIds.map((colorId) => ({ colorId })),
+        create: selectedColorIds.map((colorId) => ({
+          colorId,
+          stock: Number(formData.get(`stockColor-${colorId}`)) || 0
+        })),
       },
       sizes: {
         create: sizeData, // ⬅ harga per size
@@ -194,6 +207,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   const basePrice = Number(formData.get("basePrice"));
   const costPrice = Number(formData.get("costPrice")) || 0;
   const weight = Number(formData.get("weight"));
+  let stock = Number(formData.get("stock")) || 0;
   const is_featured = formData.get("is_featured") === "true";
   if (!name || !slug) {
     throw new Error("Nama dan slug wajib diisi");
@@ -220,6 +234,7 @@ export async function updateProduct(productId: string, formData: FormData) {
     const price = Number(priceRaw);
     const costPrice = Number(formData.get(`costPrice-${sizeId}`)) || 0;
     const weight = Number(formData.get(`weight-${sizeId}`)) || 0;
+    const stockSize = Number(formData.get(`stockSize-${sizeId}`)) || 0;
 
     if (!priceRaw || isNaN(price)) {
       throw new Error("Harga ukuran tidak valid");
@@ -229,7 +244,8 @@ export async function updateProduct(productId: string, formData: FormData) {
       sizeId,
       price,
       costPrice,
-      weight
+      weight,
+      stock: stockSize
     };
   });
 
@@ -271,6 +287,12 @@ export async function updateProduct(productId: string, formData: FormData) {
     }
   }
 
+  if (sizeData.length > 0 || selectedColorIds.length > 0) {
+    const sizeStock = sizeData.reduce((sum, size) => sum + size.stock, 0);
+    const colorStock = selectedColorIds.reduce((sum, colorId) => sum + (Number(formData.get(`stockColor-${colorId}`)) || 0), 0);
+    stock = sizeStock + colorStock;
+  }
+
   await prisma.product.update({
     where: { id: productId },
     data: {
@@ -283,11 +305,15 @@ export async function updateProduct(productId: string, formData: FormData) {
       costPrice,
       weight,
       is_featured,
+      stock,
       categoryId: categoryId || null,
 
       colors: {
         deleteMany: { productId },
-        create: selectedColorIds.map((colorId) => ({ colorId })),
+        create: selectedColorIds.map((colorId) => ({
+          colorId,
+          stock: Number(formData.get(`stockColor-${colorId}`)) || 0
+        })),
       },
 
       sizes: {

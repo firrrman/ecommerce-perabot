@@ -15,13 +15,16 @@ interface ProductDetailProps {
     weight: number;
     highlights: string[];
     details: string | null;
+    stock: number;
     images: { src: string }[];
     colors: {
       id: string;
+      stock: number;
       color: { id: string; name: string; hex: string };
     }[];
     sizes: {
       id: string;
+      stock: number;
       size: { id: string; name: string };
       price: number;
       weight: number;
@@ -38,6 +41,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [selectedPrice, setSelectedPrice] = useState<number>(product.basePrice);
   const [selectedWeight, setSelectedWeight] = useState<number>(product.weight);
   const [selectedCostPrice, setSelectedCostPrice] = useState<number>(product.costPrice);
+  const [selectedStock, setSelectedStock] = useState<number>(product.stock);
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedColorName, setSelectedColorName] = useState<string | null>(null);
@@ -46,13 +50,36 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"deskripsi" | "spesifikasi" | "detail">("deskripsi");
 
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart();
   const router = useRouter();
 
-  const increase = () => setQuantity((prev) => prev + 1);
+  const increase = () => {
+    if (quantity < selectedStock) {
+      setQuantity((prev) => prev + 1);
+    } else {
+      toast.error(`Stok maksimal hanya ${selectedStock}`);
+    }
+  };
   const decrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = () => {
+    const existingCartItem = cart.find(
+      (item) => item.productId === product.id && (item.colorId || null) === selectedColor && (item.sizeId || null) === selectedSize
+    );
+    const existingQuantity = existingCartItem ? existingCartItem.quantity : 0;
+
+    if (selectedStock === 0) {
+      toast.error("Stok produk habis");
+      return;
+    }
+    if (quantity + existingQuantity > selectedStock) {
+      if (existingQuantity > 0) {
+        toast.error(`Jumlah melebihi stok. Anda sudah memiliki ${existingQuantity} item ini di keranjang.`);
+      } else {
+        toast.error("Jumlah melebihi stok");
+      }
+      return;
+    }
     if (product.colors.length > 0 && !selectedColor) {
       toast.error("Pilih warna terlebih dahulu");
       return;
@@ -154,6 +181,9 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
               <p className="mt-3 text-2xl font-bold text-black">
                 Rp {selectedPrice.toLocaleString("id-ID")}
               </p>
+              <p className="mt-2 text-sm text-gray-500 font-medium">
+                Sisa Stok: {selectedStock}
+              </p>
             </div>
 
             {/* Divider */}
@@ -175,8 +205,9 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                       onClick={() => {
                         setSelectedColor(color.color.id);
                         setSelectedColorName(color.color.name);
+                        setSelectedStock(color.stock);
                       }}
-                      title={color.color.name}
+                      title={`${color.color.name} (Stok: ${color.stock})`}
                       className={classNames(
                         "w-9 h-9 rounded-full border-2 transition-all duration-200 hover:scale-110",
                         selectedColor === color.color.id
@@ -204,7 +235,9 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                         setSelectedPrice(size.price);
                         setSelectedWeight(size.weight);
                         setSelectedCostPrice(size.costPrice);
+                        setSelectedStock(size.stock);
                       }}
+                      title={`Stok: ${size.stock}`}
                       className={classNames(
                         "px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200",
                         selectedSize === size.size.id

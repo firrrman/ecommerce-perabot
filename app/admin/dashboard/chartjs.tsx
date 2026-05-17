@@ -94,7 +94,7 @@ export default function ChartJs({
         <select
           value={year || ""}
           onChange={handleChange}
-          className="border rounded px-3 py-2 text-xs"
+          className="border rounded px-3 py-2 text-xs cursor-pointer"
         >
           <option value={currentYear}>{currentYear}</option>
           <option value={currentYear - 1}>{currentYear - 1}</option>

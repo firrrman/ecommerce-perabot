@@ -72,6 +72,20 @@ export default async function FormProduct() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
+              Stok <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="stock"
+              type="number"
+              placeholder="100"
+              defaultValue="0"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Harga Modal / Cost Price <span className="text-red-500">*</span>
             </label>
             <input
@@ -208,7 +222,13 @@ export default async function FormProduct() {
                   <input
                     type="number"
                     name={`weight-${size.id}`}
-                    placeholder="Berat Produk"
+                    placeholder="Berat"
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="number"
+                    name={`stockSize-${size.id}`}
+                    placeholder="Stok"
                     className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
@@ -226,20 +246,28 @@ export default async function FormProduct() {
             {colors.map((color) => (
               <label
                 key={color.id}
-                className="flex items-center gap-2 bg-white px-3 py-2 rounded border border-gray-200 cursor-pointer hover:border-orange-300 transition-colors"
+                className="flex flex-col gap-2 bg-white p-3 rounded border border-gray-200"
               >
+                <div className="flex items-center gap-2 cursor-pointer hover:border-orange-300 transition-colors">
+                  <input
+                    type="checkbox"
+                    name="colors"
+                    value={color.id}
+                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    {color.name}
+                  </span>
+                  <div
+                    className="w-6 h-6 rounded border-2 border-gray-300"
+                    style={{ backgroundColor: color.hex }}
+                  />
+                </div>
                 <input
-                  type="checkbox"
-                  name="colors"
-                  value={color.id}
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  {color.name}
-                </span>
-                <div
-                  className="w-6 h-6 rounded border-2 border-gray-300"
-                  style={{ backgroundColor: color.hex }}
+                  type="number"
+                  name={`stockColor-${color.id}`}
+                  placeholder="Stok"
+                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </label>
             ))}

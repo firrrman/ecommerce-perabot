@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { adjustOrderStock } from "@/lib/stock";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -15,6 +16,19 @@ export async function POST(req: Request) {
   if (signature !== body.signature_key) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
+
+  const order = await prisma.order.findUnique({
+    where: { paymentOrderId: body.order_id },
+  });
+
+  if (!order) {
+    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  }
+
+  const oldStatus = order.status;
+  const deductedStatuses = ["PAID", "SHIPPED", "FINISHED"];
+  const nonDeductedStatuses = ["PENDING", "CANCELLED"];
+
   // jika pembayaran berhasil
   if (
     body.transaction_status === "settlement" ||
@@ -30,6 +44,10 @@ export async function POST(req: Request) {
         paidAt: new Date(),
       },
     });
+
+    if (nonDeductedStatuses.includes(oldStatus)) {
+      await adjustOrderStock(order.id, "DEDUCT");
+    }
   }
 
   // jika pembayaran dibatalkan / expired
@@ -45,6 +63,10 @@ export async function POST(req: Request) {
         status: "CANCELLED",
       },
     });
+
+    if (deductedStatuses.includes(oldStatus)) {
+      await adjustOrderStock(order.id, "RESTORE");
+    }
   }
 
   return NextResponse.json({ message: "OK" });

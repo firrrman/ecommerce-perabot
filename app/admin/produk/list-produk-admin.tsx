@@ -7,11 +7,14 @@ import { SearchBarAdmin } from "../../component/search-bar";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/app/component/pagination";
+import ConfirmModal from "@/app/component/confirm-modal";
+import { Loader2 } from "lucide-react";
 
 export interface ProductCardProps {
   id: string;
   name: string;
   slug: string;
+  stock: number;
   images: { src: string; alt: string | null }[];
   basePrice: number;
   category: { name: string } | null;
@@ -42,26 +45,28 @@ export default function ProdukListAdmin({
   produk: any;
 }) {
   const [viewMode, setViewMode] = useState("list");
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(price);
+  const confirmDelete = (id: string) => {
+    setConfirmDeleteId(id);
   };
 
-  async function handleDelete(id: string) {
-    if (!confirm("Yakin hapus produk ini?")) return;
+  const handleConfirmDelete = async () => {
+    const id = confirmDeleteId;
+    if (!id) return;
+
+    setConfirmDeleteId(null);
+    setIsDeletingId(id);
 
     try {
-      await onDelete(id); // ⬅️ PANGGIL DARI SERVER
-      alert("Produk berhasil dihapus");
+      await onDelete(id);
       location.reload();
     } catch {
       alert("Gagal menghapus produk");
+      setIsDeletingId(null);
     }
-  }
+  };
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -78,6 +83,14 @@ export default function ProdukListAdmin({
     }
 
     router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(price);
   };
 
   return (
@@ -135,31 +148,29 @@ export default function ProdukListAdmin({
           <div className="flex gap-1 bg-slate-100 p-1 rounded-lg ml-auto">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded transition-colors ${
-                viewMode === "grid"
-                  ? "bg-white shadow-sm"
-                  : "hover:bg-slate-200"
-              }`}
+              className={`p-1.5 rounded transition-colors ${viewMode === "grid"
+                ? "bg-white shadow-sm"
+                : "hover:bg-slate-200"
+                }`}
             >
               <Grid
                 size={18}
                 className={
-                  viewMode === "grid" ? "text-slate-700" : "text-slate-500"
+                  viewMode === "grid" ? "text-slate-700" : "text-slate-500 cursor-pointer"
                 }
               />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-1.5 rounded transition-colors ${
-                viewMode === "list"
-                  ? "bg-white shadow-sm"
-                  : "hover:bg-slate-200"
-              }`}
+              className={`p-1.5 rounded transition-colors ${viewMode === "list"
+                ? "bg-white shadow-sm"
+                : "hover:bg-slate-200"
+                }`}
             >
               <List
                 size={18}
                 className={
-                  viewMode === "list" ? "text-slate-700" : "text-slate-500"
+                  viewMode === "list" ? "text-slate-700" : "text-slate-500 cursor-pointer"
                 }
               />
             </button>
@@ -199,9 +210,14 @@ export default function ProdukListAdmin({
                   <p className="text-lg font-bold text-slate-800">
                     {formatPrice(product.basePrice)}
                   </p>
-                  <span className="text-sm text-slate-500">
-                    Terjual: {product.sold}
-                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm text-slate-500">
+                      Stok: {product.stock}
+                    </span>
+                    <span className="text-sm text-slate-500">
+                      Terjual: {product.sold}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Link
@@ -212,10 +228,11 @@ export default function ProdukListAdmin({
                     Edit
                   </Link>
                   <button
-                    onClick={() => handleDelete(product.id)}
-                    className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors"
+                    onClick={() => confirmDelete(product.id)}
+                    disabled={isDeletingId === product.id}
+                    className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors disabled:opacity-50"
                   >
-                    <Trash2 size={14} />
+                    {isDeletingId === product.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>
               </div>
@@ -239,6 +256,9 @@ export default function ProdukListAdmin({
                   </th>
                   <th className="text-left p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Harga Dasar
+                  </th>
+                  <th className="text-left p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Stok
                   </th>
                   <th className="text-left p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Terjual
@@ -285,6 +305,7 @@ export default function ProdukListAdmin({
                         {formatPrice(product.basePrice)}
                       </span>
                     </td>
+                    <td className="p-4">{product.stock}</td>
                     <td className="p-4">{product.sold}</td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
@@ -295,11 +316,12 @@ export default function ProdukListAdmin({
                           <Edit size={16} />
                         </Link>
                         <button
-                          className="p-2 hover:bg-red-50 rounded-lg cursor-pointer transition-colors text-red-600"
+                          className="p-2 hover:bg-red-50 rounded-lg cursor-pointer transition-colors text-red-600 disabled:opacity-50"
                           title="Hapus"
-                          onClick={() => handleDelete(product.id)}
+                          disabled={isDeletingId === product.id}
+                          onClick={() => confirmDelete(product.id)}
                         >
-                          <Trash2 size={16} />
+                          {isDeletingId === product.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                         </button>
                       </div>
                     </td>
@@ -315,6 +337,14 @@ export default function ProdukListAdmin({
         page={page}
         search={search}
         category={category}
+      />
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk ini? Aksi ini tidak dapat dibatalkan."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDeleteId(null)}
       />
     </div>
   );

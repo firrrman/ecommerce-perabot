@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import LayoutAdmin from "@/app/component/layout-admin";
 import { Order, updateOrderStatus } from "@/app/actions/pesanan";
+import StatusForm from "./status-form";
 import {
   Package,
   Calendar,
@@ -77,7 +78,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
               <select
                 name="status"
                 defaultValue={status || ""}
-                className="px-4 py-2 border border-slate-300 rounded-lg text-sm"
+                className="px-4 py-2 border border-slate-300 rounded-lg text-sm cursor-pointer"
               >
                 <option value="">Semua Status</option>
                 <option value="PENDING">Pending</option>
@@ -92,7 +93,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                 type="date"
                 name="date"
                 defaultValue={date || ""}
-                className="px-4 py-2 border border-slate-300 rounded-lg text-sm"
+                className="px-4 py-2 border border-slate-300 rounded-lg text-sm cursor-pointer"
               />
               <input type="hidden" name="search" value={search || ""} />
               <input type="hidden" name="page" value={page || ""} />
@@ -100,7 +101,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
               {/* BUTTON */}
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                className="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
               >
                 Terapkan
               </button>
@@ -171,26 +172,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <form action={updateOrderStatus}>
-                      <input type="hidden" name="orderId" value={order.id} />
-                      <select
-                        name="status"
-                        defaultValue={order.status}
-                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="PENDING">Pending</option>
-                        <option value="PAID">Dibayar</option>
-                        <option value="SHIPPED">Dikirim</option>
-                        <option value="FINISHED">Selesai</option>
-                        <option value="CANCELLED">Dibatalkan</option>
-                      </select>
-                      <button
-                        type="submit"
-                        className="bg-blue-600 text-white p-2 rounded-lg ml-3 hover:bg-blue-700 text-sm cursor-pointer"
-                      >
-                        Ubah Status
-                      </button>
-                    </form>
+                    <StatusForm order={order} />
                     {order.status === "SHIPPED" && (
                       <a
                         href={`/api/shipping-label/${order.id}`}

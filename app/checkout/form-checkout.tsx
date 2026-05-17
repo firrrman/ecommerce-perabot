@@ -20,14 +20,21 @@ export default function FormCheckout() {
   const [shippingCost, setShippingCost] = useState(0);
   const [getOngkir, setGetOngkir] = useState<any[]>([]);
   const [selectedOngkir, setSelectedOngkir] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("midtrans");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">(
+    "midtrans",
+  );
   const [isLoading, setIsLoading] = useState(false);
+
+  console.log("destinations", destinations);
 
   const fullAlamat = `${detailAlamat}, ${alamat}`;
   const filteredDestination = destinations.filter((item) =>
-    item.label.toLowerCase().includes(search.toLowerCase())
+    item.label.toLowerCase().includes(search.toLowerCase()),
   );
-  const totalWeight = cart.reduce((sum, item) => sum + item.weight * item.quantity, 0);
+  const totalWeight = cart.reduce(
+    (sum, item) => sum + item.weight * item.quantity,
+    0,
+  );
   const subtotal = cart.reduce((t, i) => t + i.price * i.quantity, 0);
   const total = subtotal + shippingCost;
   const totalCost = cart.reduce((t, i) => t + i.costPrice * i.quantity, 0);
@@ -118,12 +125,26 @@ export default function FormCheckout() {
       <div className="min-h-screen bg-white pt-28 pb-24 flex items-center justify-center">
         <div className="text-center">
           <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
-              <circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-gray-300"
+            >
+              <circle cx="8" cy="21" r="1" />
+              <circle cx="19" cy="21" r="1" />
               <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-black">Keranjang kamu kosong</h2>
+          <h2 className="text-xl font-bold text-black">
+            Keranjang kamu kosong
+          </h2>
           <p className="text-sm text-gray-400 mt-2 max-w-xs mx-auto">
             Silakan pilih produk terlebih dahulu sebelum melakukan checkout.
           </p>
@@ -142,29 +163,34 @@ export default function FormCheckout() {
   return (
     <div className="min-h-screen bg-white pt-28 pb-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* Page Header */}
         <div className="my-5">
-          <h1 className="text-3xl sm:text-4xl font-bold text-black tracking-tight">Checkout</h1>
-          <p className="text-base text-gray-400 mt-2">Lengkapi informasi pengiriman dan pembayaran</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-black tracking-tight">
+            Checkout
+          </h1>
+          <p className="text-base text-gray-400 mt-2">
+            Lengkapi informasi pengiriman dan pembayaran
+          </p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-
             {/* ── LEFT: Form ── */}
             <div className="lg:col-span-2 flex flex-col gap-8">
-
               {/* Section: Kontak */}
               <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
                 <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">1</span>
+                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
+                    1
+                  </span>
                   Informasi Kontak
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Nama Lengkap
+                    </label>
                     <input
                       name="customerName"
                       placeholder="Masukkan nama lengkap"
@@ -173,7 +199,9 @@ export default function FormCheckout() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Email
+                    </label>
                     <input
                       name="gmail"
                       type="email"
@@ -183,7 +211,9 @@ export default function FormCheckout() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">No. Telepon</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      No. Telepon
+                    </label>
                     <input
                       name="phone"
                       placeholder="08xxxxxxxxxx"
@@ -197,14 +227,18 @@ export default function FormCheckout() {
               {/* Section: Alamat */}
               <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
                 <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">2</span>
+                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
+                    2
+                  </span>
                   Alamat Pengiriman
                 </h2>
 
                 <div className="flex flex-col gap-5">
                   {/* Search Kecamatan */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Cari Kecamatan / Desa</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Cari Kecamatan / Desa
+                    </label>
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -212,7 +246,10 @@ export default function FormCheckout() {
                         className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearchAddress())}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), handleSearchAddress())
+                        }
                       />
                       <button
                         type="button"
@@ -251,7 +288,9 @@ export default function FormCheckout() {
 
                   {/* Detail Alamat */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Detail Alamat</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Detail Alamat
+                    </label>
                     <textarea
                       name="address"
                       placeholder="Jalan, RT/RW, No. Rumah, Patokan"
@@ -266,10 +305,14 @@ export default function FormCheckout() {
                   {/* Preview Alamat */}
                   {(detailAlamat || alamat) && (
                     <div className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-4">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Preview Alamat</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        Preview Alamat
+                      </p>
                       <p className="text-sm text-gray-700 leading-relaxed">
                         {detailAlamat && <span>{detailAlamat}, </span>}
-                        {alamat && <span className="font-medium">{alamat}</span>}
+                        {alamat && (
+                          <span className="font-medium">{alamat}</span>
+                        )}
                       </p>
                     </div>
                   )}
@@ -277,7 +320,10 @@ export default function FormCheckout() {
                   {/* Catatan */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Catatan Tambahan <span className="font-normal text-gray-400">(opsional)</span>
+                      Catatan Tambahan{" "}
+                      <span className="font-normal text-gray-400">
+                        (opsional)
+                      </span>
                     </label>
                     <textarea
                       name="note"
@@ -293,7 +339,9 @@ export default function FormCheckout() {
               {alamat && (
                 <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
                   <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">3</span>
+                    <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
+                      3
+                    </span>
                     Metode Pengiriman
                   </h2>
 
@@ -307,14 +355,23 @@ export default function FormCheckout() {
                           value={0}
                           checked={selectedOngkir === 0}
                           required
-                          onChange={() => { setSelectedOngkir(0); setShippingCost(0); }}
+                          onChange={() => {
+                            setSelectedOngkir(0);
+                            setShippingCost(0);
+                          }}
                           className="accent-black w-4 h-4"
                         />
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-black">Gratis Ongkir</p>
-                          <p className="text-xs text-gray-400 mt-0.5">Pengiriman gratis untuk wilayah ini</p>
+                          <p className="text-sm font-semibold text-black">
+                            Gratis Ongkir
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            Pengiriman gratis untuk wilayah ini
+                          </p>
                         </div>
-                        <span className="text-sm font-bold text-green-600">Gratis</span>
+                        <span className="text-sm font-bold text-green-600">
+                          Gratis
+                        </span>
                       </label>
                     )}
 
@@ -330,14 +387,19 @@ export default function FormCheckout() {
                           value={ongkirdata.cost}
                           checked={selectedOngkir === ongkirdata.cost}
                           required
-                          onChange={() => { setSelectedOngkir(ongkirdata.cost); setShippingCost(ongkirdata.cost); }}
+                          onChange={() => {
+                            setSelectedOngkir(ongkirdata.cost);
+                            setShippingCost(ongkirdata.cost);
+                          }}
                           className="accent-black w-4 h-4"
                         />
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-black">
                             {ongkirdata.name} — {ongkirdata.service}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">{ongkirdata.description}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {ongkirdata.description}
+                          </p>
                         </div>
                         <span className="text-sm font-bold text-black">
                           Rp {ongkirdata.cost.toLocaleString("id-ID")}
@@ -347,7 +409,8 @@ export default function FormCheckout() {
 
                     {!isFreeShipping && getOngkir.length === 0 && (
                       <div className="text-sm text-gray-400 bg-gray-50 rounded-xl p-4 text-center">
-                        Pilih alamat terlebih dahulu untuk melihat opsi pengiriman
+                        Pilih alamat terlebih dahulu untuk melihat opsi
+                        pengiriman
                       </div>
                     )}
                   </div>
@@ -357,7 +420,9 @@ export default function FormCheckout() {
               {/* Section: Pembayaran */}
               <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
                 <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">{alamat ? "4" : "3"}</span>
+                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
+                    {alamat ? "4" : "3"}
+                  </span>
                   Metode Pembayaran
                 </h2>
 
@@ -374,10 +439,25 @@ export default function FormCheckout() {
                         className="accent-black w-4 h-4"
                       />
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-black">Bayar di Tempat (COD)</p>
-                        <p className="text-xs text-gray-400 mt-0.5">Bayar langsung saat barang tiba</p>
+                        <p className="text-sm font-semibold text-black">
+                          Bayar di Tempat (COD)
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          Bayar langsung saat barang tiba
+                        </p>
                       </div>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-gray-400"
+                      >
                         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                       </svg>
                     </label>
@@ -394,11 +474,27 @@ export default function FormCheckout() {
                       className="accent-black w-4 h-4"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-black">Transfer / E-Wallet</p>
-                      <p className="text-xs text-gray-400 mt-0.5">QRIS, GoPay, OVO, Dana, Transfer Bank, dll.</p>
+                      <p className="text-sm font-semibold text-black">
+                        Transfer / E-Wallet
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        QRIS, GoPay, OVO, Dana, Transfer Bank, dll.
+                      </p>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                      <rect width="20" height="14" x="2" y="5" rx="2" /><path d="M2 10h20" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-gray-400"
+                    >
+                      <rect width="20" height="14" x="2" y="5" rx="2" />
+                      <path d="M2 10h20" />
                     </svg>
                   </label>
                 </div>
@@ -419,7 +515,9 @@ export default function FormCheckout() {
             {/* ── RIGHT: Order Summary ── */}
             <div className="lg:col-span-1">
               <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 sticky top-28 shadow-sm">
-                <h2 className="text-xl font-bold text-black mb-6">Ringkasan Pesanan</h2>
+                <h2 className="text-xl font-bold text-black mb-6">
+                  Ringkasan Pesanan
+                </h2>
 
                 {/* Items */}
                 <div className="flex flex-col gap-4 mb-6">
@@ -434,18 +532,24 @@ export default function FormCheckout() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-black line-clamp-2 leading-snug">{item.name}</p>
+                        <p className="text-sm font-medium text-black line-clamp-2 leading-snug">
+                          {item.name}
+                        </p>
                         {(item.sizeName || item.colorName) && (
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {[item.sizeName, item.colorName].filter(Boolean).join(" · ")}
+                            {[item.sizeName, item.colorName]
+                              .filter(Boolean)
+                              .join(" · ")}
                           </p>
                         )}
                         <p className="text-xs text-gray-500 mt-1">
-                          {item.quantity} × Rp {item.price.toLocaleString("id-ID")}
+                          {item.quantity} × Rp{" "}
+                          {item.price.toLocaleString("id-ID")}
                         </p>
                       </div>
                       <p className="text-sm font-semibold text-black shrink-0">
-                        Rp {(item.price * item.quantity).toLocaleString("id-ID")}
+                        Rp{" "}
+                        {(item.price * item.quantity).toLocaleString("id-ID")}
                       </p>
                     </div>
                   ))}
@@ -458,7 +562,9 @@ export default function FormCheckout() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
-                    <span className="font-medium text-black">Rp {subtotal.toLocaleString("id-ID")}</span>
+                    <span className="font-medium text-black">
+                      Rp {subtotal.toLocaleString("id-ID")}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Ongkos Kirim</span>
@@ -466,7 +572,9 @@ export default function FormCheckout() {
                       {shippingCost === 0 && !isFreeShipping ? (
                         <span className="text-gray-400">Belum dipilih</span>
                       ) : shippingCost === 0 ? (
-                        <span className="text-green-600 font-semibold">Gratis</span>
+                        <span className="text-green-600 font-semibold">
+                          Gratis
+                        </span>
                       ) : (
                         `Rp ${shippingCost.toLocaleString("id-ID")}`
                       )}
@@ -480,7 +588,9 @@ export default function FormCheckout() {
                 {/* Total */}
                 <div className="flex justify-between items-center mb-8">
                   <span className="text-base font-bold text-black">Total</span>
-                  <span className="text-2xl font-bold text-black">Rp {total.toLocaleString("id-ID")}</span>
+                  <span className="text-2xl font-bold text-black">
+                    Rp {total.toLocaleString("id-ID")}
+                  </span>
                 </div>
 
                 {/* Submit Button */}
@@ -491,7 +601,16 @@ export default function FormCheckout() {
                 >
                   {isLoading ? (
                     <>
-                      <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg
+                        className="animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
                         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                       </svg>
                       Memproses...
@@ -499,19 +618,30 @@ export default function FormCheckout() {
                   ) : (
                     <>
                       Bayar Sekarang
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
                       </svg>
                     </>
                   )}
                 </button>
 
                 <p className="text-xs text-gray-400 text-center mt-4 leading-relaxed">
-                  Dengan menekan tombol ini, kamu menyetujui syarat dan ketentuan kami.
+                  Dengan menekan tombol ini, kamu menyetujui syarat dan
+                  ketentuan kami.
                 </p>
               </div>
             </div>
-
           </div>
         </form>
       </div>
