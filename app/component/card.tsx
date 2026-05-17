@@ -18,7 +18,7 @@ export function Card({ product }: { product: ProductCardProps[] }) {
       className="group relative cursor-pointer snap-start shrink-0 w-[65vw] sm:w-[40vw] md:w-[240px] rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-gray-50">
+      <div className="relative aspect-4/5 w-full overflow-hidden bg-gray-50">
         <img
           src={item.images[0]?.src || "/placeholder.jpg"}
           alt={item.name}
@@ -27,7 +27,7 @@ export function Card({ product }: { product: ProductCardProps[] }) {
         />
         {/* Overlay gradient on hover */}
         {item.stock > 0 && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         )}
 
         {/* Out of Stock Overlay */}
@@ -51,7 +51,7 @@ export function Card({ product }: { product: ProductCardProps[] }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col flex-grow justify-between">
+      <div className="p-4 flex flex-col grow justify-between">
         <div>
           <h3 className="text-base font-medium text-gray-800 line-clamp-2 leading-snug group-hover:text-black transition-colors">
             {item.name}
@@ -83,7 +83,7 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
       className="group relative cursor-pointer snap-start shrink-0 w-full rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-gray-50">
+      <div className="relative aspect-4/5 w-full overflow-hidden bg-gray-50">
         <img
           src={item.images[0]?.src || "/placeholder.jpg"}
           alt={item.name}
@@ -92,7 +92,7 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
         />
         {/* Overlay gradient on hover */}
         {item.stock > 0 && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         )}
 
         {/* Out of Stock Overlay */}
@@ -116,7 +116,7 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col flex-grow justify-between">
+      <div className="p-4 flex flex-col grow justify-between">
         <div>
           <h3 className="text-base font-medium text-gray-800 line-clamp-2 leading-snug group-hover:text-black transition-colors">
             {item.name}
