@@ -117,14 +117,14 @@ model Order {
 model OrderItem {
   id        String  @id @default(uuid())
   orderId   String
-  productId String?
+  productId String
   sizeId    String?
   colorId   String?
   quantity  Int
   price     Int
   costPrice Int         @default(0)
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
   size      Size?   @relation(fields: [sizeId], references: [id])
   color     Color?  @relation(fields: [colorId], references: [id])
 }

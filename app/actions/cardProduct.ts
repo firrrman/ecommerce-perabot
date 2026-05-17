@@ -14,7 +14,6 @@ export async function bestSeller() {
   const bestSeller = await prisma.orderItem.groupBy({
     by: ["productId"],
     where: {
-      productId: { not: null },
       order: {
         status: {
           in: [OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.FINISHED],

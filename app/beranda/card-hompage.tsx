@@ -7,6 +7,7 @@ interface productCard {
   images: { src: string }[];
   basePrice: number;
   sold?: number;
+  stock: number;
 }
 
 export default async function CardHomepage({
