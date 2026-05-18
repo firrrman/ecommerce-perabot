@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import FormLogin from "@/app/admin/login/form-login";
+import FormLogin from "@/app/login/form-login";
 
 export default function LoginPage() {
   return (
@@ -16,13 +16,10 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Admin Portal
+            Log In
           </h1>
-          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-            Masuk untuk mengelola produk dan pesanan
-          </p>
         </div>
-        
+
         <FormLogin />
       </div>
     </section>

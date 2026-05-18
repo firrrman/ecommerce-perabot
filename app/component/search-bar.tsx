@@ -185,7 +185,7 @@ export function SearchBarAdminOrder() {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Cari pelanggan / order..."
+          placeholder="Cari pelanggan"
           className="w-full px-3 py-2 pr-24 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-sm"
         />
 

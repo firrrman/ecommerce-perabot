@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { adminLoginAction } from "../../actions/login";
+import { adminLoginAction } from "../actions/login";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
@@ -26,7 +26,7 @@ export default function FormLogin() {
       }
 
       toast.success("Login berhasil");
-      router.push("/admin/dashboard");
+      router.push(res.redirectTo ?? "/login");
     } catch (error) {
       toast.error("Terjadi kesalahan");
     }
@@ -56,7 +56,7 @@ export default function FormLogin() {
           />
         </div>
       </div>
-      
+
       <div>
         <label
           htmlFor="password"
