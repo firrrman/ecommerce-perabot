@@ -26,7 +26,7 @@ export default async function Produk({ searchParams }: Props) {
   return (
     <Layout>
       {/* Kategori Navigation */}
-      <div className="flex sm:justify-center gap-8 mt-30 mb-10 overflow-x-auto no-scrollbar px-5">
+      <div className="flex sm:justify-center gap-8 mt-30 mb-10 overflow-x-auto no-scrollbar px-5 md:px-10 xl:px-20">
         {CATEGORIES.map((category) => (
           <a
             key={category.href}
@@ -47,13 +47,13 @@ export default async function Produk({ searchParams }: Props) {
       {product.data.length > 0 ? (
         <>
           {/* Produk */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-5 gap-5 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-5 md:px-10 xl:px-20 gap-5 mb-10">
             <Card2 product={product.data} />
           </div>
         </>
       ) : (
         // Tampilan ketika tidak ada produk ditemukan
-        <div className="flex flex-col items-center justify-center py-20 px-5">
+        <div className="flex flex-col items-center justify-center py-20 px-5 md:px-10 xl:px-20">
           <p className="text-gray-400 text-lg mb-2">
             {search ? "Produk tidak ditemukan" : "Tidak ada produk"}
           </p>

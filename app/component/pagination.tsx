@@ -13,7 +13,7 @@ export default function Pagination({
   }${status ? `&status=${status}` : ""}${date ? `&date=${date}` : ""}`;
 
   return (
-    <div className="flex justify-center items-center gap-2 mb-20 px-5 flex-wrap text-sm mt-10">
+    <div className="flex justify-center items-center gap-2 mb-20 px-5 md:px-10 xl:px-20 flex-wrap text-sm mt-10">
       {/* Prev */}
       <a
         href={page > 1 ? `?page=${page - 1}${query}` : "#"}

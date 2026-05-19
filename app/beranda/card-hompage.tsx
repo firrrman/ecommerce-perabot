@@ -18,29 +18,29 @@ export default async function CardHomepage({
   featuredProducts: productCard[];
 }) {
   return (
-    <div className=" flex flex-col gap-2 my-10">
+    <div className=" flex flex-col gap-2 my-10 px-5 md:px-10 xl:px-20">
       <div id="produk-terlaris" className="relative w-full h-fit pt-4 overflow-hidden">
-        <div className="text-xl md:text-2xl px-5">
+        <div className="text-xl md:text-2xl">
           <h1>Produk</h1>
           <p className="text-4xl md:text-6xl">Terlaris</p>
         </div>
-        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-6 no-scrollbar py-6">
           <Card product={bestSeller} />
         </div>
       </div>
       <div className="relative w-full h-fit overflow-hidden">
-        <div className="text-xl md:text-2xl px-5 mt-6">
+        <div className="text-xl md:text-2xl mt-6">
           <h1>Produk</h1>
           <p className="text-4xl md:text-6xl">Unggulan</p>
         </div>
-        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-6 no-scrollbar px-5 py-6">
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-6 no-scrollbar py-6">
           <Card product={featuredProducts} />
         </div>
       </div>
       <div className="flex justify-center mt-8 mb-4 w-full">
         <a
           href="/produk"
-          className="group inline-flex items-center gap-2 px-8 py-4 border-2 border-black rounded-full font-semibold text-black hover:bg-black hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-95"
+          className="group inline-flex items-center gap-2 px-6 text-sm py-4 border-2 border-black rounded-full font-semibold text-black hover:bg-black hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-95"
         >
           Lihat Semua Produk
           <svg

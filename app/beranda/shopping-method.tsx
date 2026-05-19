@@ -35,7 +35,7 @@ const steps = [
 
 export default function ShoppingMethod() {
   return (
-    <section id="shopping-method" className="py-16 px-4 md:px-8 max-w-7xl mx-auto scroll-mt-10">
+    <section id="shopping-method" className="py-16 px-5 md:px-10 xl:px-20 max-w-7xl mx-auto scroll-mt-10">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-5xl font-semibold mb-4">
           Cara Belanja Mudah

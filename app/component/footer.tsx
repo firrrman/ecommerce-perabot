@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="w-full bg-white p-5">
+    <footer className="w-full bg-white p-5 md:px-10 xl:px-20">
       <p className="text-center mt-5">
         Menyediakan perabot rumah berkualitas dengan desain modern dan harga
         terjangkau.

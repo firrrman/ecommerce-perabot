@@ -15,7 +15,7 @@ export function Card({ product }: { product: ProductCardProps[] }) {
     <Link
       href={`/detail-produk/${item.slug}`}
       key={index}
-      className="group relative cursor-pointer snap-start shrink-0 w-[65vw] sm:w-[40vw] md:w-[240px] rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
+      className="group relative cursor-pointer snap-start shrink-0 w-[200px] rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
     >
       {/* Image Container */}
       <div className="relative aspect-4/5 w-full overflow-hidden bg-gray-50">

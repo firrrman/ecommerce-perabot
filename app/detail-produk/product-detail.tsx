@@ -114,7 +114,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
 
   return (
     <div className="min-h-screen bg-white pt-28 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-5 md:px-10 xl:px-20">
 
         {/* Back Button */}
         <button

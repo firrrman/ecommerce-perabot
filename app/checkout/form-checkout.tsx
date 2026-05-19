@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "../context/cart-context";
 import { createOrderFromForm } from "../actions/order";
 import { createPayment } from "../actions/create-payment";
@@ -9,7 +9,10 @@ import { toast } from "react-toastify";
 export default function FormCheckout() {
   const { cart, clearCart } = useCart();
   const [search, setSearch] = useState("");
-  const [destinations, setDestinations] = useState<any[]>([]);
+  const [regions, setRegions] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [alamat, setAlamat] = useState("");
   const [detailAlamat, setDetailAlamat] = useState("");
   const [province, setProvince] = useState("");
@@ -25,12 +28,39 @@ export default function FormCheckout() {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("destinations", destinations);
+  // Realtime search dengan debounce 300ms
+  useEffect(() => {
+    if (search.length < 2) {
+      setRegions([]);
+      setShowDropdown(false);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/regions?q=${encodeURIComponent(search)}`);
+        const data = await res.json();
+        setRegions(data);
+        setShowDropdown(true);
+      } catch {
+        setRegions([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [search]);
 
-  const fullAlamat = `${detailAlamat}, ${alamat}`;
-  const filteredDestination = destinations.filter((item) =>
-    item.label.toLowerCase().includes(search.toLowerCase()),
-  );
+  // Tutup dropdown saat klik di luar
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   const totalWeight = cart.reduce(
     (sum, item) => sum + item.weight * item.quantity,
     0,
@@ -42,20 +72,7 @@ export default function FormCheckout() {
   const isFreeShipping =
     alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630";
 
-  const handleSearchAddress = async () => {
-    if (!search) {
-      toast.info("Masukkan kecamatan atau desa untuk mencari alamat");
-      return;
-    }
-    const res = await fetch("/api/ongkir", {
-      method: "POST",
-      body: JSON.stringify({ search }),
-    });
-    const data = await res.json();
-    setDestinations(data.destination || []);
-  };
-
-  const handleCheckOngkir = async (id: string) => {
+  const handleCheckOngkir = async (id: number | string) => {
     const res = await fetch("/api/ongkir", {
       method: "POST",
       body: JSON.stringify({ idAlamat: id, weight: totalWeight }),
@@ -75,6 +92,16 @@ export default function FormCheckout() {
     try {
       if (cart.length === 0) {
         toast.error("Keranjang kosong");
+        return;
+      }
+
+      if (!alamat) {
+        toast.error("Pilih alamat dengan benar");
+        return;
+      }
+
+      if (!getOngkir && !isFreeShipping) {
+        toast.error("Mohon maaf ongkir belum tersedia, coba lagi besok");
         return;
       }
 
@@ -162,7 +189,7 @@ export default function FormCheckout() {
   /* ─── Main Checkout ─── */
   return (
     <div className="min-h-screen bg-white pt-28 pb-24">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-5 md:px-10 xl:px-20 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="my-5">
           <h1 className="text-3xl sm:text-4xl font-bold text-black tracking-tight">
@@ -234,55 +261,92 @@ export default function FormCheckout() {
                 </h2>
 
                 <div className="flex flex-col gap-5">
-                  {/* Search Kecamatan */}
-                  <div>
+                  {/* Search Kecamatan — Realtime dari database */}
+                  <div ref={searchRef}>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Cari Kecamatan / Desa
                     </label>
-                    <div className="flex gap-2">
+                    <div className="relative">
                       <input
                         type="text"
-                        placeholder="Contoh: Ciaruteun Udik"
-                        className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                        required
+                        placeholder="Ketik nama kecamatan atau desa..."
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), handleSearchAddress())
-                        }
+                        onChange={(e) => {
+                          setSearch(e.target.value);
+                          if (alamat) {
+                            // Reset pilihan jika user mengedit ulang
+                            setAlamat("");
+                            setProvince("");
+                            setCity("");
+                            setSubDistrict("");
+                            setVillage("");
+                            setKodepos("");
+                            setGetOngkir([]);
+                            setShippingCost(0);
+                            setSelectedOngkir(0);
+                          }
+                        }}
+                        onFocus={() => regions.length > 0 && setShowDropdown(true)}
                       />
-                      <button
-                        type="button"
-                        onClick={handleSearchAddress}
-                        className="bg-black text-white text-sm font-semibold px-5 py-3 rounded-xl hover:bg-gray-800 active:scale-95 transition-all cursor-pointer"
-                      >
-                        Cari
-                      </button>
+                      {/* Spinner / icon */}
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        {isSearching ? (
+                          <svg className="animate-spin text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.3-4.3" />
+                          </svg>
+                        )}
+                      </div>
+
+                      {/* Dropdown results dari database */}
+                      {showDropdown && regions.length > 0 && (
+                        <ul className="absolute z-50 left-0 right-0 top-full mt-1 border border-gray-200 rounded-xl bg-white max-h-52 overflow-auto shadow-xl divide-y divide-gray-50">
+                          {regions.map((item) => (
+                            <li
+                              key={item.id}
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm text-gray-700 transition-colors"
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => {
+                                setAlamat(item.label);
+                                setSearch(item.label);
+                                setKodepos(item.zip_code);
+                                setProvince(item.province);
+                                setCity(item.city);
+                                setSubDistrict(item.district);
+                                setVillage(item.subdistrict);
+                                setShowDropdown(false);
+                                setRegions([]);
+                                handleCheckOngkir(item.id);
+                              }}
+                            >
+                              <span className="font-medium">{item.subdistrict}, {item.district}, {item.city}, {item.province}, {item.zip_code}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {/* Pesan jika tidak ada hasil */}
+                      {showDropdown && !isSearching && search.length >= 2 && regions.length === 0 && (
+                        <div className="absolute z-50 left-0 right-0 top-full mt-1 border border-gray-200 rounded-xl bg-white px-4 py-3 text-sm text-gray-400 shadow-xl">
+                          Desa/Kecamatan tidak ditemukan
+                        </div>
+                      )}
                     </div>
 
-                    {/* Dropdown results */}
-                    {filteredDestination.length > 0 && (
-                      <ul className="border border-gray-200 rounded-xl mt-2 max-h-48 overflow-auto shadow-lg divide-y divide-gray-50">
-                        {filteredDestination.map((item) => (
-                          <li
-                            key={item.id}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm text-gray-700 transition-colors"
-                            onClick={() => {
-                              setAlamat(item.label);
-                              setSearch(item.label);
-                              setKodepos(item.zip_code);
-                              setDestinations([]);
-                              setProvince(item.province_name);
-                              setCity(item.city_name);
-                              setSubDistrict(item.district_name);
-                              setVillage(item.subdistrict_name);
-                              handleCheckOngkir(item.id);
-                            }}
-                          >
-                            {item.label}
-                          </li>
-                        ))}
-                      </ul>
+                    {/* Badge alamat terpilih */}
+                    {alamat && (
+                      <div className="mt-2 flex items-center gap-2 text-xs text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        <span className="font-medium">Alamat dipilih:</span> {alamat}
+                      </div>
                     )}
                   </div>
 
@@ -376,7 +440,7 @@ export default function FormCheckout() {
                     )}
 
                     {/* Ongkir options */}
-                    {getOngkir.map((ongkirdata: any, index: number) => (
+                    {getOngkir?.map((ongkirdata: any, index: number) => (
                       <label
                         key={index}
                         className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50"
@@ -407,7 +471,7 @@ export default function FormCheckout() {
                       </label>
                     ))}
 
-                    {!isFreeShipping && getOngkir.length === 0 && (
+                    {!isFreeShipping && getOngkir?.length === 0 && (
                       <div className="text-sm text-gray-400 bg-gray-50 rounded-xl p-4 text-center">
                         Pilih alamat terlebih dahulu untuk melihat opsi
                         pengiriman

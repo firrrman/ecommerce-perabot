@@ -7,7 +7,7 @@ export default function CategoryCard() {
   ];
 
   return (
-    <div className="my-16 px-5 w-full">
+    <div className="my-16 px-5 w-full md:px-10 xl:px-20">
       <div className="text-xl md:text-2xl mb-8">
         <h1>Jelajahi</h1>
         <p className="text-4xl md:text-6xl">Kategori</p>

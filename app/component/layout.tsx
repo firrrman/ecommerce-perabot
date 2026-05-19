@@ -102,7 +102,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         textColor="#000000"
         strokeColor="#ff0000"
         minFontSize={36}
-        className="px-5"
+        className="px-5 md:px-10 xl:px-20"
       />
 
       <Footer />

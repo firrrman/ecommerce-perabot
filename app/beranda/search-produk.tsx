@@ -15,13 +15,13 @@ export default function SearchProduk() {
   };
 
   return (
-    <div className="w-full px-5 my-12 flex flex-col items-center justify-center">
+    <div className="w-full px-5 my-12 flex flex-col items-center justify-center md:px-10 xl:px-20">
       <div className="text-center mb-6">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-black tracking-tight">
           Mau Cari Perabot Apa Hari Ini?
         </h2>
       </div>
-      <form onSubmit={handleSearch} className="relative w-full max-w-4xl group">
+      <form onSubmit={handleSearch} className="relative w-full max-w-4xl group ">
         <div className="absolute inset-y-0 left-4 md:left-6 flex items-center pointer-events-none text-gray-300 group-focus-within:text-black transition-colors duration-300">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </div>

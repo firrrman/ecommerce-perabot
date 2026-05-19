@@ -68,7 +68,7 @@ const GridMotion: FC<GridMotionProps> = ({
   return (
     <div ref={gridRef} className="h-lvh w-full overflow-hidden">
       <section className="w-full h-full overflow-hidden relative flex items-center justify-center bg-black">
-        <div className="bg-black/70 w-full h-full absolute z-10 flex flex-col items-center justify-center p-5">
+        <div className="bg-black/70 w-full h-full absolute z-10 flex flex-col items-center justify-center p-5 md:px-10 xl:px-20">
           <TextPressure
             text="PERABOTAN"
             flex={true}
@@ -81,6 +81,9 @@ const GridMotion: FC<GridMotionProps> = ({
             strokeColor="#ff0000"
             minFontSize={36}
           />
+          <div className="text-white/85 text-sm sm:text-base text-center max-w-2xl leading-relaxed mt-8 md:mt-0">
+            Dari Pasar Leuwiliang hingga hadir secara digital, Perabotan membawa kebutuhan rumah tangga berkualitas untuk setiap keluarga.
+          </div>
           <div className="flex flex-col sm:flex-row gap-5 mb-4 mt-8 px-5 items-center justify-center relative z-20">
             <a
               href="#produk-terlaris"
@@ -98,7 +101,7 @@ const GridMotion: FC<GridMotionProps> = ({
         </div>
 
 
-        <div className="absolute bottom-0 text-white z-10 font-extralight w-full flex justify-between p-5">
+        <div className="absolute bottom-0 text-white z-10 font-extralight w-full flex justify-between p-5 md:px-10 xl:px-20">
           <p>
             Perabot <br /> Berkualitas
           </p>

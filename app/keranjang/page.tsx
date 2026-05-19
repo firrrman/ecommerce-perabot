@@ -24,7 +24,7 @@ export default function CartPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-white pt-28 pb-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-5 md:px-10 xl:px-20">
 
           {/* ── Page Header ── */}
           <div className="my-5">
