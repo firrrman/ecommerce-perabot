@@ -58,11 +58,9 @@ export function Card({ product }: { product: ProductCardProps[] }) {
           <h3 className={`text-base font-medium line-clamp-2 leading-snug transition-colors ${item.stock > 0 ? "text-gray-800 group-hover:text-black" : "text-gray-400"}`}>
             {item.name}
           </h3>
-          {item.sold !== undefined && item.sold > 0 && item.stock > 0 && (
-            <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
-              Terlaris: Terjual {item.sold}
-            </div>
-          )}
+          <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
+            Terlaris: Terjual {item.sold}
+          </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
           <p className={`text-lg font-bold ${item.stock > 0 ? "text-black" : "text-gray-400"}`}>
