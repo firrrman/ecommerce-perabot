@@ -22,7 +22,7 @@ export function Card({ product }: { product: ProductCardProps[] }) {
         <img
           src={item.images[0]?.src || "/placeholder.jpg"}
           alt={item.name}
-          className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale opacity-80"}`}
+          className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale-40 group-hover:scale-105"}`}
           loading="lazy"
         />
         {/* Overlay gradient on hover */}
@@ -32,10 +32,12 @@ export function Card({ product }: { product: ProductCardProps[] }) {
 
         {/* Out of Stock Overlay */}
         {item.stock <= 0 && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="bg-white text-black px-4 py-2 rounded-lg font-bold text-sm tracking-wide shadow-md transform -rotate-12">
-              HABIS TERJUAL
-            </span>
+          <div className="absolute inset-0 bg-zinc-950/20 backdrop-blur-[2px] flex items-center justify-center p-3 transition-all duration-500 group-hover:bg-zinc-950/30">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2.5 rounded-2xl shadow-xl flex flex-col items-center gap-1.5 transform scale-90 group-hover:scale-100 transition-all duration-500">
+              <span className="text-white text-[10px] font-bold tracking-widest uppercase text-center leading-none">
+                Habis Terjual
+              </span>
+            </div>
           </div>
         )}
 
@@ -53,20 +55,20 @@ export function Card({ product }: { product: ProductCardProps[] }) {
       {/* Content */}
       <div className="p-4 flex flex-col grow justify-between">
         <div>
-          <h3 className="text-base font-medium text-gray-800 line-clamp-2 leading-snug group-hover:text-black transition-colors">
+          <h3 className={`text-base font-medium line-clamp-2 leading-snug transition-colors ${item.stock > 0 ? "text-gray-800 group-hover:text-black" : "text-gray-400"}`}>
             {item.name}
           </h3>
-          {item.sold !== undefined && item.sold > 0 && (
+          {item.sold !== undefined && item.sold > 0 && item.stock > 0 && (
             <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
               Terlaris: Terjual {item.sold}
             </div>
           )}
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <p className="text-lg font-bold text-black">
+          <p className={`text-lg font-bold ${item.stock > 0 ? "text-black" : "text-gray-400"}`}>
             Rp {item.basePrice.toLocaleString("id-ID")}
           </p>
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors duration-300">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${item.stock > 0 ? "bg-gray-100 group-hover:bg-black group-hover:text-white" : "bg-gray-50 text-gray-300"}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
           </div>
         </div>
@@ -87,7 +89,7 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
         <img
           src={item.images[0]?.src || "/placeholder.jpg"}
           alt={item.name}
-          className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale opacity-80"}`}
+          className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale-60 group-hover:scale-105"}`}
           loading="lazy"
         />
         {/* Overlay gradient on hover */}
@@ -97,10 +99,12 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
 
         {/* Out of Stock Overlay */}
         {item.stock <= 0 && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="bg-white text-black px-4 py-2 rounded-lg font-bold text-sm tracking-wide shadow-md transform -rotate-12">
-              HABIS TERJUAL
-            </span>
+          <div className="absolute inset-0 bg-zinc-950/20 backdrop-blur-[2px] flex items-center justify-center p-3 transition-all duration-500 group-hover:bg-zinc-950/30">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2.5 rounded-2xl shadow-xl flex flex-col items-center gap-1.5 transform scale-90 group-hover:scale-100 transition-all duration-500">
+              <span className="text-white text-[10px] font-bold tracking-widest uppercase text-center leading-none">
+                Habis Terjual
+              </span>
+            </div>
           </div>
         )}
 
@@ -118,7 +122,7 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
       {/* Content */}
       <div className="p-4 flex flex-col grow justify-between">
         <div>
-          <h3 className="text-base font-medium text-gray-800 line-clamp-2 leading-snug group-hover:text-black transition-colors">
+          <h3 className={`text-base font-medium line-clamp-2 leading-snug transition-colors ${item.stock > 0 ? "text-gray-800 group-hover:text-black" : "text-gray-400"}`}>
             {item.name}
           </h3>
           {/* {item.sold !== undefined && item.sold > 0 && (
@@ -128,10 +132,10 @@ export function Card2({ product }: { product: ProductCardProps[] }) {
           )} */}
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <p className="text-lg font-bold text-black">
+          <p className={`text-lg font-bold ${item.stock > 0 ? "text-black" : "text-gray-400"}`}>
             Rp {item.basePrice.toLocaleString("id-ID")}
           </p>
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors duration-300">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${item.stock > 0 ? "bg-gray-100 group-hover:bg-black group-hover:text-white" : "bg-gray-50 text-gray-300"}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
           </div>
         </div>

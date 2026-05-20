@@ -37,16 +37,15 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
   return (
     <Layout>
       {/* Kategori Navigation */}
-      <div className="flex sm:justify-center gap-8 mt-30 mb-10 overflow-x-auto no-scrollbar px-5">
+      <div className="flex sm:justify-center gap-8 mt-30 mb-10 overflow-x-auto no-scrollbar px-5 md:px-10 xl:px-20">
         {CATEGORIES.map((category) => (
           <a
             key={category.href}
             href={category.href}
-            className={`whitespace-nowrap pb-2 transition-colors ${
-              category.slug === slug
-                ? "border-b-2 border-black font-medium"
-                : "hover:text-gray-600"
-            }`}
+            className={`whitespace-nowrap pb-2 transition-colors ${category.slug === slug
+              ? "border-b-2 border-black font-medium"
+              : "hover:text-gray-600"
+              }`}
           >
             {category.name}
           </a>
@@ -59,7 +58,7 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
       {/* Grid Produk */}
       {product.data.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-5 gap-5 mb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 px-5 md:px-10 xl:px-20 gap-5 mb-10">
             <Card2 product={product.data} />
           </div>
         </>
@@ -86,11 +85,10 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
                 ? `?page=${page - 1}${search ? `&search=${search}` : ""}`
                 : "#"
             }
-            className={`px-4 py-2 border rounded-md transition-colors ${
-              page > 1
-                ? "hover:bg-gray-100 cursor-pointer"
-                : "text-gray-300 cursor-not-allowed pointer-events-none"
-            }`}
+            className={`px-4 py-2 border rounded-md transition-colors ${page > 1
+              ? "hover:bg-gray-100 cursor-pointer"
+              : "text-gray-300 cursor-not-allowed pointer-events-none"
+              }`}
           >
             Prev
           </a>
@@ -102,14 +100,12 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
               return (
                 <a
                   key={pageNumber}
-                  href={`?page=${pageNumber}${
-                    search ? `&search=${search}` : ""
-                  }`}
-                  className={`px-4 py-2 border rounded-md min-w-11 text-center transition-colors ${
-                    page === pageNumber
-                      ? "bg-black text-white"
-                      : "hover:bg-gray-100"
-                  }`}
+                  href={`?page=${pageNumber}${search ? `&search=${search}` : ""
+                    }`}
+                  className={`px-4 py-2 border rounded-md min-w-11 text-center transition-colors ${page === pageNumber
+                    ? "bg-black text-white"
+                    : "hover:bg-gray-100"
+                    }`}
                 >
                   {pageNumber}
                 </a>
@@ -124,11 +120,10 @@ export default async function ProdukCategory({ params, searchParams }: Props) {
                 ? `?page=${page + 1}${search ? `&search=${search}` : ""}`
                 : "#"
             }
-            className={`px-4 py-2 border rounded-md transition-colors ${
-              page < product.meta.totalPage
-                ? "hover:bg-gray-100 cursor-pointer"
-                : "text-gray-300 cursor-not-allowed pointer-events-none"
-            }`}
+            className={`px-4 py-2 border rounded-md transition-colors ${page < product.meta.totalPage
+              ? "hover:bg-gray-100 cursor-pointer"
+              : "text-gray-300 cursor-not-allowed pointer-events-none"
+              }`}
           >
             Next
           </a>

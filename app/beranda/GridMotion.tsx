@@ -82,8 +82,7 @@ const GridMotion: FC<GridMotionProps> = ({
             minFontSize={36}
           />
           <div className="text-white/85 text-sm sm:text-base text-center max-w-2xl leading-relaxed mt-8 md:mt-0">
-            Dari Pasar Leuwiliang hingga hadir secara digital, Perabotan membawa kebutuhan rumah tangga berkualitas untuk setiap keluarga.
-          </div>
+            Berawal dari toko perabot milik Bapak Eman di Pasar Leuwiliang, kini hadir secara digital untuk tetap melayani kebutuhan rumah tangga anda.          </div>
           <div className="flex flex-col sm:flex-row gap-5 mb-4 mt-8 px-5 items-center justify-center relative z-20">
             <a
               href="#produk-terlaris"

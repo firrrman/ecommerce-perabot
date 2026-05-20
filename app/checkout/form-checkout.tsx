@@ -189,7 +189,7 @@ export default function FormCheckout() {
   /* ─── Main Checkout ─── */
   return (
     <div className="min-h-screen bg-white pt-28 pb-24">
-      <div className="max-w-6xl mx-auto px-5 md:px-10 xl:px-20 sm:px-6 lg:px-8">
+      <div className="w-full px-5 md:px-10 xl:px-20 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="my-5">
           <h1 className="text-3xl sm:text-4xl font-bold text-black tracking-tight">
@@ -203,7 +203,7 @@ export default function FormCheckout() {
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
             {/* ── LEFT: Form ── */}
-            <div className="lg:col-span-2 flex flex-col gap-8">
+            <div className="lg:col-span-2 gap-8 grid grid-cols-1 md:grid-cols-2">
               {/* Section: Kontak */}
               <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
                 <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
@@ -213,8 +213,8 @@ export default function FormCheckout() {
                   Informasi Kontak
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="sm:col-span-2">
+                <div className="grid grid-cols-1 gap-5">
+                  <div className="w-full">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Nama Lengkap
                     </label>
@@ -338,16 +338,6 @@ export default function FormCheckout() {
                         </div>
                       )}
                     </div>
-
-                    {/* Badge alamat terpilih */}
-                    {alamat && (
-                      <div className="mt-2 flex items-center gap-2 text-xs text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 6 9 17l-5-5" />
-                        </svg>
-                        <span className="font-medium">Alamat dipilih:</span> {alamat}
-                      </div>
-                    )}
                   </div>
 
                   {/* Detail Alamat */}
