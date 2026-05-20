@@ -47,6 +47,7 @@ export default function ProdukListAdmin({
   const [viewMode, setViewMode] = useState("list");
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const confirmDelete = (id: string) => {
     setConfirmDeleteId(id);
@@ -222,10 +223,15 @@ export default function ProdukListAdmin({
                 <div className="flex gap-2">
                   <Link
                     href={`/admin/edit-produk/${product.id}`}
+                    onClick={() => setEditingId(product.id)}
                     className="flex-1 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
                   >
-                    <Edit size={14} />
-                    Edit
+                    {editingId === product.id ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Edit size={14} />
+                    )}
+                    {editingId === product.id ? "Memuat..." : "Edit"}
                   </Link>
                   <button
                     onClick={() => confirmDelete(product.id)}
@@ -311,9 +317,14 @@ export default function ProdukListAdmin({
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/admin/edit-produk/${product.id}`}
-                          className="p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors text-blue-600"
+                          onClick={() => setEditingId(product.id)}
+                          className="p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors text-blue-600 flex items-center justify-center"
                         >
-                          <Edit size={16} />
+                          {editingId === product.id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <Edit size={16} />
+                          )}
                         </Link>
                         <button
                           className="p-2 hover:bg-red-50 rounded-lg cursor-pointer transition-colors text-red-600 disabled:opacity-50"

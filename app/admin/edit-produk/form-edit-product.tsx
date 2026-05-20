@@ -1,6 +1,8 @@
 "use client";
 export const dynamic = "force-dynamic";
 
+import SubmitButton from "@/app/component/submit-button";
+
 export default function EditProductForm({
   product,
   categories,
@@ -415,12 +417,11 @@ export default function EditProductForm({
 
             {/* Action Buttons */}
             <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
-              <button
-                type="submit"
+              <SubmitButton
+                defaultText="Simpan Perubahan"
+                loadingText="Menyimpan..."
                 className="flex-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-sm hover:shadow-md"
-              >
-                Simpan Perubahan
-              </button>
+              />
               <button
                 type="button"
                 onClick={() => window.history.back()}

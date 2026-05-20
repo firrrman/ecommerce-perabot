@@ -11,8 +11,10 @@ import {
   Legend,
 } from "chart.js";
 
+import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,
@@ -32,8 +34,10 @@ export default function ChartJs({
 }) {
   const router = useRouter();
   const currentYear = new Date().getFullYear();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLoading(true);
     router.push(`/admin/dashboard?year=${e.target.value}`);
   };
 
@@ -89,12 +93,22 @@ export default function ChartJs({
   };
 
   return (
-    <div className="bg-white shadow rounded-xl p-6 mb-6">
-      <div className="flex justify-end">
+    <div className="bg-white shadow rounded-xl p-6 mb-6 relative">
+      {loading && (
+        <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex flex-col items-center justify-center rounded-xl z-10">
+          <div className="flex items-center gap-2 text-blue-600 font-medium">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span>Memuat data grafik...</span>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-end mb-4">
         <select
           value={year || ""}
           onChange={handleChange}
-          className="border rounded px-3 py-2 text-xs cursor-pointer"
+          disabled={loading}
+          className="border rounded px-3 py-2 text-xs cursor-pointer disabled:opacity-50 bg-white"
         >
           <option value={currentYear}>{currentYear}</option>
           <option value={currentYear - 1}>{currentYear - 1}</option>
@@ -104,6 +118,7 @@ export default function ChartJs({
 
       <div className="h-[400px]">
         <Bar data={data} options={options} />
-      </div>     </div>
+      </div>
+    </div>
   );
 }
