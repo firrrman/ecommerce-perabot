@@ -58,9 +58,18 @@ export function Card({ product }: { product: ProductCardProps[] }) {
           <h3 className={`text-base font-medium line-clamp-2 leading-snug transition-colors ${item.stock > 0 ? "text-gray-800 group-hover:text-black" : "text-gray-400"}`}>
             {item.name}
           </h3>
-          <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
-            Terlaris: Terjual {item.sold}
-          </div>
+          {item.sold ? (
+            <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
+              Terlaris: Terjual {item.sold}
+            </div>
+          ) : (
+            <div className="mt-2 inline-flex items-center gap-1.5 bg-linear-to-r from-amber-50 to-yellow-50 text-amber-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-amber-200/80">
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" className="text-amber-400">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+              Produk Unggulan
+            </div>
+          )}
         </div>
         <div className="mt-3 flex items-center justify-between">
           <p className={`text-lg font-bold ${item.stock > 0 ? "text-black" : "text-gray-400"}`}>
