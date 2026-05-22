@@ -15,6 +15,14 @@ export async function POST(req: Request) {
   if (signature !== body.signature_key) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
+  const order = await prisma.order.findUnique({
+    where: { paymentOrderId: body.order_id },
+  });
+
+  if (!order) {
+    return NextResponse.json({ message: "Order not found, acknowledged" }, { status: 200 });
+  }
+
   // jika pembayaran berhasil
   if (
     body.transaction_status === "settlement" ||

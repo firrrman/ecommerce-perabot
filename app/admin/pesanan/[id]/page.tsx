@@ -23,6 +23,7 @@ export default async function OrderDetailPage({ params }: Props) {
   const { id } = await params;
   const order = await getOrderDetail(id);
 
+  console.log("order", order);
   if (!order) {
     return (
       <LayoutAdmin activeMenuProp="orders">
@@ -178,8 +179,8 @@ export default async function OrderDetailPage({ params }: Props) {
                             </span>
                           </span>
                           <span> Rp {item.price.toLocaleString("id-ID")}</span>
-                          <span>{item.color?.name}</span>
-                          <span>{item.size?.name}</span>
+                          <span>{item.variant?.color?.name}</span>
+                          <span>{item.variant?.size?.name}</span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -214,7 +215,7 @@ export default async function OrderDetailPage({ params }: Props) {
                 <div className="flex justify-between text-gray-600">
                   <span>Ongkos Kirim</span>
                   <span className="font-semibold">
-                    Rp {order.ongkir.toLocaleString("id-ID")}
+                    Rp {order.shippingCost.toLocaleString("id-ID")}
                   </span>
                 </div>
                 <div className="border-t border-gray-200 pt-4">

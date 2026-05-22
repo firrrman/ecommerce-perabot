@@ -2,6 +2,8 @@
 export const dynamic = "force-dynamic";
 
 import SubmitButton from "@/app/component/submit-button";
+import VariantSection, { Variant } from "../tambah-produk/variant-section";
+import { toast } from "react-toastify";
 
 export default function EditProductForm({
   product,
@@ -10,6 +12,23 @@ export default function EditProductForm({
   sizes,
   action,
 }: any) {
+  const initialVariants: Variant[] = (product.variants || []).map((v: any) => ({
+    localId: v.id,
+    sizeId: v.sizeId || "",
+    colorId: v.colorId || "",
+    price: v.price !== null && v.price !== undefined ? v.price.toString() : "",
+    costPrice: v.costPrice !== null && v.costPrice !== undefined ? v.costPrice.toString() : "",
+    weight: v.weight !== null && v.weight !== undefined ? v.weight.toString() : "",
+    stock: v.stock !== null && v.stock !== undefined ? v.stock.toString() : "",
+  }));
+
+  const clientAction = async (formData: FormData) => {
+    const result = await action(formData);
+    if (result?.error) {
+      toast.error(result.error);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -24,7 +43,7 @@ export default function EditProductForm({
 
         {/* Form Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <form action={action} className="space-y-6">
+          <form action={clientAction} className="space-y-6">
             {/* Informasi Dasar */}
             <div className="border-b border-gray-200 pb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -221,139 +240,13 @@ export default function EditProductForm({
               </div>
             </div>
 
-            {/* Warna */}
+            {/* Varian Produk */}
             <div className="border-b border-gray-200 pb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-pink-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                  />
-                </svg>
-                Pilih Warna
-              </h2>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex flex-wrap gap-3">
-                  {colors.map((color: any) => (
-                    <label
-                      key={color.id}
-                      className="flex flex-col gap-2 bg-white p-3 rounded-lg border border-gray-200"
-                    >
-                      <div className="flex items-center gap-2 cursor-pointer hover:border-pink-300 transition-colors">
-                        <input
-                          type="checkbox"
-                          name="colors"
-                          value={color.id}
-                          defaultChecked={(product.colors ?? []).some(
-                            (c: any) => c.colorId === color.id,
-                          )}
-                          className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
-                        />
-                        <span className="text-sm font-medium text-gray-700">
-                          {color.name}
-                        </span>
-                        <div
-                          className="w-6 h-6 rounded border-2 border-gray-300"
-                          style={{ backgroundColor: color.hex }}
-                        />
-                      </div>
-                      <input
-                        type="number"
-                        name={`stockColor-${color.id}`}
-                        defaultValue={(product.colors ?? []).find((c: any) => c.colorId === color.id)?.stock ?? ""}
-                        placeholder="Stok"
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Ukuran & Harga */}
-            <div className="border-b border-gray-200 pb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                  />
-                </svg>
-                Ukuran & Harga Varian
-              </h2>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {sizes.map((size: any) => {
-                    const existing = (product.sizes ?? []).find(
-                      (s: any) => s.sizeId === size.id,
-                    );
-
-                    return (
-                      <div
-                        key={size.id}
-                        className="flex items-center gap-3 bg-white p-3 rounded-lg border border-gray-200"
-                      >
-                        <input
-                          type="checkbox"
-                          name="sizes"
-                          value={size.id}
-                          defaultChecked={!!existing}
-                          className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                        />
-                        <span className="font-medium text-gray-700 min-w-17.5">
-                          {size.name}
-                        </span>
-                        <div className="flex gap-2 w-full">
-                          <input
-                            type="number"
-                            name={`price-${size.id}`}
-                            defaultValue={existing?.price ?? ""}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="Harga Jual"
-                          />
-                          <input
-                            type="number"
-                            name={`costPrice-${size.id}`}
-                            defaultValue={existing?.costPrice ?? ""}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="Modal"
-                          />
-                          <input
-                            type="number"
-                            name={`weight-${size.id}`}
-                            defaultValue={existing?.weight ?? ""}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="Berat Produk"
-                          />
-                          <input
-                            type="number"
-                            name={`stockSize-${size.id}`}
-                            defaultValue={existing?.stock ?? ""}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="Stok"
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <VariantSection
+                colors={colors}
+                sizes={sizes}
+                initialVariants={initialVariants}
+              />
             </div>
 
             {/* Gambar Produk */}

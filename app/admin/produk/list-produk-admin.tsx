@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/app/component/pagination";
 import ConfirmModal from "@/app/component/confirm-modal";
 import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 export interface ProductCardProps {
   id: string;
@@ -64,7 +65,7 @@ export default function ProdukListAdmin({
       await onDelete(id);
       location.reload();
     } catch {
-      alert("Gagal menghapus produk");
+      toast.error("Gagal menghapus produk");
       setIsDeletingId(null);
     }
   };

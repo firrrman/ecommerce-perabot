@@ -10,7 +10,7 @@ export async function getTotalPaidRevenue() {
   const result = await prisma.order.aggregate({
     _sum: {
       totalPrice: true,
-      ongkir: true,
+      shippingCost: true,
     },
     where: {
       status: {
@@ -19,7 +19,7 @@ export async function getTotalPaidRevenue() {
     },
   });
 
-  return (result._sum.totalPrice ?? 0) - (result._sum.ongkir ?? 0);
+  return (result._sum.totalPrice ?? 0) - (result._sum.shippingCost ?? 0);
 }
 
 export async function getOrder() {

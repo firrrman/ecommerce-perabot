@@ -31,7 +31,7 @@ export async function createPayment(paymentOrderId: string) {
     })),
     {
       id: "ONGKIR",
-      price: order.ongkir,
+      price: order.shippingCost,
       quantity: 1,
       name: "Ongkos Kirim",
     },

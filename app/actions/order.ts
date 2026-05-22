@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { adjustOrderStock } from "@/lib/stock";
 
 export async function createOrderFromForm(formData: FormData) {
   const cart = JSON.parse(formData.get("cart") as string);
@@ -24,7 +25,7 @@ export async function createOrderFromForm(formData: FormData) {
       portalCode: Number(formData.get("portalCode")),
       address: formData.get("address") as string,
       note: formData.get("note") as string,
-      ongkir: Number(formData.get("ongkir")),
+      shippingCost: Number(formData.get("ongkir")),
       totalPrice: Number(formData.get("totalPrice")),
       totalCost: Number(formData.get("totalCost")),
       paymentMethod: formData.get("paymentMethod") as string,
@@ -35,45 +36,29 @@ export async function createOrderFromForm(formData: FormData) {
             const orderItem: any = {
               productId: item.productId,
               quantity: item.quantity,
-              price: item.price,
+              price: item.price, // harga dari cart (sudah dikonfirmasi user saat checkout)
             };
 
-            // Fetch the current cost price to lock it in
-            let costPrice = 0;
-            if (item.sizeId) {
-              const productSize = await prisma.productSize.findUnique({
-                where: {
-                  productId_sizeId: {
-                    productId: item.productId,
-                    sizeId: item.sizeId,
-                  },
-                },
+            if (item.variantId) {
+              // Selalu fetch variant terbaru dari DB
+              const variant = await prisma.productVariant.findUnique({
+                where: { id: item.variantId },
               });
-              costPrice = productSize?.costPrice || 0;
+
+              if (!variant) {
+                throw new Error(
+                  `Produk yang dipilih sudah berubah, silakan perbarui keranjang.`
+                );
+              }
+
+              orderItem.variantId = variant.id;
+              orderItem.costPrice = variant.costPrice ?? 0;
             } else {
+              // Produk tanpa varian — ambil costPrice dari product
               const product = await prisma.product.findUnique({
                 where: { id: item.productId },
               });
-              costPrice = product?.costPrice || 0;
-            }
-            orderItem.costPrice = costPrice;
-
-            // VALIDASI SIZE
-            if (item.sizeId) {
-              const sizeExists = await prisma.size.findUnique({
-                where: { id: item.sizeId },
-                select: { id: true },
-              });
-              if (sizeExists) orderItem.sizeId = item.sizeId;
-            }
-
-            // VALIDASI COLOR
-            if (item.colorId) {
-              const colorExists = await prisma.color.findUnique({
-                where: { id: item.colorId },
-                select: { id: true },
-              });
-              if (colorExists) orderItem.colorId = item.colorId;
+              orderItem.costPrice = product?.costPrice ?? 0;
             }
 
             return orderItem;
@@ -82,6 +67,9 @@ export async function createOrderFromForm(formData: FormData) {
       },
     },
   });
+
+  // Kurangi stok segera setelah order dibuat (status awal = PENDING)
+  await adjustOrderStock(order.id, "DEDUCT");
 
   revalidatePath("/checkout");
 

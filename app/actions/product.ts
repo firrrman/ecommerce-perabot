@@ -80,8 +80,6 @@ export async function createProduct(formData: FormData) {
   const details = formData.get("details") as string;
   const categoryId = formData.get("categoryId") as string;
   const images = formData.getAll("image") as File[];
-  const selectedColorIds = formData.getAll("colors") as string[];
-  const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
   const costPrice = Number(formData.get("costPrice")) || 0;
@@ -89,28 +87,53 @@ export async function createProduct(formData: FormData) {
   let stock = Number(formData.get("stock")) || 0;
   const is_featured = formData.get("is_featured") === "true";
 
-  const sizeData = selectedSizeIds.map((sizeId) => {
-    const price = Number(formData.get(`price-${sizeId}`));
-    const costPrice = Number(formData.get(`costPrice-${sizeId}`)) || 0;
-    const weight = Number(formData.get(`weight-${sizeId}`)) || 0;
-    const stockSize = Number(formData.get(`stockSize-${sizeId}`)) || 0;
+  if (images.length === 0) {
+    throw new Error("Minimal 1 gambar harus diupload");
+  }
 
-    if (images.length === 0) {
-      throw new Error("Minimal 1 gambar harus diupload");
+  if (!name || !slug) {
+    throw new Error("Data belum lengkap");
+  }
+
+  // Build variant data dari input dynamic row
+  const variantCount = Number(formData.get("variantCount")) || 0;
+  const variantData: {
+    sizeId?: string;
+    colorId?: string;
+    price?: number;
+    costPrice: number;
+    weight: number;
+    stock: number;
+  }[] = [];
+
+  for (let i = 0; i < variantCount; i++) {
+    const sizeId = formData.get(`variant_sizeId_${i}`) as string;
+    const colorId = formData.get(`variant_colorId_${i}`) as string;
+    const priceRaw = formData.get(`variant_price_${i}`);
+    const costPriceRaw = formData.get(`variant_costPrice_${i}`);
+    const weightRaw = formData.get(`variant_weight_${i}`);
+    const stockRaw = formData.get(`variant_stock_${i}`);
+
+    const finalSizeId = sizeId || undefined;
+    const finalColorId = colorId || undefined;
+
+    // Masukkan ke variant data jika minimal memilih ukuran atau warna
+    if (finalSizeId || finalColorId) {
+      const price = priceRaw ? Number(priceRaw) : undefined;
+      const cPrice = costPriceRaw ? Number(costPriceRaw) : 0;
+      const wght = weightRaw ? Number(weightRaw) : 0;
+      const stck = stockRaw ? Number(stockRaw) : 0;
+
+      variantData.push({
+        sizeId: finalSizeId,
+        colorId: finalColorId,
+        price: isNaN(price as number) ? undefined : price,
+        costPrice: isNaN(cPrice) ? 0 : cPrice,
+        weight: isNaN(wght) ? 0 : wght,
+        stock: isNaN(stck) ? 0 : stck,
+      });
     }
-
-    if (selectedSizeIds.length === 0) {
-      throw new Error("Minimal pilih 1 ukuran");
-    }
-
-    return {
-      sizeId,
-      price,
-      costPrice,
-      weight,
-      stock: stockSize,
-    };
-  });
+  }
 
   const highlights = highlightsRaw
     ? highlightsRaw
@@ -119,14 +142,9 @@ export async function createProduct(formData: FormData) {
       .filter(Boolean) // hilangkan baris kosong
     : [];
 
-  if (!name || !slug || !images) {
-    throw new Error("Data belum lengkap");
-  }
-
-  if (sizeData.length > 0 || selectedColorIds.length > 0) {
-    const sizeStock = sizeData.reduce((sum, size) => sum + size.stock, 0);
-    const colorStock = selectedColorIds.reduce((sum, colorId) => sum + (Number(formData.get(`stockColor-${colorId}`)) || 0), 0);
-    stock = sizeStock + colorStock;
+  // Hitung total stok dari semua variant
+  if (variantData.length > 0) {
+    stock = variantData.reduce((sum, v) => sum + v.stock, 0);
   }
 
   /* =====================
@@ -171,16 +189,10 @@ export async function createProduct(formData: FormData) {
       categoryId: categoryId || null,
       stock,
       images: {
-        create: uploadedImages, // array { src, alt }
+        create: uploadedImages,
       },
-      colors: {
-        create: selectedColorIds.map((colorId) => ({
-          colorId,
-          stock: Number(formData.get(`stockColor-${colorId}`)) || 0
-        })),
-      },
-      sizes: {
-        create: sizeData, // ⬅ harga per size
+      variants: {
+        create: variantData,
       },
       basePrice,
       costPrice,
@@ -201,8 +213,6 @@ export async function updateProduct(productId: string, formData: FormData) {
   const details = formData.get("details") as string;
   const categoryId = formData.get("categoryId") as string;
   const images = formData.getAll("image") as File[];
-  const selectedColorIds = formData.getAll("colors") as string[];
-  const selectedSizeIds = formData.getAll("sizes") as string[];
   const highlightsRaw = formData.get("highlights") as string;
   const basePrice = Number(formData.get("basePrice"));
   const costPrice = Number(formData.get("costPrice")) || 0;
@@ -215,7 +225,7 @@ export async function updateProduct(productId: string, formData: FormData) {
 
   const product = await prisma.product.findUnique({
     where: { id: productId },
-    include: { images: true },
+    include: { images: true, variants: true },
   });
 
   if (!product) {
@@ -229,25 +239,48 @@ export async function updateProduct(productId: string, formData: FormData) {
       .filter(Boolean)
     : [];
 
-  const sizeData = selectedSizeIds.map((sizeId) => {
-    const priceRaw = formData.get(`price-${sizeId}`);
-    const price = Number(priceRaw);
-    const costPrice = Number(formData.get(`costPrice-${sizeId}`)) || 0;
-    const weight = Number(formData.get(`weight-${sizeId}`)) || 0;
-    const stockSize = Number(formData.get(`stockSize-${sizeId}`)) || 0;
+  // Build variant data dari input dynamic row
+  const variantCount = Number(formData.get("variantCount")) || 0;
+  const variantData: {
+    id: string;
+    sizeId?: string;
+    colorId?: string;
+    price?: number;
+    costPrice: number;
+    weight: number;
+    stock: number;
+  }[] = [];
 
-    if (!priceRaw || isNaN(price)) {
-      throw new Error("Harga ukuran tidak valid");
+  for (let i = 0; i < variantCount; i++) {
+    const vId = formData.get(`variant_id_${i}`) as string;
+    const sizeId = formData.get(`variant_sizeId_${i}`) as string;
+    const colorId = formData.get(`variant_colorId_${i}`) as string;
+    const priceRaw = formData.get(`variant_price_${i}`);
+    const costPriceRaw = formData.get(`variant_costPrice_${i}`);
+    const weightRaw = formData.get(`variant_weight_${i}`);
+    const stockRaw = formData.get(`variant_stock_${i}`);
+
+    const finalSizeId = sizeId || undefined;
+    const finalColorId = colorId || undefined;
+
+    // Masukkan ke variant data jika minimal memilih ukuran atau warna
+    if (finalSizeId || finalColorId) {
+      const price = priceRaw ? Number(priceRaw) : undefined;
+      const cPrice = costPriceRaw ? Number(costPriceRaw) : 0;
+      const wght = weightRaw ? Number(weightRaw) : 0;
+      const stck = stockRaw ? Number(stockRaw) : 0;
+
+      variantData.push({
+        id: vId || crypto.randomUUID(), // Fallback if missing
+        sizeId: finalSizeId,
+        colorId: finalColorId,
+        price: isNaN(price as number) ? undefined : price,
+        costPrice: isNaN(cPrice) ? 0 : cPrice,
+        weight: isNaN(wght) ? 0 : wght,
+        stock: isNaN(stck) ? 0 : stck,
+      });
     }
-
-    return {
-      sizeId,
-      price,
-      costPrice,
-      weight,
-      stock: stockSize
-    };
-  });
+  }
 
   let uploadedImages: { src: string; alt: string; path: string }[] = [];
 
@@ -287,10 +320,32 @@ export async function updateProduct(productId: string, formData: FormData) {
     }
   }
 
-  if (sizeData.length > 0 || selectedColorIds.length > 0) {
-    const sizeStock = sizeData.reduce((sum, size) => sum + size.stock, 0);
-    const colorStock = selectedColorIds.reduce((sum, colorId) => sum + (Number(formData.get(`stockColor-${colorId}`)) || 0), 0);
-    stock = sizeStock + colorStock;
+  // Hitung total stok dari semua variant
+  if (variantData.length > 0) {
+    stock = variantData.reduce((sum, v) => sum + v.stock, 0);
+  }
+
+  // Prepare variants updates
+  const existingVariants = product.variants;
+  const submittedIds = variantData.map((v) => v.id);
+
+  const variantsToDelete = existingVariants
+    .filter((ev) => !submittedIds.includes(ev.id))
+    .map((ev) => ev.id);
+
+  if (variantsToDelete.length > 0) {
+    const variantsInOrders = await prisma.productVariant.findFirst({
+      where: {
+        id: { in: variantsToDelete },
+        orderItems: { some: {} },
+      },
+    });
+
+    if (variantsInOrders) {
+      return {
+        error: "Gagal: Varian tidak bisa dihapus karena sudah ada pesanan yang menggunakan varian tersebut. Jika stok habis, silakan ubah stok varian menjadi 0."
+      };
+    }
   }
 
   await prisma.product.update({
@@ -308,17 +363,28 @@ export async function updateProduct(productId: string, formData: FormData) {
       stock,
       categoryId: categoryId || null,
 
-      colors: {
-        deleteMany: { productId },
-        create: selectedColorIds.map((colorId) => ({
-          colorId,
-          stock: Number(formData.get(`stockColor-${colorId}`)) || 0
+      variants: {
+        deleteMany: variantsToDelete.length > 0 ? { id: { in: variantsToDelete } } : undefined,
+        upsert: variantData.map((v) => ({
+          where: { id: v.id },
+          update: {
+            sizeId: v.sizeId,
+            colorId: v.colorId,
+            price: v.price,
+            costPrice: v.costPrice,
+            weight: v.weight,
+            stock: v.stock,
+          },
+          create: {
+            id: v.id,
+            sizeId: v.sizeId,
+            colorId: v.colorId,
+            price: v.price,
+            costPrice: v.costPrice,
+            weight: v.weight,
+            stock: v.stock,
+          },
         })),
-      },
-
-      sizes: {
-        deleteMany: { productId },
-        create: sizeData,
       },
 
       ...(hasNewImage && {

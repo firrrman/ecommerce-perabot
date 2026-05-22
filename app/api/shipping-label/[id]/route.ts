@@ -32,8 +32,12 @@ export async function GET(
       items: {
         include: {
           product: true,
-          size: true,
-          color: true,
+          variant: {
+            include: {
+              size: true,
+              color: true,
+            },
+          },
         },
       },
     },
@@ -176,8 +180,8 @@ export async function GET(
   order.items.forEach((item) => {
     const productName = item.product.name;
     const specParts = [];
-    if (item.size) specParts.push(`Size: ${item.size.name}`);
-    if (item.color) specParts.push(`Color: ${item.color.name}`);
+    if (item.variant?.size) specParts.push(`Size: ${item.variant.size.name}`);
+    if (item.variant?.color) specParts.push(`Color: ${item.variant.color.name}`);
     const spec = specParts.length > 0 ? ` (${specParts.join(", ")})` : "";
     const itemText = `• [Qty: ${item.quantity}] ${productName}${spec}`;
 

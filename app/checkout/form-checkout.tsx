@@ -140,7 +140,11 @@ export default function FormCheckout() {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Gagal memproses checkout");
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Gagal memproses checkout"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -589,9 +593,9 @@ export default function FormCheckout() {
                         <p className="text-sm font-medium text-black line-clamp-2 leading-snug">
                           {item.name}
                         </p>
-                        {(item.sizeName || item.colorName) && (
+                        {(item.variant?.size?.name || item.variant?.color?.name) && (
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {[item.sizeName, item.colorName]
+                            {[item.variant?.size?.name, item.variant?.color?.name]
                               .filter(Boolean)
                               .join(" · ")}
                           </p>

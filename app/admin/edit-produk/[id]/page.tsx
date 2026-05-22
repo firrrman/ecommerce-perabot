@@ -20,8 +20,12 @@ export default async function EditProdukPage({ params }: Props) {
     where: { id: id },
     include: {
       images: true,
-      colors: true,
-      sizes: true,
+      variants: {
+        include: {
+          color: true,
+          size: true,
+        },
+      },
     },
   });
 
@@ -31,16 +35,40 @@ export default async function EditProdukPage({ params }: Props) {
 
   if (!product) return <div>Produk tidak ditemukan</div>;
 
+  // Map variants to colors and sizes for the edit form
+  const mappedColors = product.variants
+    .filter((v) => v.colorId !== null)
+    .map((v) => ({
+      colorId: v.colorId!,
+      stock: v.stock,
+    }));
+
+  const mappedSizes = product.variants
+    .filter((v) => v.sizeId !== null)
+    .map((v) => ({
+      sizeId: v.sizeId!,
+      price: v.price ?? product.basePrice,
+      costPrice: v.costPrice,
+      weight: v.weight,
+      stock: v.stock,
+    }));
+
+  const mappedProduct = {
+    ...product,
+    colors: mappedColors,
+    sizes: mappedSizes,
+  };
+
   async function action(formData: FormData) {
     "use server";
-    await updateProduct(id, formData);
+    return await updateProduct(id, formData);
   }
 
   return (
     <LayoutAdmin activeMenuProp="products">
       <main className="overflow-y-auto p-4 md:p-6">
         <EditProductForm
-          product={product}
+          product={mappedProduct}
           categories={categories}
           colors={colors}
           sizes={sizes}

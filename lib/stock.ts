@@ -11,56 +11,15 @@ export async function adjustOrderStock(orderId: string, action: "DEDUCT" | "REST
   const multiplier = action === "DEDUCT" ? -1 : 1;
 
   for (const item of order.items) {
-    // Adjust Size Stock if sizeId exists
-    if (item.sizeId) {
-      // Check if the relation exists before updating just in case
-      const productSize = await prisma.productSize.findUnique({
-        where: {
-          productId_sizeId: {
-            productId: item.productId,
-            sizeId: item.sizeId,
-          },
-        },
+    // Adjust Variant Stock jika ada variantId
+    if (item.variantId) {
+      await prisma.productVariant.update({
+        where: { id: item.variantId },
+        data: { stock: { increment: item.quantity * multiplier } },
       });
-
-      if (productSize) {
-        await prisma.productSize.update({
-          where: {
-            productId_sizeId: {
-              productId: item.productId,
-              sizeId: item.sizeId,
-            },
-          },
-          data: { stock: { increment: item.quantity * multiplier } },
-        });
-      }
     }
 
-    // Adjust Color Stock if colorId exists
-    if (item.colorId) {
-      const productColor = await prisma.productColor.findUnique({
-        where: {
-          productId_colorId: {
-            productId: item.productId,
-            colorId: item.colorId,
-          },
-        },
-      });
-
-      if (productColor) {
-        await prisma.productColor.update({
-          where: {
-            productId_colorId: {
-              productId: item.productId,
-              colorId: item.colorId,
-            },
-          },
-          data: { stock: { increment: item.quantity * multiplier } },
-        });
-      }
-    }
-
-    // Adjust Product Stock (always do this to keep main stock in sync with variants if they exist)
+    // Adjust Product Stock (selalu sinkronkan stok utama)
     await prisma.product.update({
       where: { id: item.productId },
       data: { stock: { increment: item.quantity * multiplier } },

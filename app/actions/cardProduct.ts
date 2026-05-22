@@ -77,12 +77,6 @@ export async function featuredProducts() {
     take: 10,
     include: {
       images: true,
-      colors: true,
-      sizes: {
-        include: {
-          size: true,
-        },
-      },
     },
   });
 }
@@ -123,11 +117,7 @@ export async function allProducts(
         orderBy: { createdAt: "desc" },
         include: {
           images: true,
-          colors: true,
           category: true,
-          sizes: {
-            include: { size: true },
-          },
           orderItems: {
             where: {
               order: {
@@ -215,12 +205,6 @@ export async function getCategoryProducts(
         },
         include: {
           images: true,
-          colors: true,
-          sizes: {
-            include: {
-              size: true,
-            },
-          },
         },
       }),
       prisma.product.count({
@@ -246,16 +230,67 @@ export async function getCategoryProducts(
 }
 
 export async function getProductBySlug(slug: string) {
-  return await prisma.product.findUnique({
+  const product = await prisma.product.findUnique({
     where: { slug: slug },
     include: {
       images: true,
-      sizes: {
-        include: { size: true },
-      },
-      colors: {
-        include: { color: true },
+      variants: {
+        include: {
+          size: true,
+          color: true,
+        },
       },
     },
   });
+
+  if (!product) return null;
+
+  // Extract unique colors from variants
+  const colorsMap = new Map<string, { id: string; stock: number; color: { id: string; name: string; hex: string } }>();
+  // Extract unique sizes from variants
+  const sizesMap = new Map<string, { id: string; stock: number; size: { id: string; name: string }; price: number; weight: number; costPrice: number }>();
+
+  product.variants.forEach((v) => {
+    if (v.color) {
+      const existing = colorsMap.get(v.color.id);
+      if (existing) {
+        existing.stock += v.stock;
+      } else {
+        colorsMap.set(v.color.id, {
+          id: v.id,
+          stock: v.stock,
+          color: {
+            id: v.color.id,
+            name: v.color.name,
+            hex: v.color.hex,
+          },
+        });
+      }
+    }
+
+    if (v.size) {
+      const existing = sizesMap.get(v.size.id);
+      if (existing) {
+        existing.stock += v.stock;
+      } else {
+        sizesMap.set(v.size.id, {
+          id: v.id,
+          stock: v.stock,
+          size: {
+            id: v.size.id,
+            name: v.size.name,
+          },
+          price: v.price ?? product.basePrice,
+          weight: v.weight || product.weight,
+          costPrice: v.costPrice || product.costPrice,
+        });
+      }
+    }
+  });
+
+  return {
+    ...product,
+    colors: Array.from(colorsMap.values()),
+    sizes: Array.from(sizesMap.values()),
+  };
 }

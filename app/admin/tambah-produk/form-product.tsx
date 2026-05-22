@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { createProduct } from "../../actions/product";
+import VariantSection from "./variant-section";
 
 export default async function FormProduct() {
   const colors = await prisma.color.findMany({ orderBy: { name: "asc" } });
@@ -186,93 +187,8 @@ export default async function FormProduct() {
           </p>
         </div>
 
-        {/* Ukuran & Harga */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Ukuran & Harga Varian
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {sizes.map((size) => (
-              <div
-                key={size.id}
-                className="flex items-center gap-2 bg-white p-3 rounded border border-gray-200"
-              >
-                <input
-                  type="checkbox"
-                  name="sizes"
-                  value={size.id}
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                />
-                <span className="font-medium text-gray-700 min-w-15">
-                  {size.name}
-                </span>
-                <div className="flex gap-2 w-full">
-                  <input
-                    type="number"
-                    name={`price-${size.id}`}
-                    placeholder="Harga Jual"
-                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="number"
-                    name={`costPrice-${size.id}`}
-                    placeholder="Modal"
-                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="number"
-                    name={`weight-${size.id}`}
-                    placeholder="Berat"
-                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="number"
-                    name={`stockSize-${size.id}`}
-                    placeholder="Stok"
-                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Warna */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Pilih Warna
-          </label>
-          <div className="flex flex-wrap gap-3">
-            {colors.map((color) => (
-              <label
-                key={color.id}
-                className="flex flex-col gap-2 bg-white p-3 rounded border border-gray-200"
-              >
-                <div className="flex items-center gap-2 cursor-pointer hover:border-orange-300 transition-colors">
-                  <input
-                    type="checkbox"
-                    name="colors"
-                    value={color.id}
-                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    {color.name}
-                  </span>
-                  <div
-                    className="w-6 h-6 rounded border-2 border-gray-300"
-                    style={{ backgroundColor: color.hex }}
-                  />
-                </div>
-                <input
-                  type="number"
-                  name={`stockColor-${color.id}`}
-                  placeholder="Stok"
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </label>
-            ))}
-          </div>
-        </div>
+        {/* Varian Produk */}
+        <VariantSection colors={colors} sizes={sizes} />
 
         {/* Upload Gambar */}
         <div>

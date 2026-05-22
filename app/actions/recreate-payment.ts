@@ -50,7 +50,7 @@ export async function recreatePayment(oldPaymentOrderId: string) {
     })),
     {
       id: "ONGKIR",
-      price: order.ongkir,
+      price: order.shippingCost,
       quantity: 1,
       name: "Ongkos Kirim",
     },

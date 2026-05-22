@@ -35,8 +35,7 @@ model Product {
   category    Category?      @relation(fields: [categoryId], references: [id])
   stock       Int            @default(0)
   images      ProductImage[]
-  colors      ProductColor[]
-  sizes       ProductSize[]
+  variants    ProductVariant[]
   orderItems  OrderItem[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -55,40 +54,35 @@ model Color {
   id         String         @id @default(uuid())
   name       String
   hex        String
-  products   ProductColor[]
-  orderItems OrderItem[]
+  variants   ProductVariant[]
 }
 
 model Size {
   id         String        @id @default(uuid())
   name       String
-  products   ProductSize[]
+  variants   ProductVariant[]
+}
+
+model ProductVariant {
+  id         String @id @default(uuid())
+
+  productId  String
+  colorId    String?
+  sizeId     String?
+
+  price      Int?
+  costPrice  Int @default(0)
+  weight     Int @default(0)
+  stock      Int @default(0)
+
+  sku        String?
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color   Color?  @relation(fields: [colorId], references: [id])
+  size    Size?   @relation(fields: [sizeId], references: [id])
   orderItems OrderItem[]
-}
 
-model ProductColor {
-  id        String  @id @default(uuid())
-  productId String
-  colorId   String
-  stock     Int     @default(0)
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  color     Color   @relation(fields: [colorId], references: [id], onDelete: Cascade)
-
-  @@unique([productId, colorId])
-}
-
-model ProductSize {
-  id        String  @id @default(uuid())
-  productId String
-  sizeId    String
-  price       Int
-  costPrice   Int         @default(0)
-  weight      Int         @default(0)
-  stock       Int         @default(0)
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  size      Size    @relation(fields: [sizeId], references: [id], onDelete: Cascade)
-
-  @@unique([productId, sizeId])
+  @@unique([productId, colorId, sizeId])
 }
 
 model Order {
@@ -103,7 +97,7 @@ model Order {
   portalCode   Int
   address      String
   note         String?
-  ongkir       Int
+  shippingCost Int
   totalPrice   Int
   totalCost    Int         @default(0)
   paymentOrderId String    @unique
@@ -118,15 +112,13 @@ model OrderItem {
   id        String  @id @default(uuid())
   orderId   String
   productId String
-  sizeId    String?
-  colorId   String?
+  variantId String?
   quantity  Int
   price     Int
   costPrice Int         @default(0)
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-  size      Size?   @relation(fields: [sizeId], references: [id])
-  color     Color?  @relation(fields: [colorId], references: [id])
+  variant  ProductVariant? @relation(fields: [variantId], references: [id])
 }
 
 enum OrderStatus {

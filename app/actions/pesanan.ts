@@ -117,11 +117,16 @@ export async function getOrderDetail(orderId: string) {
     include: {
       items: {
         include: {
-          color: true,
-          size: true,
+          variant: {
+            include: {
+              color: true,
+              size: true,
+            },
+          },
           product: {
             include: {
               images: true,
+              variants: true,
             },
           },
         },
@@ -131,6 +136,7 @@ export async function getOrderDetail(orderId: string) {
 
   return order;
 }
+
 
 export async function updateOrderStatus(formData: FormData) {
   const orderId = formData.get("orderId") as string;
@@ -161,13 +167,18 @@ export async function updateOrderStatus(formData: FormData) {
   });
 
   // STOCK ADJUSTMENT LOGIC
-  const deductedStatuses = ["PENDING", "PAID", "SHIPPED", "FINISHED"];
-  const nonDeductedStatuses = ["CANCELLED"];
+  // Status aktif (stok sudah dikurangi): PENDING, PAID, SHIPPED, FINISHED
+  // Status tidak aktif (stok dikembalikan): CANCELLED
+  const activeStatuses = ["PENDING", "PAID", "SHIPPED", "FINISHED"];
+  const cancelledStatus = ["CANCELLED"];
 
-  if (nonDeductedStatuses.includes(oldStatus) && deductedStatuses.includes(newStatus)) {
-    await adjustOrderStock(orderId, "DEDUCT");
-  } else if (deductedStatuses.includes(oldStatus) && nonDeductedStatuses.includes(newStatus)) {
+  // Jika dari aktif → CANCELLED: kembalikan stok
+  if (activeStatuses.includes(oldStatus) && cancelledStatus.includes(newStatus)) {
     await adjustOrderStock(orderId, "RESTORE");
+  }
+  // Jika dari CANCELLED → aktif: kurangi stok kembali
+  else if (cancelledStatus.includes(oldStatus) && activeStatuses.includes(newStatus)) {
+    await adjustOrderStock(orderId, "DEDUCT");
   }
 
   revalidatePath("/admin/pesanan");

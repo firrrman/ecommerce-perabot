@@ -150,7 +150,7 @@ export async function getTotalRevenueByYear(year: number) {
   const result = await prisma.order.aggregate({
     _sum: {
       totalPrice: true,
-      ongkir: true,
+      shippingCost: true,
     },
     where: {
       status: {
@@ -163,7 +163,7 @@ export async function getTotalRevenueByYear(year: number) {
     },
   });
 
-  return (result._sum.totalPrice ?? 0) - (result._sum.ongkir ?? 0);
+  return (result._sum.totalPrice ?? 0) - (result._sum.shippingCost ?? 0);
 }
 
 export async function getOrderCountByYear(year: number) {
@@ -219,14 +219,14 @@ export async function getMonthlyRevenue(year: number) {
     select: {
       createdAt: true,
       totalPrice: true,
-      ongkir: true,
+      shippingCost: true,
     },
   });
 
   const monthly = Array(12).fill(0);
   orders.forEach((o) => {
     const month = new Date(o.createdAt).getMonth();
-    monthly[month] += o.totalPrice - o.ongkir;
+    monthly[month] += o.totalPrice - o.shippingCost;
   });
 
   return monthly;
@@ -269,14 +269,14 @@ export async function getMonthlyProfit(year: number) {
       createdAt: true,
       totalPrice: true,
       totalCost: true,
-      ongkir: true,
+      shippingCost: true,
     },
   });
 
   const monthly = Array(12).fill(0);
   orders.forEach((o) => {
     const month = new Date(o.createdAt).getMonth();
-    monthly[month] += (o.totalPrice - o.ongkir) - o.totalCost;
+    monthly[month] += (o.totalPrice - o.shippingCost) - o.totalCost;
   });
 
   return monthly;

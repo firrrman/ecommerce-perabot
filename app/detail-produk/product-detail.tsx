@@ -17,6 +17,18 @@ interface ProductDetailProps {
     details: string | null;
     stock: number;
     images: { src: string }[];
+    variants: {
+      id: string;
+      productId: string;
+      colorId: string | null;
+      sizeId: string | null;
+      price: number | null;
+      costPrice: number;
+      weight: number;
+      stock: number;
+      color: { id: string; name: string; hex: string } | null;
+      size: { id: string; name: string } | null;
+    }[];
     colors: {
       id: string;
       stock: number;
@@ -50,6 +62,78 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"deskripsi" | "spesifikasi" | "detail">("deskripsi");
 
+  const updateSelectedVariant = (sizeId: string | null, colorId: string | null) => {
+    let price = product.basePrice;
+    let weight = product.weight;
+    let costPrice = product.costPrice;
+    let stock = product.stock;
+
+    const hasColors = product.colors.length > 0;
+    const hasSizes = product.sizes.length > 0;
+
+    if (hasSizes && hasColors) {
+      if (sizeId && colorId) {
+        // Match exact combination
+        const exact = product.variants.find(
+          (v) => v.sizeId === sizeId && v.colorId === colorId
+        );
+        if (exact) {
+          price = exact.price ?? product.basePrice;
+          weight = exact.weight ?? product.weight;
+          costPrice = exact.costPrice ?? product.costPrice;
+          stock = exact.stock;
+        } else {
+          stock = 0;
+        }
+      } else if (sizeId) {
+        // Only size selected
+        const sizeVariants = product.variants.filter((v) => v.sizeId === sizeId);
+        stock = sizeVariants.reduce((sum, v) => sum + v.stock, 0);
+        const withPrice = sizeVariants.find((v) => v.price !== null);
+        if (withPrice) {
+          price = withPrice.price!;
+          weight = withPrice.weight ?? product.weight;
+          costPrice = withPrice.costPrice ?? product.costPrice;
+        }
+      } else if (colorId) {
+        // Only color selected
+        const colorVariants = product.variants.filter((v) => v.colorId === colorId);
+        stock = colorVariants.reduce((sum, v) => sum + v.stock, 0);
+      }
+    } else if (hasSizes) {
+      if (sizeId) {
+        const exact = product.variants.find((v) => v.sizeId === sizeId);
+        if (exact) {
+          price = exact.price ?? product.basePrice;
+          weight = exact.weight ?? product.weight;
+          costPrice = exact.costPrice ?? product.costPrice;
+          stock = exact.stock;
+        }
+      }
+    } else if (hasColors) {
+      if (colorId) {
+        const exact = product.variants.find((v) => v.colorId === colorId);
+        if (exact) {
+          price = exact.price ?? product.basePrice;
+          weight = exact.weight ?? product.weight;
+          costPrice = exact.costPrice ?? product.costPrice;
+          stock = exact.stock;
+        }
+      }
+    }
+
+    setSelectedPrice(price);
+    setSelectedWeight(weight);
+    setSelectedCostPrice(costPrice);
+    setSelectedStock(stock);
+
+    setQuantity((prev) => {
+      if (stock === 0) return 1;
+      if (prev > stock) return stock;
+      return prev;
+    });
+  };
+
   const { cart, addToCart } = useCart();
   const router = useRouter();
 
@@ -63,8 +147,41 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const decrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = () => {
+    let matchedVariantId: string | null = null;
+    let matchedVariant: any = null;
+    const hasColors = product.colors.length > 0;
+    const hasSizes = product.sizes.length > 0;
+
+    if (hasSizes && hasColors) {
+      if (selectedSize && selectedColor) {
+        const exact = product.variants.find(
+          (v) => v.sizeId === selectedSize && v.colorId === selectedColor
+        );
+        if (exact) {
+          matchedVariantId = exact.id;
+          matchedVariant = exact;
+        }
+      }
+    } else if (hasSizes) {
+      if (selectedSize) {
+        const exact = product.variants.find((v) => v.sizeId === selectedSize);
+        if (exact) {
+          matchedVariantId = exact.id;
+          matchedVariant = exact;
+        }
+      }
+    } else if (hasColors) {
+      if (selectedColor) {
+        const exact = product.variants.find((v) => v.colorId === selectedColor);
+        if (exact) {
+          matchedVariantId = exact.id;
+          matchedVariant = exact;
+        }
+      }
+    }
+
     const existingCartItem = cart.find(
-      (item) => item.productId === product.id && (item.colorId || null) === selectedColor && (item.sizeId || null) === selectedSize
+      (item) => item.productId === product.id && item.variantId === matchedVariantId
     );
     const existingQuantity = existingCartItem ? existingCartItem.quantity : 0;
 
@@ -91,13 +208,11 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
 
     addToCart({
       productId: product.id,
+      variantId: matchedVariantId,
+      variant: matchedVariant,
       name: product.name,
       price: selectedPrice,
       image: product.images[0].src,
-      sizeId: selectedSize,
-      sizeName: selectedSizeName,
-      colorId: selectedColor,
-      colorName: selectedColorName,
       costPrice: selectedCostPrice,
       weight: selectedWeight,
       quantity,
@@ -203,9 +318,12 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                     <button
                       key={color.id}
                       onClick={() => {
-                        setSelectedColor(color.color.id);
-                        setSelectedColorName(color.color.name);
-                        setSelectedStock(color.stock);
+                        const isSelected = selectedColor === color.color.id;
+                        const nextColor = isSelected ? null : color.color.id;
+                        const nextColorName = isSelected ? null : color.color.name;
+                        setSelectedColor(nextColor);
+                        setSelectedColorName(nextColorName);
+                        updateSelectedVariant(selectedSize, nextColor);
                       }}
                       title={`${color.color.name} (Stok: ${color.stock})`}
                       className={classNames(
@@ -230,12 +348,12 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                     <button
                       key={size.id}
                       onClick={() => {
-                        setSelectedSize(size.size.id);
-                        setSelectedSizeName(size.size.name);
-                        setSelectedPrice(size.price);
-                        setSelectedWeight(size.weight);
-                        setSelectedCostPrice(size.costPrice);
-                        setSelectedStock(size.stock);
+                        const isSelected = selectedSize === size.size.id;
+                        const nextSize = isSelected ? null : size.size.id;
+                        const nextSizeName = isSelected ? null : size.size.name;
+                        setSelectedSize(nextSize);
+                        setSelectedSizeName(nextSizeName);
+                        updateSelectedVariant(nextSize, selectedColor);
                       }}
                       title={`Stok: ${size.stock}`}
                       className={classNames(

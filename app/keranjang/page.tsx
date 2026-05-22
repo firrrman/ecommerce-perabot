@@ -15,8 +15,7 @@ export default function CartPage() {
   const handleRemove = (produk: any) => {
     removeFromCart({
       productId: produk.productId,
-      sizeId: produk.sizeId,
-      colorId: produk.colorId,
+      variantId: produk.variantId,
     });
     toast.success("Produk dihapus dari keranjang");
   };
@@ -81,7 +80,7 @@ export default function CartPage() {
               <div className="lg:col-span-2 flex flex-col gap-5">
                 {cart.map((produk) => (
                   <div
-                    key={`${produk.productId}-${produk.sizeId}-${produk.colorId}`}
+                    key={`${produk.productId}-${produk.variantId || "default"}`}
                     className="flex gap-5 sm:gap-6 p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200"
                   >
                     {/* Product Image */}
@@ -102,14 +101,14 @@ export default function CartPage() {
                         </h2>
 
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {produk.colorName && (
+                          {produk.variant?.color?.name && (
                             <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                              Warna: {produk.colorName}
+                              Warna: {produk.variant.color.name}
                             </span>
                           )}
-                          {produk.sizeName && (
+                          {produk.variant?.size?.name && (
                             <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                              Ukuran: {produk.sizeName}
+                              Ukuran: {produk.variant.size.name}
                             </span>
                           )}
                         </div>
@@ -173,12 +172,12 @@ export default function CartPage() {
                   <div className="space-y-4 mb-6">
                     {cart.map((produk) => (
                       <div
-                        key={`sum-${produk.productId}-${produk.sizeId}-${produk.colorId}`}
+                        key={`sum-${produk.productId}-${produk.variantId || "default"}`}
                         className="flex justify-between gap-3"
                       >
                         <span className="text-sm text-gray-500 line-clamp-2 flex-1">
                           {produk.name}
-                          {produk.sizeName ? ` (${produk.sizeName})` : ""}
+                          {produk.variant?.size?.name ? ` (${produk.variant.size.name})` : ""}
                           <span className="text-gray-400"> ×{produk.quantity}</span>
                         </span>
                         <span className="text-sm text-gray-700 font-semibold shrink-0">

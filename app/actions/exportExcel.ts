@@ -40,7 +40,7 @@ export async function exportOrderExcel(year: number) {
 
   const totalRevenue = orders.reduce((sum, order) => {
     if (order.status === "FINISHED" || order.status === "PAID") {
-      return sum + (order.totalPrice) - (order.ongkir);
+      return sum + (order.totalPrice) - (order.shippingCost);
     }
     return sum;
   }, 0);
