@@ -112,23 +112,28 @@ export default function FormCheckout() {
 
       const result = await createOrderFromForm(formData);
 
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
       if (paymentMethod === "cod") {
         clearCart();
         localStorage.removeItem("cart");
-        window.location.href = `/payment/cod-finish?order_id=${result.orderId}`;
+        window.location.href = `/payment/cod-finish?order_id=${result.orderId!}`;
         return;
       }
 
       if (paymentMethod === "midtrans") {
-        const token = await createPayment(result.paymentOrderId);
+        const token = await createPayment(result.paymentOrderId!);
         window.snap.pay(token, {
-          onSuccess: function (result: any) {
+          onSuccess: function (resultMidtrans: any) {
             clearCart();
             localStorage.removeItem("cart");
-            window.location.href = `/payment/finish?order_id=${result.order_id}`;
+            window.location.href = `/payment/finish?order_id=${resultMidtrans.order_id}`;
           },
           onPending: function () {
-            window.location.href = `/payment/finish?order_id=${result.paymentOrderId}`;
+            window.location.href = `/payment/finish?order_id=${result.paymentOrderId!}`;
           },
           onError: function () {
             alert("Pembayaran gagal");

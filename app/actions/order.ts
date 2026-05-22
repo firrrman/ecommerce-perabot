@@ -7,6 +7,32 @@ import { adjustOrderStock } from "@/lib/stock";
 export async function createOrderFromForm(formData: FormData) {
   const cart = JSON.parse(formData.get("cart") as string);
 
+  // Cek stok terlebih dahulu
+  for (const item of cart) {
+    if (item.variantId) {
+      const variant = await prisma.productVariant.findUnique({
+        where: { id: item.variantId },
+        include: { product: true }
+      });
+      if (!variant) {
+        return { error: "Produk atau varian tidak ditemukan, silakan perbarui keranjang." };
+      }
+      if (variant.stock < item.quantity) {
+        return { error: `Stok produk ${variant.product.name} tidak mencukupi (Sisa: ${variant.stock}).` };
+      }
+    } else {
+      const product = await prisma.product.findUnique({
+        where: { id: item.productId }
+      });
+      if (!product) {
+        return { error: "Produk tidak ditemukan." };
+      }
+      if (product.stock < item.quantity) {
+        return { error: `Stok produk ${product.name} tidak mencukupi (Sisa: ${product.stock}).` };
+      }
+    }
+  }
+
   // ⭐ BUAT paymentOrderId
   const paymentOrderId = "ORDER-" + Date.now();
 
