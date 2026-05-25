@@ -46,7 +46,7 @@ export default async function Home() {
   return (
     <Layout>
       <GridMotion items={items} />
-
+      
       <CardHomepage bestSeller={bestProduct} featuredProducts={featuredProduct} />
 
       <SearchProduk />

@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "../context/cart-context";
+import { OrbitProgress } from "react-loading-indicators";
 import { createOrderFromForm } from "../actions/order";
 import { createPayment } from "../actions/create-payment";
 import { toast } from "react-toastify";
@@ -302,9 +303,9 @@ export default function FormCheckout() {
                       {/* Spinner / icon */}
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                         {isSearching ? (
-                          <svg className="animate-spin text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                          </svg>
+                          <div className="flex items-center justify-center scale-40 transform origin-right">
+                            <OrbitProgress dense color="#000000" size="small" text="" textColor="" />
+                          </div>
                         ) : (
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
                             <circle cx="11" cy="11" r="8" />
@@ -411,75 +412,75 @@ export default function FormCheckout() {
                     </h2>
 
                     <div className="flex flex-col gap-3">
-                    {/* Free shipping option */}
-                    {isFreeShipping && (
-                      <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
-                        <input
-                          type="radio"
-                          name="ongkir"
-                          value={0}
-                          checked={selectedOngkir === 0}
-                          required
-                          onChange={() => {
-                            setSelectedOngkir(0);
-                            setShippingCost(0);
-                          }}
-                          className="accent-black w-4 h-4"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-black">
-                            Gratis Ongkir
-                          </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
-                            Pengiriman gratis untuk wilayah ini
-                          </p>
-                        </div>
-                        <span className="text-sm font-bold text-green-600">
-                          Gratis
-                        </span>
-                      </label>
-                    )}
+                      {/* Free shipping option */}
+                      {isFreeShipping && (
+                        <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="ongkir"
+                            value={0}
+                            checked={selectedOngkir === 0}
+                            required
+                            onChange={() => {
+                              setSelectedOngkir(0);
+                              setShippingCost(0);
+                            }}
+                            className="accent-black w-4 h-4"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-black">
+                              Gratis Ongkir
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              Pengiriman gratis untuk wilayah ini
+                            </p>
+                          </div>
+                          <span className="text-sm font-bold text-green-600">
+                            Gratis
+                          </span>
+                        </label>
+                      )}
 
-                    {/* Ongkir options */}
-                    {getOngkir?.map((ongkirdata: any, index: number) => (
-                      <label
-                        key={index}
-                        className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50"
-                      >
-                        <input
-                          type="radio"
-                          name="ongkir"
-                          value={ongkirdata.cost}
-                          checked={selectedOngkir === ongkirdata.cost}
-                          required
-                          onChange={() => {
-                            setSelectedOngkir(ongkirdata.cost);
-                            setShippingCost(ongkirdata.cost);
-                          }}
-                          className="accent-black w-4 h-4"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-black">
-                            {ongkirdata.name} — {ongkirdata.service}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
-                            {ongkirdata.description}
-                          </p>
-                        </div>
-                        <span className="text-sm font-bold text-black">
-                          Rp {ongkirdata.cost.toLocaleString("id-ID")}
-                        </span>
-                      </label>
-                    ))}
+                      {/* Ongkir options */}
+                      {getOngkir?.map((ongkirdata: any, index: number) => (
+                        <label
+                          key={index}
+                          className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50"
+                        >
+                          <input
+                            type="radio"
+                            name="ongkir"
+                            value={ongkirdata.cost}
+                            checked={selectedOngkir === ongkirdata.cost}
+                            required
+                            onChange={() => {
+                              setSelectedOngkir(ongkirdata.cost);
+                              setShippingCost(ongkirdata.cost);
+                            }}
+                            className="accent-black w-4 h-4"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-black">
+                              {ongkirdata.name} — {ongkirdata.service}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {ongkirdata.description}
+                            </p>
+                          </div>
+                          <span className="text-sm font-bold text-black">
+                            Rp {ongkirdata.cost.toLocaleString("id-ID")}
+                          </span>
+                        </label>
+                      ))}
 
-                    {!isFreeShipping && getOngkir?.length === 0 && (
-                      <div className="text-sm text-gray-400 bg-gray-50 rounded-xl p-3 text-center">
-                        Pilih alamat terlebih dahulu untuk melihat opsi
-                        pengiriman
-                      </div>
-                    )}
+                      {!isFreeShipping && getOngkir?.length === 0 && (
+                        <div className="text-sm text-gray-400 bg-gray-50 rounded-xl p-3 text-center">
+                          Pilih alamat terlebih dahulu untuk melihat opsi
+                          pengiriman
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
                 )}
 
                 {/* Section: Pembayaran */}
@@ -492,23 +493,58 @@ export default function FormCheckout() {
                   </h2>
 
                   <div className="flex flex-col gap-3">
-                  {/* COD — only available for specific address */}
-                  {isFreeShipping && (
+                    {/* COD — only available for specific address */}
+                    {isFreeShipping && (
+                      <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="cod"
+                          checked={paymentMethod === "cod"}
+                          onChange={() => setPaymentMethod("cod")}
+                          className="accent-black w-4 h-4"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-black">
+                            Bayar di Tempat (COD)
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            Bayar langsung saat barang tiba
+                          </p>
+                        </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-gray-400"
+                        >
+                          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                      </label>
+                    )}
+
+                    {/* Transfer / E-Wallet */}
                     <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
                       <input
                         type="radio"
                         name="paymentMethod"
-                        value="cod"
-                        checked={paymentMethod === "cod"}
-                        onChange={() => setPaymentMethod("cod")}
+                        value="midtrans"
+                        checked={paymentMethod === "midtrans"}
+                        onChange={() => setPaymentMethod("midtrans")}
                         className="accent-black w-4 h-4"
                       />
                       <div className="flex-1">
                         <p className="text-sm font-semibold text-black">
-                          Bayar di Tempat (COD)
+                          Transfer / E-Wallet
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5">
-                          Bayar langsung saat barang tiba
+                          QRIS, GoPay, OVO, Dana, Transfer Bank, dll.
                         </p>
                       </div>
                       <svg
@@ -523,48 +559,13 @@ export default function FormCheckout() {
                         strokeLinejoin="round"
                         className="text-gray-400"
                       >
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        <rect width="20" height="14" x="2" y="5" rx="2" />
+                        <path d="M2 10h20" />
                       </svg>
                     </label>
-                  )}
-
-                  {/* Transfer / E-Wallet */}
-                  <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="midtrans"
-                      checked={paymentMethod === "midtrans"}
-                      onChange={() => setPaymentMethod("midtrans")}
-                      className="accent-black w-4 h-4"
-                    />
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-black">
-                        Transfer / E-Wallet
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        QRIS, GoPay, OVO, Dana, Transfer Bank, dll.
-                      </p>
-                    </div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-gray-400"
-                    >
-                      <rect width="20" height="14" x="2" y="5" rx="2" />
-                      <path d="M2 10h20" />
-                    </svg>
-                  </label>
+                  </div>
                 </div>
               </div>
-            </div>
 
               {/* Hidden fields */}
               <input type="hidden" name="province" value={province} />
@@ -666,21 +667,10 @@ export default function FormCheckout() {
                   className="w-full flex items-center justify-center gap-2 bg-black text-white text-sm font-semibold py-3.5 rounded-2xl hover:bg-gray-900 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
-                    <>
-                      <svg
-                        className="animate-spin"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                      </svg>
+                    <div className="scale-40">
+                      <OrbitProgress dense color="#ffffff" size="small" text="" textColor="" />
                       Memproses...
-                    </>
+                    </div>
                   ) : (
                     <>
                       Bayar Sekarang

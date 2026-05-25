@@ -2,12 +2,15 @@
 export const dynamic = "force-dynamic";
 
 import { useState } from "react";
-import { Grid, List, ChevronDown, Edit, Trash2, Star } from "lucide-react";
+import { Grid, List, ChevronDown, Edit, Trash2, Star, Package } from "lucide-react";
 import { SearchBarAdmin } from "../../component/search-bar";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/app/component/pagination";
+import ConfirmModal from "@/app/component/confirm-modal";
 import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import TransitionLink from "@/app/component/transition-link";
 
 export interface ProductCardProps {
   id: string;
@@ -46,6 +49,7 @@ export default function ProdukListAdmin({
   const [viewMode, setViewMode] = useState("list");
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const confirmDelete = (id: string) => {
     setConfirmDeleteId(id);
@@ -62,7 +66,7 @@ export default function ProdukListAdmin({
       await onDelete(id);
       location.reload();
     } catch {
-      alert("Gagal menghapus produk");
+      toast.error("Gagal menghapus produk");
       setIsDeletingId(null);
     }
   };
@@ -81,6 +85,7 @@ export default function ProdukListAdmin({
       params.set("category", value);
     }
 
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "category" }));
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
@@ -172,7 +177,17 @@ export default function ProdukListAdmin({
       </div>
 
       {/* Products Grid/List */}
-      {viewMode === "grid" ? (
+      {product.length === 0 ? (
+        <div className="bg-white rounded-lg border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+            <Package className="w-8 h-8 text-slate-400" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">Tidak Ada Produk</h3>
+          <p className="text-slate-500 max-w-sm">
+            Belum ada produk yang ditambahkan atau produk yang Anda cari tidak ditemukan.
+          </p>
+        </div>
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {product.map((product) => (
             <div
@@ -199,7 +214,7 @@ export default function ProdukListAdmin({
                 <h3 className="font-semibold text-slate-800 mb-2 line-clamp-1">
                   {product.name}
                 </h3>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <p className="text-lg font-bold text-slate-800">
                     {formatPrice(product.basePrice)}
                   </p>
@@ -211,6 +226,27 @@ export default function ProdukListAdmin({
                       Terjual: {product.sold}
                     </span>
                   </div>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    href={`/admin/edit-produk/${product.id}`}
+                    onClick={() => setEditingId(product.id)}
+                    className="flex-1 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+                  >
+                    {editingId === product.id ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Edit size={14} />
+                    )}
+                    {editingId === product.id ? "Memuat..." : "Edit"}
+                  </Link>
+                  <button
+                    onClick={() => confirmDelete(product.id)}
+                    disabled={isDeletingId === product.id}
+                    className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {isDeletingId === product.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  </button>
                 </div>
               </div>
             </div>
@@ -293,6 +329,14 @@ export default function ProdukListAdmin({
         page={page}
         search={search}
         category={category}
+      />
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk ini? Aksi ini tidak dapat dibatalkan."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDeleteId(null)}
       />
     </div>
   );

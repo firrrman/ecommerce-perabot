@@ -1,7 +1,6 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { Loader2 } from "lucide-react";
 
 interface SubmitButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   defaultText: string;
@@ -24,7 +23,6 @@ export default function SubmitButton({
       className={`relative flex items-center justify-center gap-2 ${className} ${pending ? "opacity-80 cursor-not-allowed" : ""
         }`}
     >
-      {pending && <Loader2 className="w-4 h-4 animate-spin" />}
       <span>{pending ? loadingText : defaultText}</span>
     </button>
   );

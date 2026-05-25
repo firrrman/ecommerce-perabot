@@ -16,7 +16,7 @@ import {
   bestSeller,
   getOrderGrafik,
 } from "@/app/actions/dashboard";
-import Link from "next/link";
+import TransitionLink from "../../component/transition-link";
 import ChartJs from "./chartjs";
 
 type Props = {
@@ -114,12 +114,12 @@ export default async function Dashboard({ searchParams }: Props) {
               <h3 className="text-lg font-bold text-gray-800">
                 Pesanan Terbaru
               </h3>
-              <Link
+              <TransitionLink
                 href="/admin/pesanan"
                 className="text-amber-600 text-sm font-semibold hover:text-amber-700"
               >
                 Lihat Semua
-              </Link>
+              </TransitionLink>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -200,7 +200,7 @@ export default async function Dashboard({ searchParams }: Props) {
 
         {/* Quick Actions */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
+          <TransitionLink
             href={"/admin/tambah-produk"}
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
           >
@@ -210,8 +210,8 @@ export default async function Dashboard({ searchParams }: Props) {
             <span className="text-sm font-semibold text-gray-800">
               Tambah Produk
             </span>
-          </Link>
-          <Link
+          </TransitionLink>
+          <TransitionLink
             href={"/admin/pesanan"}
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
           >
@@ -221,8 +221,8 @@ export default async function Dashboard({ searchParams }: Props) {
             <span className="text-sm font-semibold text-gray-800">
               Kelola Pesanan
             </span>
-          </Link>
-          <Link
+          </TransitionLink>
+          <TransitionLink
             href={"/admin/laporan"}
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
           >
@@ -232,7 +232,7 @@ export default async function Dashboard({ searchParams }: Props) {
             <span className="text-sm font-semibold text-gray-800">
               Lihat Laporan
             </span>
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     </LayoutAdmin>

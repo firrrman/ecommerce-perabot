@@ -1,4 +1,6 @@
 export const dynamic = "force-dynamic";
+
+import LayoutOwner from "../../component/layout-owner";
 import {
   DollarSign,
   Package,
@@ -14,9 +16,8 @@ import {
   bestSeller,
   getOrderGrafik,
 } from "@/app/actions/dashboard";
-import Link from "next/link";
+import TransitionLink from "../../component/transition-link";
 import ChartJs from "./chartjs";
-import LayoutOwner from "@/app/component/layout-owner";
 
 type Props = {
   searchParams: Promise<{ year?: number }>;
@@ -113,12 +114,12 @@ export default async function Dashboard({ searchParams }: Props) {
               <h3 className="text-lg font-bold text-gray-800">
                 Pesanan Terbaru
               </h3>
-              <Link
-                href="/admin/pesanan"
+              <TransitionLink
+                href="/owner/pesanan"
                 className="text-amber-600 text-sm font-semibold hover:text-amber-700"
               >
                 Lihat Semua
-              </Link>
+              </TransitionLink>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -199,7 +200,7 @@ export default async function Dashboard({ searchParams }: Props) {
 
         {/* Quick Actions */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
+          <TransitionLink
             href={"/owner/produk"}
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
           >
@@ -209,8 +210,8 @@ export default async function Dashboard({ searchParams }: Props) {
             <span className="text-sm font-semibold text-gray-800">
               Lihat Produk
             </span>
-          </Link>
-          <Link
+          </TransitionLink>
+          <TransitionLink
             href={"/owner/pesanan"}
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
           >
@@ -218,10 +219,10 @@ export default async function Dashboard({ searchParams }: Props) {
               <ShoppingCart className="text-purple-600" size={24} />
             </div>
             <span className="text-sm font-semibold text-gray-800">
-              Lihat Pesanan
+              Kelola Pesanan
             </span>
-          </Link>
-          <Link
+          </TransitionLink>
+          <TransitionLink
             href={"/owner/laporan"}
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
           >
@@ -231,7 +232,7 @@ export default async function Dashboard({ searchParams }: Props) {
             <span className="text-sm font-semibold text-gray-800">
               Lihat Laporan
             </span>
-          </Link>
+          </TransitionLink>
         </div>
       </div>
     </LayoutOwner>

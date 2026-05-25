@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState } from "react";
-import { Grid, List, ChevronDown, Edit, Trash2, Star } from "lucide-react";
+import { Grid, List, ChevronDown, Edit, Trash2, Star, Package } from "lucide-react";
 import { SearchBarAdmin } from "../../component/search-bar";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,6 +10,7 @@ import Pagination from "@/app/component/pagination";
 import ConfirmModal from "@/app/component/confirm-modal";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
+import TransitionLink from "@/app/component/transition-link";
 
 export interface ProductCardProps {
   id: string;
@@ -84,6 +85,7 @@ export default function ProdukListAdmin({
       params.set("category", value);
     }
 
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "category" }));
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
@@ -108,12 +110,12 @@ export default function ProdukListAdmin({
               Kelola dan pantau semua produk perabotan
             </p>
           </div>
-          <a
+          <TransitionLink
             href="/admin/tambah-produk"
             className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium"
           >
             Tambah Produk
-          </a>
+          </TransitionLink>
         </div>
 
         {/* Filters */}
@@ -181,7 +183,17 @@ export default function ProdukListAdmin({
       </div>
 
       {/* Products Grid/List */}
-      {viewMode === "grid" ? (
+      {product.length === 0 ? (
+        <div className="bg-white rounded-lg border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+            <Package className="w-8 h-8 text-slate-400" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">Tidak Ada Produk</h3>
+          <p className="text-slate-500 max-w-sm">
+            Belum ada produk yang ditambahkan atau produk yang Anda cari tidak ditemukan.
+          </p>
+        </div>
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {product.map((product) => (
             <div

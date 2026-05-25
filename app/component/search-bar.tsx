@@ -27,6 +27,7 @@ export function SearchBar() {
       params.delete("search");
     }
 
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
     router.push(`?${params.toString()}`);
   };
 
@@ -34,6 +35,7 @@ export function SearchBar() {
     setSearchQuery("");
     const params = new URLSearchParams(searchParams);
     params.delete("search");
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
     router.push(`?${params.toString()}`);
   };
 
@@ -97,6 +99,7 @@ export function SearchBarAdmin() {
       params.delete("search");
     }
 
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
     router.push(`?${params.toString()}`);
   };
 
@@ -104,6 +107,7 @@ export function SearchBarAdmin() {
     setSearchQuery("");
     const params = new URLSearchParams(searchParams);
     params.delete("search");
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
     router.push(`?${params.toString()}`);
   };
 
@@ -165,6 +169,7 @@ export function SearchBarAdminOrder() {
       params.delete("search");
     }
 
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
     router.push(`?${params.toString()}`);
   };
 
@@ -175,6 +180,7 @@ export function SearchBarAdminOrder() {
     params.delete("search");
     params.set("page", "1");
 
+    window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
     router.push(`?${params.toString()}`);
   };
 

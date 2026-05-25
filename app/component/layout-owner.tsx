@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   X,
@@ -11,8 +11,9 @@ import {
   Truck,
   Package,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Logout from "./logout";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function LayoutOwner({
   children,
@@ -23,7 +24,22 @@ export default function LayoutOwner({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(activeMenuProp);
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setNavigatingTo(null);
+
+    const handleStartNavigation = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setNavigatingTo(customEvent.detail);
+    };
+
+    window.addEventListener("start-navigation", handleStartNavigation);
+    return () => window.removeEventListener("start-navigation", handleStartNavigation);
+  }, [pathname, searchParams]);
 
   const menuItems = [
     {
@@ -71,7 +87,9 @@ export default function LayoutOwner({
               <button
                 key={item.id}
                 onClick={() => {
+                  if (pathname === item.router) return;
                   setActiveMenu(item.id);
+                  setNavigatingTo(item.id);
                   setSidebarOpen(false);
                   router.push(item.router);
                 }}
@@ -111,7 +129,12 @@ export default function LayoutOwner({
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {navigatingTo && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+            <OrbitProgress dense color="#000000" size="medium" text="" textColor="" />
+          </div>
+        )}
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200 lg:py-5">
           <div className="flex items-center justify-between p-4">
