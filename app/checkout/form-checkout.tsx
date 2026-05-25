@@ -197,7 +197,7 @@ export default function FormCheckout() {
 
   /* ─── Main Checkout ─── */
   return (
-    <div className="min-h-screen bg-white pt-28 pb-24">
+    <div className="min-h-screen bg-white pt-24 pb-12">
       <div className="w-full px-5 md:px-10 xl:px-20 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="my-5">
@@ -210,50 +210,50 @@ export default function FormCheckout() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
             {/* ── LEFT: Form ── */}
-            <div className="lg:col-span-2 gap-8 grid grid-cols-1 md:grid-cols-2">
+            <div className="xl:col-span-2 gap-5 lg:gap-6 grid grid-cols-1 md:grid-cols-2">
               {/* Section: Kontak */}
-              <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
-                <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
+              <div className="border border-gray-100 md:col-span-2 rounded-2xl p-5 shadow-sm">
+                <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-black text-white text-xs flex items-center justify-center font-bold">
                     1
                   </span>
                   Informasi Kontak
                 </h2>
 
-                <div className="grid grid-cols-1 gap-5">
-                  <div className="w-full">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+                  <div className="w-full md:col-span-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       Nama Lengkap
                     </label>
                     <input
                       name="customerName"
                       placeholder="Masukkan nama lengkap"
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
                       required
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <div className="md:col-span-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       Email
                     </label>
                     <input
                       name="gmail"
                       type="email"
                       placeholder="email@contoh.com"
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
                       required
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <div className="md:col-span-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       No. Telepon
                     </label>
                     <input
                       name="phone"
                       placeholder="08xxxxxxxxxx"
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
                       required
                     />
                   </div>
@@ -261,18 +261,18 @@ export default function FormCheckout() {
               </div>
 
               {/* Section: Alamat */}
-              <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
-                <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
+              <div className="border border-gray-100 rounded-2xl p-5 shadow-sm">
+                <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-black text-white text-xs flex items-center justify-center font-bold">
                     2
                   </span>
                   Alamat Pengiriman
                 </h2>
 
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-4">
                   {/* Search Kecamatan — Realtime dari database */}
                   <div ref={searchRef}>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       Cari Kecamatan / Desa
                     </label>
                     <div className="relative">
@@ -280,7 +280,7 @@ export default function FormCheckout() {
                         type="text"
                         required
                         placeholder="Ketik nama kecamatan atau desa..."
-                        className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
                         value={search}
                         onChange={(e) => {
                           setSearch(e.target.value);
@@ -351,14 +351,14 @@ export default function FormCheckout() {
 
                   {/* Detail Alamat */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       Detail Alamat
                     </label>
                     <textarea
                       name="address"
                       placeholder="Jalan, RT/RW, No. Rumah, Patokan"
-                      rows={3}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all resize-none placeholder:text-gray-400"
+                      rows={2}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all resize-none placeholder:text-gray-400"
                       value={detailAlamat}
                       onChange={(e) => setDetailAlamat(e.target.value)}
                       required
@@ -367,8 +367,8 @@ export default function FormCheckout() {
 
                   {/* Preview Alamat */}
                   {(detailAlamat || alamat) && (
-                    <div className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-4">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-3">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
                         Preview Alamat
                       </p>
                       <p className="text-sm text-gray-700 leading-relaxed">
@@ -382,7 +382,7 @@ export default function FormCheckout() {
 
                   {/* Catatan */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       Catatan Tambahan{" "}
                       <span className="font-normal text-gray-400">
                         (opsional)
@@ -392,23 +392,25 @@ export default function FormCheckout() {
                       name="note"
                       placeholder="Catatan untuk penjual..."
                       rows={2}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all resize-none placeholder:text-gray-400"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all resize-none placeholder:text-gray-400"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Section: Pengiriman */}
-              {alamat && (
-                <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
-                  <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
-                      3
-                    </span>
-                    Metode Pengiriman
-                  </h2>
+              {/* Group Pengiriman & Pembayaran in Right Column */}
+              <div className="flex flex-col gap-5 lg:gap-6">
+                {/* Section: Pengiriman */}
+                {alamat && (
+                  <div className="border border-gray-100 rounded-2xl p-5 shadow-sm">
+                    <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-black text-white text-xs flex items-center justify-center font-bold">
+                        3
+                      </span>
+                      Metode Pengiriman
+                    </h2>
 
-                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3">
                     {/* Free shipping option */}
                     {isFreeShipping && (
                       <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
@@ -471,25 +473,25 @@ export default function FormCheckout() {
                     ))}
 
                     {!isFreeShipping && getOngkir?.length === 0 && (
-                      <div className="text-sm text-gray-400 bg-gray-50 rounded-xl p-4 text-center">
+                      <div className="text-sm text-gray-400 bg-gray-50 rounded-xl p-3 text-center">
                         Pilih alamat terlebih dahulu untuk melihat opsi
                         pengiriman
                       </div>
                     )}
                   </div>
                 </div>
-              )}
+                )}
 
-              {/* Section: Pembayaran */}
-              <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
-                <h2 className="text-xl font-bold text-black mb-6 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-black text-white text-sm flex items-center justify-center font-bold">
-                    {alamat ? "4" : "3"}
-                  </span>
-                  Metode Pembayaran
-                </h2>
+                {/* Section: Pembayaran */}
+                <div className="border border-gray-100 rounded-2xl p-5 shadow-sm h-fit">
+                  <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-black text-white text-xs flex items-center justify-center font-bold">
+                      {alamat ? "4" : "3"}
+                    </span>
+                    Metode Pembayaran
+                  </h2>
 
-                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-3">
                   {/* COD — only available for specific address */}
                   {isFreeShipping && (
                     <label className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-black hover:bg-gray-50 transition-all has-checked:border-black has-checked:bg-gray-50">
@@ -562,6 +564,7 @@ export default function FormCheckout() {
                   </label>
                 </div>
               </div>
+            </div>
 
               {/* Hidden fields */}
               <input type="hidden" name="province" value={province} />
@@ -576,9 +579,9 @@ export default function FormCheckout() {
             </div>
 
             {/* ── RIGHT: Order Summary ── */}
-            <div className="lg:col-span-1">
-              <div className="border border-gray-100 rounded-2xl p-6 sm:p-8 sticky top-28 shadow-sm">
-                <h2 className="text-xl font-bold text-black mb-6">
+            <div className="xl:col-span-1">
+              <div className="border border-gray-100 rounded-2xl p-5 lg:p-6 sticky top-24 shadow-sm">
+                <h2 className="text-lg font-bold text-black mb-4">
                   Ringkasan Pesanan
                 </h2>
 
@@ -660,7 +663,7 @@ export default function FormCheckout() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 bg-black text-white text-base font-semibold py-4 rounded-2xl hover:bg-gray-900 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 bg-black text-white text-sm font-semibold py-3.5 rounded-2xl hover:bg-gray-900 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
