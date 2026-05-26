@@ -27,7 +27,7 @@ export async function createPayment(paymentOrderId: string) {
       id: item.id,
       price: item.price,
       quantity: item.quantity,
-      name: item.product.name,
+      name: item.productName || item.product?.name || "Produk Dihapus",
     })),
     {
       id: "ONGKIR",

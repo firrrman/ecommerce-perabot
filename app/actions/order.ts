@@ -69,6 +69,7 @@ export async function createOrderFromForm(formData: FormData) {
               // Selalu fetch variant terbaru dari DB
               const variant = await prisma.productVariant.findUnique({
                 where: { id: item.variantId },
+                include: { product: true, color: true, size: true }
               });
 
               if (!variant) {
@@ -79,12 +80,16 @@ export async function createOrderFromForm(formData: FormData) {
 
               orderItem.variantId = variant.id;
               orderItem.costPrice = variant.costPrice ?? 0;
+              orderItem.productName = variant.product.name;
+              orderItem.colorName = variant.color?.name;
+              orderItem.sizeName = variant.size?.name;
             } else {
               // Produk tanpa varian — ambil costPrice dari product
               const product = await prisma.product.findUnique({
                 where: { id: item.productId },
               });
               orderItem.costPrice = product?.costPrice ?? 0;
+              orderItem.productName = product?.name;
             }
 
             return orderItem;

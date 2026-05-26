@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import ConfirmModal from "@/app/component/confirm-modal";
 
 type Color = { id: string; name: string; hex: string };
 type Size = { id: string; name: string };
@@ -24,6 +25,7 @@ export default function VariantSection({
   initialVariants?: Variant[];
 }) {
   const [variants, setVariants] = useState<Variant[]>(initialVariants);
+  const [variantToDelete, setVariantToDelete] = useState<string | null>(null);
 
   const addVariant = () => {
     setVariants((prev) => [
@@ -41,7 +43,14 @@ export default function VariantSection({
   };
 
   const removeVariant = (localId: string) => {
-    setVariants((prev) => prev.filter((v) => v.localId !== localId));
+    setVariantToDelete(localId);
+  };
+
+  const confirmDelete = () => {
+    if (variantToDelete) {
+      setVariants((prev) => prev.filter((v) => v.localId !== variantToDelete));
+      setVariantToDelete(null);
+    }
   };
 
   const updateVariant = (
@@ -310,6 +319,14 @@ export default function VariantSection({
           + Tambah Varian Lagi
         </button>
       )}
+
+      <ConfirmModal
+        isOpen={!!variantToDelete}
+        title="Hapus Varian"
+        message="Apakah Anda yakin ingin menghapus varian ini?"
+        onConfirm={confirmDelete}
+        onCancel={() => setVariantToDelete(null)}
+      />
     </div>
   );
 }

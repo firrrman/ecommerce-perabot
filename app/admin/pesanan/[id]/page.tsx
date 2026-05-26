@@ -169,7 +169,7 @@ export default async function OrderDetailPage({ params }: Props) {
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
                         <p className="font-semibold text-gray-800 mb-2">
-                          {item.product?.name || "Produk Dihapus"}
+                          {item.productName || item.product?.name || "Produk Dihapus"}
                         </p>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <span className="bg-gray-100 px-3 py-1 rounded-full">
@@ -179,8 +179,8 @@ export default async function OrderDetailPage({ params }: Props) {
                             </span>
                           </span>
                           <span> Rp {item.price.toLocaleString("id-ID")}</span>
-                          <span>{item.variant?.color?.name}</span>
-                          <span>{item.variant?.size?.name}</span>
+                          <span>{item.colorName || item.variant?.color?.name}</span>
+                          <span>{item.sizeName || item.variant?.size?.name}</span>
                         </div>
                       </div>
                       <div className="text-right">

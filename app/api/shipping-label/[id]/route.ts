@@ -178,10 +178,13 @@ export async function GET(
 
   currentY -= 15;
   order.items.forEach((item) => {
-    const productName = item.product.name;
+    const productName = item.productName || item.product?.name || "Produk Dihapus";
     const specParts = [];
-    if (item.variant?.size) specParts.push(`Size: ${item.variant.size.name}`);
-    if (item.variant?.color) specParts.push(`Color: ${item.variant.color.name}`);
+    const sizeName = item.sizeName || item.variant?.size?.name;
+    const colorName = item.colorName || item.variant?.color?.name;
+    
+    if (sizeName) specParts.push(`Size: ${sizeName}`);
+    if (colorName) specParts.push(`Color: ${colorName}`);
     const spec = specParts.length > 0 ? ` (${specParts.join(", ")})` : "";
     const itemText = `• [Qty: ${item.quantity}] ${productName}${spec}`;
 

@@ -333,20 +333,6 @@ export async function updateProduct(productId: string, formData: FormData) {
     .filter((ev) => !submittedIds.includes(ev.id))
     .map((ev) => ev.id);
 
-  if (variantsToDelete.length > 0) {
-    const variantsInOrders = await prisma.productVariant.findFirst({
-      where: {
-        id: { in: variantsToDelete },
-        orderItems: { some: {} },
-      },
-    });
-
-    if (variantsInOrders) {
-      return {
-        error: "Gagal: Varian tidak bisa dihapus karena sudah ada pesanan yang menggunakan varian tersebut. Jika stok habis, silakan ubah stok varian menjadi 0."
-      };
-    }
-  }
 
   await prisma.product.update({
     where: { id: productId },

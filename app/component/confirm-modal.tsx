@@ -65,12 +65,14 @@ export default function ConfirmModal({
           </p>
           <div className="flex gap-4">
             <button
+              type="button"
               onClick={onCancel}
               className="px-8 py-3 bg-white/10 border border-white/20 text-white font-medium rounded-xl hover:bg-white/20 transition-colors"
             >
               {cancelText}
             </button>
             <button
+              type="button"
               onClick={onConfirm}
               className="px-8 py-3 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 transition-colors shadow-lg"
             >
@@ -108,6 +110,7 @@ export default function ConfirmModal({
               <AlertTriangle className="w-5 h-5" />
             </div>
             <button
+              type="button"
               onClick={onCancel}
               className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
             >
@@ -122,12 +125,14 @@ export default function ConfirmModal({
 
           <div className="flex gap-3 w-full">
             <button
+              type="button"
               onClick={onCancel}
               className="flex-1 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors"
             >
               {cancelText}
             </button>
             <button
+              type="button"
               onClick={onConfirm}
               className="flex-1 px-4 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm"
             >

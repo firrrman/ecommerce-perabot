@@ -155,7 +155,7 @@ export async function exportOrderExcel(year: number) {
       detailData.push([
         order.id,
         order.customerName,
-        item.product.name,
+        item.productName || item.product?.name || "Produk Dihapus",
         item.quantity,
         item.price,
         item.quantity * item.price,

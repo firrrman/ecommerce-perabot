@@ -667,8 +667,7 @@ export default function FormCheckout() {
                   className="w-full flex items-center justify-center gap-2 bg-black text-white text-sm font-semibold py-3.5 rounded-2xl hover:bg-gray-900 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
-                    <div className="scale-40">
-                      <OrbitProgress dense color="#ffffff" size="small" text="" textColor="" />
+                    <div>
                       Memproses...
                     </div>
                   ) : (
