@@ -6,6 +6,7 @@ import { featuredProducts, bestSeller } from "./actions/cardProduct";
 import CategoryCard from "./beranda/category-card";
 import CardHomepage from "./beranda/card-hompage";
 import ShoppingMethod from "./beranda/shopping-method";
+import WhatsAppCTA from "./beranda/whatsapp-cta";
 
 export default async function Home() {
   const bestProduct = await bestSeller();
@@ -46,12 +47,13 @@ export default async function Home() {
   return (
     <Layout>
       <GridMotion items={items} />
-      
+
       <CardHomepage bestSeller={bestProduct} featuredProducts={featuredProduct} />
 
       <SearchProduk />
       <CategoryCard />
       <ShoppingMethod />
+      <WhatsAppCTA />
     </Layout>
   );
 }

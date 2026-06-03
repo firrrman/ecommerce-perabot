@@ -20,7 +20,7 @@ export function Card({ product }: { product: ProductCardProps[] }) {
       {/* Image Container */}
       <div className="relative aspect-4/5 w-full overflow-hidden bg-gray-50">
         <img
-          src={item.images[0]?.src || "/placeholder.jpg"}
+          src={item.images[0]?.src}
           alt={item.name}
           className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale-40 group-hover:scale-105"}`}
           loading="lazy"
