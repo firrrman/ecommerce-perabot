@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { createProduct } from "../../actions/product";
 import VariantSection from "./variant-section";
+import FormCategory from "./form-category";
+import FormColor from "./form-color";
+import FormSize from "./form-size";
+import SubmitButton from "@/app/component/submit-button";
+import TransitionLink from "@/app/component/transition-link";
 
 export default async function FormProduct() {
   const colors = await prisma.color.findMany({ orderBy: { name: "asc" } });
@@ -10,6 +15,13 @@ export default async function FormProduct() {
   });
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      {/* Container for Kategori, Warna, Ukuran */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-b border-gray-100 pb-8">
+        <FormCategory />
+        <FormColor />
+        <FormSize />
+      </div>
+
       <div className="flex items-center gap-2 mb-6">
         <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
           <svg
@@ -209,10 +221,18 @@ export default async function FormProduct() {
         </div>
 
         {/* Submit Button */}
-        <div className="pt-4">
-          <button className="w-full cursor-pointer bg-orange-600 hover:bg-orange-700 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-sm hover:shadow-md">
-            Simpan Produk
-          </button>
+        <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+          <SubmitButton
+            defaultText="Tambah Produk"
+            loadingText="Menyimpan..."
+            className="flex-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-sm hover:shadow-md"
+          />
+          <TransitionLink
+            href="/admin/produk"
+            className="border-gray-300 text-gray-700 hover:bg-gray-50 border cursor-pointer px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium"
+          >
+            Batal
+          </TransitionLink>
         </div>
       </form>
     </div>

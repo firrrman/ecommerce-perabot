@@ -2,11 +2,11 @@ import { createCategory } from "../../actions/product";
 
 export default function FormCategory() {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
           <svg
-            className="w-5 h-5 text-blue-600"
+            className="w-4 h-4 text-blue-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -19,32 +19,32 @@ export default function FormCategory() {
             />
           </svg>
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">Tambah Kategori</h2>
+        <h3 className="text-sm font-semibold text-gray-900">Tambah Kategori</h3>
       </div>
-      <form action={createCategory} className="space-y-4">
+      <form action={createCategory} className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Nama Kategori
           </label>
           <input
             name="name"
-            placeholder="Contoh: Ruang Tamu"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Contoh: Meja"
+            className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Slug
           </label>
           <input
             name="slug"
-            placeholder="ruang-tamu"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="meja"
+            className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
         </div>
-        <button className="w-full cursor-pointer bg-[#2645ff] hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors">
+        <button className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-2 rounded-md transition-colors">
           Simpan Kategori
         </button>
       </form>
