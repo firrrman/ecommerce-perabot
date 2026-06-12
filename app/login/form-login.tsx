@@ -37,20 +37,20 @@ export default function FormLogin() {
       <div>
         <label
           htmlFor="email"
-          className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300"
+          className="block mb-2 text-xs font-bold text-black uppercase tracking-wider"
         >
           Email Address
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-            <Mail className="w-5 h-5 text-slate-400" />
+            <Mail className="w-5 h-5 text-gray-400" />
           </div>
           <input
             type="email"
             name="email"
             id="email"
             onChange={(e) => setEmail(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-3 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:placeholder-slate-400 dark:text-white"
+            className="bg-white border-2 border-gray-200 text-black text-sm rounded-xl focus:ring-0 focus:border-black block w-full pl-11 p-3.5 placeholder-gray-400 font-medium transition-all"
             placeholder="admin@example.com"
             required
           />
@@ -60,13 +60,13 @@ export default function FormLogin() {
       <div>
         <label
           htmlFor="password"
-          className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300"
+          className="block mb-2 text-xs font-bold text-black uppercase tracking-wider"
         >
           Password
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-            <Lock className="w-5 h-5 text-slate-400" />
+            <Lock className="w-5 h-5 text-gray-400" />
           </div>
           <input
             type={showPassword ? "text" : "password"}
@@ -74,13 +74,13 @@ export default function FormLogin() {
             id="password"
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 p-3 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:placeholder-slate-400 dark:text-white"
+            className="bg-white border-2 border-gray-200 text-black text-sm rounded-xl focus:ring-0 focus:border-black block w-full pl-11 pr-11 p-3.5 placeholder-gray-400 font-medium transition-all"
             required
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 hover:text-black transition-colors cursor-pointer"
           >
             {showPassword ? (
               <EyeOff className="w-5 h-5" />
@@ -89,14 +89,14 @@ export default function FormLogin() {
             )}
           </button>
         </div>
+        <button
+          type="submit"
+          className="w-full text-white cursor-pointer bg-black hover:bg-gray-900 font-bold rounded-xl text-sm px-5 py-4 text-center mt-8 transition-all active:scale-[0.98] uppercase tracking-widest"
+        >
+          Sign in to Dashboard
+        </button>
       </div>
 
-      <button
-        type="submit"
-        className="w-full text-white cursor-pointer bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-3.5 text-center mt-8 transition-all hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.98]"
-      >
-        Sign in to Dashboard
-      </button>
     </form>
   );
 }
