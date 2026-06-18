@@ -170,18 +170,6 @@ export default async function FormProduct() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Detail Produk
-            </label>
-            <textarea
-              name="details"
-              placeholder="Detail produk (bahan, dimensi, dll)..."
-              rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
-          </div>
         </div>
 
         <div>

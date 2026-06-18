@@ -28,7 +28,6 @@ model Product {
   costPrice    Int           @default(0)
   is_featured  Boolean       @default(false)
   description String?
-  details     String?
   highlights  String[]
   weight       Int            @default(0)
   categoryId  String?

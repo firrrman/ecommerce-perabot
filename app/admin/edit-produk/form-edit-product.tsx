@@ -208,20 +208,6 @@ export default function EditProductForm({
                     placeholder="Deskripsi singkat produk..."
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Detail Produk
-                  </label>
-                  <textarea
-                    name="details"
-                    defaultValue={product.details ?? ""}
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Detail lengkap produk (bahan, dimensi, dll)..."
-                  />
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Highlights

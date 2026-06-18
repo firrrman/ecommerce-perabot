@@ -77,7 +77,6 @@ export async function createProduct(formData: FormData) {
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
-  const details = formData.get("details") as string;
   const categoryId = formData.get("categoryId") as string;
   const images = formData.getAll("image") as File[];
   const highlightsRaw = formData.get("highlights") as string;
@@ -184,7 +183,6 @@ export async function createProduct(formData: FormData) {
       name,
       slug,
       description,
-      details,
       highlights,
       categoryId: categoryId || null,
       stock,
@@ -210,7 +208,6 @@ export async function updateProduct(productId: string, formData: FormData) {
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
-  const details = formData.get("details") as string;
   const categoryId = formData.get("categoryId") as string;
   const images = formData.getAll("image") as File[];
   const highlightsRaw = formData.get("highlights") as string;
@@ -340,7 +337,6 @@ export async function updateProduct(productId: string, formData: FormData) {
       name,
       slug,
       description,
-      details,
       highlights,
       basePrice,
       costPrice,

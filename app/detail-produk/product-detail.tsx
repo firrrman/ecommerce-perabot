@@ -14,7 +14,6 @@ interface ProductDetailProps {
     costPrice: number;
     weight: number;
     highlights: string[];
-    details: string | null;
     stock: number;
     images: { src: string }[];
     variants: {
@@ -60,7 +59,7 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedSizeName, setSelectedSizeName] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [activeTab, setActiveTab] = useState<"deskripsi" | "spesifikasi" | "detail">("deskripsi");
+  const [activeTab, setActiveTab] = useState<"deskripsi" | "spesifikasi">("deskripsi");
 
   const updateSelectedVariant = (sizeId: string | null, colorId: string | null) => {
     let price = product.basePrice;
@@ -224,7 +223,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
   const tabs = [
     { key: "deskripsi", label: "Deskripsi" },
     { key: "spesifikasi", label: "Spesifikasi" },
-    { key: "detail", label: "Detail" },
   ] as const;
 
   return (
@@ -448,12 +446,6 @@ export default function DetailProdukComponen({ product }: ProductDetailProps) {
                   <p className="text-gray-400 text-sm">Tidak ada spesifikasi.</p>
                 )}
               </ul>
-            )}
-
-            {activeTab === "detail" && (
-              <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-3xl">
-                {product.details || "Tidak ada detail tambahan."}
-              </p>
             )}
           </div>
         </div>
