@@ -3,8 +3,11 @@
 import Footer from "./footer";
 import Header from "./header";
 import TextPressure from "./TextPressure";
+import { useCustomer } from "../context/customer-context";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { customer, logout } = useCustomer();
+
   const items = [
     {
       label: "Beranda",
@@ -14,17 +17,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {
           label: "Beranda",
           href: "/",
-          ariaLabel: "About Company",
+          ariaLabel: "Beranda",
         },
         {
           label: "Produk",
           href: "/produk",
-          ariaLabel: "About Careers",
+          ariaLabel: "Produk",
         },
         {
           label: "Keranjang",
-          href: "/about/careers",
-          ariaLabel: "About Careers",
+          href: "/keranjang",
+          ariaLabel: "Keranjang",
         },
       ],
     },

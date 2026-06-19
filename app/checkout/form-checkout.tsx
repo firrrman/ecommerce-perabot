@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "../context/cart-context";
+import { useCustomer } from "../context/customer-context";
 import { OrbitProgress } from "react-loading-indicators";
 import { createOrderFromForm } from "../actions/order";
 import { createPayment } from "../actions/create-payment";
@@ -9,6 +10,10 @@ import { toast } from "react-toastify";
 
 export default function FormCheckout() {
   const { cart, clearCart } = useCart();
+  const { customer } = useCustomer();
+  const [customerName, setCustomerName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [search, setSearch] = useState("");
   const [regions, setRegions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -28,6 +33,15 @@ export default function FormCheckout() {
     "midtrans",
   );
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync with logged in customer data
+  useEffect(() => {
+    if (customer) {
+      setCustomerName(customer.name || "");
+      setEmail(customer.email || "");
+      setPhone(customer.phone || "");
+    }
+  }, [customer]);
 
   // Realtime search dengan debounce 300ms
   useEffect(() => {
@@ -223,6 +237,13 @@ export default function FormCheckout() {
                   Informasi Kontak
                 </h2>
 
+                {!customer && (
+                  <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center text-sm text-gray-600 mb-4">
+                    <span>Sudah memiliki akun? Masuk untuk checkout lebih cepat.</span>
+                    <a href="/login?callbackUrl=/checkout" className="font-semibold text-black hover:underline shrink-0 ml-2">Masuk</a>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
                   <div className="w-full md:col-span-1">
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -232,6 +253,8 @@ export default function FormCheckout() {
                       name="customerName"
                       placeholder="Masukkan nama lengkap"
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
                       required
                     />
                   </div>
@@ -244,6 +267,8 @@ export default function FormCheckout() {
                       type="email"
                       placeholder="email@contoh.com"
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -255,6 +280,8 @@ export default function FormCheckout() {
                       name="phone"
                       placeholder="08xxxxxxxxxx"
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       required
                     />
                   </div>

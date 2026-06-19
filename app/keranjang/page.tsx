@@ -2,10 +2,14 @@
 export const dynamic = "force-dynamic";
 import Layout from "../component/layout";
 import { useCart } from "../context/cart-context";
+import { useCustomer } from "../context/customer-context";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const { cart, removeFromCart } = useCart();
+  const { customer } = useCustomer();
+  const router = useRouter();
 
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -204,15 +208,23 @@ export default function CartPage() {
                   </p>
 
                   {/* Checkout Button */}
-                  <a
-                    href="/checkout"
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!customer) {
+                        toast.info("Silakan login terlebih dahulu untuk melakukan checkout");
+                        router.push("/login?callbackUrl=/checkout");
+                      } else {
+                        router.push("/checkout");
+                      }
+                    }}
                     className="flex items-center justify-center gap-2 w-full bg-black text-white text-base font-semibold py-4 rounded-2xl hover:bg-gray-900 active:scale-[0.98] transition-all duration-200"
                   >
                     Lanjut ke Checkout
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
                     </svg>
-                  </a>
+                  </button>
                 </div>
               </div>
 

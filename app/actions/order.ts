@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { adjustOrderStock } from "@/lib/stock";
+import { cookies } from "next/headers";
 
 export async function createOrderFromForm(formData: FormData) {
   const cart = JSON.parse(formData.get("cart") as string);
@@ -36,10 +37,14 @@ export async function createOrderFromForm(formData: FormData) {
   // ⭐ BUAT paymentOrderId
   const paymentOrderId = "ORDER-" + Date.now();
 
+  const cookieStore = await cookies();
+  const customerId = cookieStore.get("customer_session")?.value;
+
   const order = await prisma.order.create({
     data: {
       // ⭐ WAJIB
       paymentOrderId,
+      customerId: customerId || null,
 
       customerName: formData.get("customerName") as string,
       gmail: formData.get("gmail") as string,

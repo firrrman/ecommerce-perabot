@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/cart-context";
+import { CustomerProvider } from "./context/customer-context";
 import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CartProvider>
-          {children} <ToastContainer />
-        </CartProvider>
+        <CustomerProvider>
+          <CartProvider>
+            {children} <ToastContainer />
+          </CartProvider>
+        </CustomerProvider>
         <script
           src="https://app.midtrans.com/snap/snap.js"
           data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}

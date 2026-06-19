@@ -2,56 +2,56 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { unifiedLoginAction } from "@/app/actions/login";
+import { customerRegisterAction } from "@/app/actions/customer";
 import { useCustomer } from "@/app/context/customer-context";
 import { toast } from "react-toastify";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function CustomerRegisterPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const { customer, refreshCustomer } = useCustomer();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-  // Redirect if customer is already logged in
+  // Redirect if already logged in
   useEffect(() => {
     if (customer) {
       router.replace(callbackUrl);
     }
   }, [customer, router, callbackUrl]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await unifiedLoginAction(email, password);
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("password", password);
+
+      const res = await customerRegisterAction(formData);
 
       if (!res.success) {
-        toast.error(res.message || "Email atau password salah");
+        toast.error(res.message || "Registrasi gagal");
         setIsLoading(false);
         return;
       }
 
-      if (res.role === "CUSTOMER") {
-        toast.success("Login berhasil!");
-        await refreshCustomer();
-        router.push(callbackUrl);
-      } else {
-        // Admin / Owner — redirect ke dashboard
-        toast.success("Login berhasil!");
-        router.push(res.redirectTo ?? "/");
-      }
+      toast.success("Registrasi berhasil!");
+      await refreshCustomer();
+      router.push(callbackUrl);
     } catch (error) {
-      console.error("Login client error:", error);
+      console.error("Register client error:", error);
       toast.error("Terjadi kesalahan, silakan coba lagi");
-    } finally {
       setIsLoading(false);
     }
   }
@@ -68,12 +68,37 @@ export default function LoginPage() {
               PERABOTAN
             </h1>
           </Link>
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">
-            Masuk ke Akun Anda
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-2">
+            Daftar Akun Customer Baru
           </p>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label
+              htmlFor="name"
+              className="block mb-1.5 text-xs font-bold text-black uppercase tracking-wider"
+            >
+              Nama Lengkap
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                <User className="w-5 h-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-white border-2 border-gray-200 text-black text-sm rounded-xl focus:ring-0 focus:border-black block w-full pl-11 p-3.5 placeholder-gray-400 font-medium transition-all outline-none"
+                placeholder="Nama Lengkap Anda"
+                required
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="email"
@@ -92,7 +117,32 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-white border-2 border-gray-200 text-black text-sm rounded-xl focus:ring-0 focus:border-black block w-full pl-11 p-3.5 placeholder-gray-400 font-medium transition-all outline-none"
-                placeholder="email@contoh.com"
+                placeholder="customer@example.com"
+                required
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="phone"
+              className="block mb-1.5 text-xs font-bold text-black uppercase tracking-wider"
+            >
+              No. Telepon
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                <Phone className="w-5 h-5 text-gray-400" />
+              </div>
+              <input
+                type="tel"
+                name="phone"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="bg-white border-2 border-gray-200 text-black text-sm rounded-xl focus:ring-0 focus:border-black block w-full pl-11 p-3.5 placeholder-gray-400 font-medium transition-all outline-none"
+                placeholder="08xxxxxxxxxx"
                 required
                 disabled={isLoading}
               />
@@ -141,17 +191,17 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full text-white cursor-pointer bg-black hover:bg-gray-900 font-bold rounded-xl text-sm px-5 py-4 text-center mt-6 transition-all active:scale-[0.98] uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Memverifikasi..." : "Masuk"}
+            {isLoading ? "Pendaftaran Diproses..." : "Daftar Akun"}
           </button>
         </form>
 
         <div className="text-center text-xs text-gray-500 mt-2">
-          Belum memiliki akun?{" "}
+          Sudah memiliki akun?{" "}
           <Link
-            href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
             className="font-bold text-black hover:underline"
           >
-            Daftar Sekarang
+            Masuk Sekarang
           </Link>
         </div>
       </div>
