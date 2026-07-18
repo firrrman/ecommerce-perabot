@@ -69,7 +69,7 @@ const GridMotion: FC<GridMotionProps> = ({
     <div ref={gridRef} className="h-lvh w-full overflow-hidden">
       <section className="w-full h-full overflow-hidden relative flex items-center justify-center bg-black">
         <div className="bg-black/70 w-full h-full absolute z-10 flex flex-col items-center justify-center p-5 md:px-10 xl:px-20">
-          <TextPressure
+            <TextPressure
             text="PERABOTAN"
             flex={true}
             alpha={false}
