@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import LayoutAdmin from "@/app/component/layout-admin";
 import { Order, updateOrderStatus } from "@/app/actions/pesanan";
 import FilterForm from "./filter-form";
 import {
@@ -17,6 +16,7 @@ import {
   SearchBarAdminOrder,
 } from "@/app/component/search-bar";
 import TransitionLink from "@/app/component/transition-link";
+import LayoutOwner from "@/app/component/layout-owner";
 
 interface Props {
   searchParams: {
@@ -51,7 +51,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
   };
 
   return (
-    <LayoutAdmin activeMenuProp="orders">
+    <LayoutOwner activeMenuProp="orders">
       <div className="p-4 md:p-6 overflow-y-auto">
         {/* Header */}
         <div className="mb-6">
@@ -188,6 +188,6 @@ export default async function PengirimanPage({ searchParams }: Props) {
           search={search}
         />
       </div>
-    </LayoutAdmin>
+    </LayoutOwner>
   );
 }
