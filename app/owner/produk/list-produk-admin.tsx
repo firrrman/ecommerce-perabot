@@ -4,13 +4,8 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { Grid, List, ChevronDown, Edit, Trash2, Star, Package } from "lucide-react";
 import { SearchBarAdmin } from "../../component/search-bar";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/app/component/pagination";
-import ConfirmModal from "@/app/component/confirm-modal";
-import { Loader2 } from "lucide-react";
-import { toast } from "react-toastify";
-import TransitionLink from "@/app/component/transition-link";
 
 export interface ProductCardProps {
   id: string;
@@ -47,29 +42,6 @@ export default function ProdukListAdmin({
   produk: any;
 }) {
   const [viewMode, setViewMode] = useState("list");
-  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  const confirmDelete = (id: string) => {
-    setConfirmDeleteId(id);
-  };
-
-  const handleConfirmDelete = async () => {
-    const id = confirmDeleteId;
-    if (!id) return;
-
-    setConfirmDeleteId(null);
-    setIsDeletingId(id);
-
-    try {
-      await onDelete(id);
-      location.reload();
-    } catch {
-      toast.error("Gagal menghapus produk");
-      setIsDeletingId(null);
-    }
-  };
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -227,27 +199,6 @@ export default function ProdukListAdmin({
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Link
-                    href={`/admin/edit-produk/${product.id}`}
-                    onClick={() => setEditingId(product.id)}
-                    className="flex-1 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
-                  >
-                    {editingId === product.id ? (
-                      <Loader2 size={14} className="animate-spin" />
-                    ) : (
-                      <Edit size={14} />
-                    )}
-                    {editingId === product.id ? "Memuat..." : "Edit"}
-                  </Link>
-                  <button
-                    onClick={() => confirmDelete(product.id)}
-                    disabled={isDeletingId === product.id}
-                    className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {isDeletingId === product.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                  </button>
-                </div>
               </div>
             </div>
           ))}
@@ -329,14 +280,6 @@ export default function ProdukListAdmin({
         page={page}
         search={search}
         category={category}
-      />
-
-      <ConfirmModal
-        isOpen={!!confirmDeleteId}
-        title="Hapus Produk"
-        message="Apakah Anda yakin ingin menghapus produk ini? Aksi ini tidak dapat dibatalkan."
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setConfirmDeleteId(null)}
       />
     </div>
   );
