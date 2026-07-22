@@ -87,6 +87,7 @@ export default async function OrderDetailPage({ params }: Props) {
                   year: "numeric",
                   hour: "2-digit",
                   minute: "2-digit",
+                  timeZone: "Asia/Jakarta",
                 }).format(order.createdAt)}
               </p>
             </div>
@@ -246,7 +247,7 @@ export default async function OrderDetailPage({ params }: Props) {
                         <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                         <span className="font-semibold text-green-700">
                           Lunas (
-                          {new Date(order.paidAt).toLocaleDateString("id-ID")})
+                          {new Date(order.paidAt).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })})
                         </span>
                       </div>
                     ) : (

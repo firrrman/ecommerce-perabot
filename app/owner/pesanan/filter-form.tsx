@@ -82,9 +82,7 @@ export default function FilterForm({
           <TransitionLink
             href={`/owner/pesanan?status=${
               status || ""
-            }&date=${new Date()
-              .toISOString()
-              .slice(0, 10)}&search=${search || ""}&page=${page || ""}`}
+            }&date=${new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Jakarta" }).format(new Date())}&search=${search || ""}&page=${page || ""}`}
             className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
           >
             Hari Ini

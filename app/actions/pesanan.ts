@@ -35,8 +35,10 @@ export async function Order(
   if (date) {
     // ================= 7 HARI TERAKHIR =================
     if (date === "last7") {
-      const start = new Date();
-      start.setDate(start.getDate() - 7);
+      const today = new Date();
+      const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const startStr = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Jakarta" }).format(sevenDaysAgo);
+      const start = new Date(`${startStr}T00:00:00+07:00`);
 
       whereCondition.createdAt = {
         gte: start,
@@ -45,17 +47,15 @@ export async function Order(
 
     // ================= BULAN INI =================
     else if (date === "month") {
-      const now = new Date();
+      const jakartaTodayStr = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Jakarta" }).format(new Date());
+      const [year, month] = jakartaTodayStr.split("-").map(Number);
+      const startStr = `${year}-${String(month).padStart(2, "0")}-01`;
+      
+      const lastDay = new Date(year, month, 0).getDate();
+      const endStr = `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
 
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      const end = new Date(
-        now.getFullYear(),
-        now.getMonth() + 1,
-        0,
-        23,
-        59,
-        59,
-      );
+      const start = new Date(`${startStr}T00:00:00+07:00`);
+      const end = new Date(`${endStr}T23:59:59.999+07:00`);
 
       whereCondition.createdAt = {
         gte: start,
@@ -65,9 +65,8 @@ export async function Order(
 
     // ================= TANGGAL BIASA =================
     else {
-      const start = new Date(date);
-      const end = new Date(date);
-      end.setHours(23, 59, 59, 999);
+      const start = new Date(`${date}T00:00:00+07:00`);
+      const end = new Date(`${date}T23:59:59.999+07:00`);
 
       whereCondition.createdAt = {
         gte: start,

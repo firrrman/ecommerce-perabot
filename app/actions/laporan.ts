@@ -1,9 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { OrderStatus } from "@prisma/client";
 
+const getJakartaMonth = (date: Date) => {
+  const monthStr = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Jakarta", month: "numeric" }).format(date);
+  return Number(monthStr) - 1;
+};
+
 export async function getOrderPending(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -23,15 +28,15 @@ export async function getOrderPending(year: number) {
   const monthly = Array(12).fill(0);
 
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month]++;
   });
 
   return monthly;
 }
 export async function getOrderPaid(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -51,15 +56,15 @@ export async function getOrderPaid(year: number) {
   const monthly = Array(12).fill(0);
 
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month]++;
   });
 
   return monthly;
 }
 export async function getOrderShipped(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -79,15 +84,15 @@ export async function getOrderShipped(year: number) {
   const monthly = Array(12).fill(0);
 
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month]++;
   });
 
   return monthly;
 }
 export async function getOrderFinished(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -107,15 +112,15 @@ export async function getOrderFinished(year: number) {
   const monthly = Array(12).fill(0);
 
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month]++;
   });
 
   return monthly;
 }
 export async function getOrderCancelled(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -135,7 +140,7 @@ export async function getOrderCancelled(year: number) {
   const monthly = Array(12).fill(0);
 
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month]++;
   });
 
@@ -144,8 +149,8 @@ export async function getOrderCancelled(year: number) {
 
 // Year-filtered stats for laporan page
 export async function getTotalRevenueByYear(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const result = await prisma.order.aggregate({
     _sum: {
@@ -167,8 +172,8 @@ export async function getTotalRevenueByYear(year: number) {
 }
 
 export async function getOrderCountByYear(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   return await prisma.order.count({
     where: {
@@ -184,8 +189,8 @@ export async function getOrderCountByYear(year: number) {
 }
 
 export async function getSoldItemsByYear(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const result = await prisma.orderItem.aggregate({
     where: {
@@ -208,8 +213,8 @@ export async function getSoldItemsByYear(year: number) {
 // ============ Laporan Keuangan ============
 
 export async function getMonthlyRevenue(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -225,7 +230,7 @@ export async function getMonthlyRevenue(year: number) {
 
   const monthly = Array(12).fill(0);
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month] += o.totalPrice - o.shippingCost;
   });
 
@@ -233,8 +238,8 @@ export async function getMonthlyRevenue(year: number) {
 }
 
 export async function getMonthlyCost(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -249,7 +254,7 @@ export async function getMonthlyCost(year: number) {
 
   const monthly = Array(12).fill(0);
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month] += o.totalCost;
   });
 
@@ -257,8 +262,8 @@ export async function getMonthlyCost(year: number) {
 }
 
 export async function getMonthlyProfit(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const orders = await prisma.order.findMany({
     where: {
@@ -275,7 +280,7 @@ export async function getMonthlyProfit(year: number) {
 
   const monthly = Array(12).fill(0);
   orders.forEach((o) => {
-    const month = new Date(o.createdAt).getMonth();
+    const month = getJakartaMonth(o.createdAt);
     monthly[month] += (o.totalPrice - o.shippingCost) - o.totalCost;
   });
 
@@ -283,8 +288,8 @@ export async function getMonthlyProfit(year: number) {
 }
 
 export async function getTotalCostByYear(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
+  const start = new Date(`${year}-01-01T00:00:00+07:00`);
+  const end = new Date(`${year + 1}-01-01T00:00:00+07:00`);
 
   const result = await prisma.order.aggregate({
     _sum: {

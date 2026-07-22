@@ -102,7 +102,7 @@ export async function exportOrderExcel(year: number) {
     order.city,
     order.status,
     order.totalPrice,
-    order.createdAt.toLocaleDateString("id-ID"),
+    order.createdAt.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" }),
   ]);
 
   const summarySheet = XLSX.utils.aoa_to_sheet([
@@ -160,7 +160,7 @@ export async function exportOrderExcel(year: number) {
         item.price,
         item.quantity * item.price,
         order.status,
-        order.createdAt.toLocaleDateString("id-ID"),
+        order.createdAt.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" }),
       ]);
     });
   });
