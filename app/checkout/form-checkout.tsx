@@ -127,8 +127,8 @@ export default function FormCheckout() {
 
       const result = await createOrderFromForm(formData);
 
-      if (result.error) {
-        toast.error(result.error);
+      if (!result || result.error) {
+        toast.error(result?.error || "Gagal membuat pesanan.");
         return;
       }
 

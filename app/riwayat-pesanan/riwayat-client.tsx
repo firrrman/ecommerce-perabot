@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PayAgainButton from "@/app/payment/finish/pay-again-button";
+import {
+  getCustomerNotifications,
+  markNotificationAsRead,
+} from "@/app/actions/notification";
 import {
   ShoppingBag,
   Calendar,
@@ -10,6 +14,7 @@ import {
   MapPin,
   CreditCard,
   ArrowLeft,
+  Bell,
 } from "lucide-react";
 
 interface OrderItem {
@@ -62,6 +67,21 @@ export default function RiwayatPesananClient({
 }: RiwayatPesananClientProps) {
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadNotifs() {
+      const res = await getCustomerNotifications();
+      if (res.success && res.notifications) {
+        setNotifications(res.notifications);
+      }
+    }
+    loadNotifs();
+  }, []);
+
+  const unreadOrderIds = new Set(
+    notifications.filter((n) => !n.isRead).map((n) => n.orderId)
+  );
 
   const statuses = [
     { key: "ALL", label: "Semua" },
@@ -125,11 +145,26 @@ export default function RiwayatPesananClient({
     });
   };
 
-  const toggleExpand = (orderId: string) => {
+  const toggleExpand = async (orderId: string) => {
+    const willExpand = !expandedOrders[orderId];
     setExpandedOrders((prev) => ({
       ...prev,
       [orderId]: !prev[orderId],
     }));
+
+    if (willExpand) {
+      const unreadForOrder = notifications.filter(
+        (n) => n.orderId === orderId && !n.isRead
+      );
+      if (unreadForOrder.length > 0) {
+        setNotifications((prev) =>
+          prev.map((n) => (n.orderId === orderId ? { ...n, isRead: true } : n))
+        );
+        for (const n of unreadForOrder) {
+          await markNotificationAsRead(n.id);
+        }
+      }
+    }
   };
 
   const filteredOrders = initialOrders.filter((order) => {
@@ -165,15 +200,25 @@ export default function RiwayatPesananClient({
               ? initialOrders.length
               : initialOrders.filter(o => o.status === tab.key).length;
 
+            const hasUnreadInTab = initialOrders.some(
+              (o) => (tab.key === "ALL" || o.status === tab.key) && unreadOrderIds.has(o.id)
+            );
+
             return (
               <button
                 key={tab.key}
                 onClick={() => setSelectedStatus(tab.key)}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-all cursor-pointer ${selectedStatus === tab.key
+                className={`relative px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-all cursor-pointer ${selectedStatus === tab.key
                   ? "bg-slate-950 text-white border-slate-950 shadow-xs"
                   : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-black"
                   }`}
               >
+                {hasUnreadInTab && (
+                  <span className="absolute top-0 right-0 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                  </span>
+                )}
                 {tab.label}
                 <span className={`ml-2 px-1.5 py-0.5 rounded-full text-[10px] ${selectedStatus === tab.key
                   ? "bg-white/20 text-white"
@@ -210,18 +255,33 @@ export default function RiwayatPesananClient({
           <div className="flex flex-col gap-6">
             {filteredOrders.map((order: Order) => {
               const isExpanded = !!expandedOrders[order.id];
+              const isUnread = unreadOrderIds.has(order.id);
 
               return (
                 <div
                   key={order.id}
-                  className="bg-white rounded-2xl border border-slate-100 shadow-xs hover:border-slate-200 transition-all overflow-hidden"
+                  className={`bg-white rounded-2xl border transition-all overflow-hidden ${isUnread
+                      ? "border-red-300 ring-2 ring-red-500/20 shadow-md"
+                      : "border-slate-100 hover:border-slate-200 shadow-xs"
+                    }`}
                 >
                   <div className="px-5 py-4 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-3 items-center justify-between">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${getStatusBadgeColor(order.status)}`}>
+                        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${getStatusBadgeColor(order.status)}`}>
+                          {isUnread && (
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                          )}
                           {getStatusText(order.status)}
                         </span>
+                        {isUnread && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse shadow-xs">
+                            <Bell className="w-3 h-3" /> Status Diperbarui
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-1.5 text-xs text-gray-500">
                         <Calendar className="h-3.5 w-3.5" />
@@ -261,16 +321,16 @@ export default function RiwayatPesananClient({
                             </h4>
                             <div className="flex flex-wrap gap-2 mt-1">
                               {item.colorName && (
-                                <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-[4px] px-1.5 py-0.5">
+                                <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-sm px-1.5 py-0.5">
                                   Warna: {item.colorName}
                                 </span>
                               )}
                               {item.sizeName && (
-                                <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-[4px] px-1.5 py-0.5">
+                                <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-sm px-1.5 py-0.5">
                                   Ukuran: {item.sizeName}
                                 </span>
                               )}
-                              <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-[4px] px-1.5 py-0.5">
+                              <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-sm px-1.5 py-0.5">
                                 Qty: {item.quantity}
                               </span>
                             </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { adjustOrderStock } from "@/lib/stock";
+import { createOrderNotification } from "@/app/actions/notification";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -48,6 +49,11 @@ export async function POST(req: Request) {
     if (nonDeductedStatuses.includes(oldStatus)) {
       await adjustOrderStock(order.id, "DEDUCT");
     }
+
+    // Notifikasi ke customer
+    if (order.customerId) {
+      await createOrderNotification(order.customerId, order.id, "PAID", order.paymentOrderId);
+    }
   }
 
   // jika pembayaran dibatalkan / expired
@@ -66,6 +72,11 @@ export async function POST(req: Request) {
 
     if (deductedStatuses.includes(oldStatus)) {
       await adjustOrderStock(order.id, "RESTORE");
+    }
+
+    // Notifikasi ke customer
+    if (order.customerId) {
+      await createOrderNotification(order.customerId, order.id, "CANCELLED", order.paymentOrderId);
     }
   }
 

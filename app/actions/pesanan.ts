@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { adjustOrderStock } from "@/lib/stock";
+import { createOrderNotification } from "@/app/actions/notification";
 
 export async function Order(
   page: number = 1,
@@ -50,7 +51,7 @@ export async function Order(
       const jakartaTodayStr = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Jakarta" }).format(new Date());
       const [year, month] = jakartaTodayStr.split("-").map(Number);
       const startStr = `${year}-${String(month).padStart(2, "0")}-01`;
-      
+
       const lastDay = new Date(year, month, 0).getDate();
       const endStr = `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
 
@@ -178,6 +179,16 @@ export async function updateOrderStatus(formData: FormData) {
   // Jika dari CANCELLED → aktif: kurangi stok kembali
   else if (cancelledStatus.includes(oldStatus) && activeStatuses.includes(newStatus)) {
     await adjustOrderStock(orderId, "DEDUCT");
+  }
+
+  // Kirim notifikasi ke customer jika ada customerId dan status berubah
+  if (order.customerId && newStatus !== oldStatus) {
+    await createOrderNotification(
+      order.customerId,
+      orderId,
+      newStatus,
+      order.paymentOrderId
+    );
   }
 
   revalidatePath("/admin/pesanan");

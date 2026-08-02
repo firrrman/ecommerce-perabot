@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { adjustOrderStock } from "@/lib/stock";
 import { cookies } from "next/headers";
+import { createOrderCreatedNotification } from "@/app/actions/notification";
 
 export async function createOrderFromForm(formData: FormData) {
   const cart = JSON.parse(formData.get("cart") as string);
@@ -106,6 +107,10 @@ export async function createOrderFromForm(formData: FormData) {
 
   // Kurangi stok segera setelah order dibuat (status awal = PENDING)
   await adjustOrderStock(order.id, "DEDUCT");
+
+  if (customerId) {
+    await createOrderCreatedNotification(customerId, order.id, order.paymentOrderId);
+  }
 
   revalidatePath("/checkout");
 

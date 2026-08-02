@@ -3,9 +3,14 @@
 import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { gsap } from "gsap";
 import { ChevronLeftIcon, ShoppingCartIcon } from "@heroicons/react/16/solid";
-import { User, LogOut, ClipboardList, ChevronDown } from "lucide-react";
+import { LogOut, ClipboardList, ChevronDown, Bell } from "lucide-react";
 import { useCart } from "../context/cart-context";
 import { useCustomer } from "../context/customer-context";
+import {
+  getCustomerNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "../actions/notification";
 
 type CardNavLink = {
   label: string;
@@ -49,6 +54,16 @@ const CardNav: React.FC<CardNavProps> = ({
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement | null>(null);
 
+  // ── Notifikasi state ──────────────────────────────────────────────────────
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifDropdownRef = useRef<HTMLDivElement | null>(null);
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  // ── Hooks konteks — harus di atas useEffect yang bergantung padanya ────────
+  const { cart } = useCart();
+  const { customer, logout } = useCustomer();
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -57,12 +72,33 @@ const CardNav: React.FC<CardNavProps> = ({
       ) {
         setIsProfileDropdownOpen(false);
       }
+      if (
+        notifDropdownRef.current &&
+        !notifDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsNotifOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // ── Load notifikasi + polling setiap 30 detik ─────────────────────────────
+  useEffect(() => {
+    if (!customer) {
+      setNotifications([]);
+      return;
+    }
+    const load = async () => {
+      const res = await getCustomerNotifications();
+      if (res.success) setNotifications(res.notifications);
+    };
+    load();
+    const interval = setInterval(load, 30000);
+    return () => clearInterval(interval);
+  }, [customer]);
   const navRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -181,9 +217,6 @@ const CardNav: React.FC<CardNavProps> = ({
     if (el) cardsRef.current[i] = el;
   };
 
-  const { cart } = useCart();
-  const { customer, logout } = useCustomer();
-
   return (
     <div
       className={`card-nav-container fixed left-1/2 -translate-x-1/2 w-[90%] max-w-200 z-99 top-[1.2em] md:top-[2em] ${className}`}
@@ -191,11 +224,11 @@ const CardNav: React.FC<CardNavProps> = ({
       <nav
         ref={navRef}
         className={`card-nav ${isExpanded ? "open" : ""
-          } block h-15 p-0 rounded-xl shadow-md relative ${isProfileDropdownOpen ? "overflow-visible" : "overflow-hidden"
+          } block h-15 p-0 rounded-xl shadow-md relative ${isProfileDropdownOpen || isNotifOpen ? "overflow-visible" : "overflow-hidden"
           } will-change-[height]`}
         style={{
           backgroundColor: baseColor,
-          overflow: isProfileDropdownOpen ? "visible" : undefined
+          overflow: isProfileDropdownOpen || isNotifOpen ? "visible" : undefined
         }}
       >
         <div className="card-nav-top absolute inset-x-0 top-0 h-15 flex items-center justify-between p-3 z-2">
@@ -204,6 +237,94 @@ const CardNav: React.FC<CardNavProps> = ({
           </a>
 
           <div className="flex justify-center gap-3 items-center h-full">
+            {/* ── Bell Notifikasi ─────────────────────────────── */}
+            {customer && (
+              <div className="relative" ref={notifDropdownRef}>
+                <button
+                  onClick={() => setIsNotifOpen(!isNotifOpen)}
+                  className="flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 relative cursor-pointer"
+                  aria-label="Notifikasi"
+                >
+                  <Bell className="h-4 w-4 text-gray-700" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-extrabold leading-none">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {isNotifOpen && (
+                  <div className="absolute right-0 mt-5 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-3 z-999 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {/* Header dropdown */}
+                    <div className="px-4 pb-3 border-b border-gray-100 flex justify-between items-center">
+                      <span className="text-sm font-bold text-slate-800">Notifikasi</span>
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={async () => {
+                            await markAllNotificationsAsRead();
+                            setNotifications((prev) =>
+                              prev.map((n) => ({ ...n, isRead: true }))
+                            );
+                          }}
+                          className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+                        >
+                          Tandai semua dibaca
+                        </button>
+                      )}
+                    </div>
+
+                    {/* List notifikasi */}
+                    <div className="max-h-72 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="px-4 py-8 text-center text-gray-400 text-xs">
+                          Belum ada notifikasi.
+                        </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <a
+                            key={notif.id}
+                            href={`/riwayat-pesanan`}
+                            onClick={async () => {
+                              if (!notif.isRead) {
+                                await markNotificationAsRead(notif.id);
+                                setNotifications((prev) =>
+                                  prev.map((n) =>
+                                    n.id === notif.id ? { ...n, isRead: true } : n
+                                  )
+                                );
+                              }
+                              setIsNotifOpen(false);
+                            }}
+                            className={`block px-4 py-3 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 transition-colors ${!notif.isRead ? "bg-indigo-50/40" : ""
+                              }`}
+                          >
+                            <div className="flex gap-2.5 items-start">
+                              {!notif.isRead && (
+                                <span className="w-2 h-2 rounded-full bg-indigo-600 mt-1.5 shrink-0" />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-bold text-slate-800">{notif.title}</p>
+                                <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{notif.message}</p>
+                                <p className="text-[9px] text-gray-400 mt-1 font-semibold">
+                                  {new Date(notif.createdAt).toLocaleDateString("id-ID", {
+                                    day: "numeric",
+                                    month: "short",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </a>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Profile Dropdown ─────────────────────────────── */}
             {customer ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
@@ -225,11 +346,19 @@ const CardNav: React.FC<CardNavProps> = ({
                     </div>
                     <a
                       href="/riwayat-pesanan"
-                      className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
+                      className="flex items-center justify-between px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
-                      <ClipboardList className="h-4 w-4 text-gray-400" />
-                      Riwayat Pesanan
+                      <div className="flex items-center gap-2">
+                        <ClipboardList className="h-4 w-4 text-gray-400" />
+                        Riwayat Pesanan
+                      </div>
+                      {unreadCount > 0 && (
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                      )}
                     </a>
                     <div className="border-t border-gray-100 my-1.5"></div>
                     <button
@@ -253,6 +382,7 @@ const CardNav: React.FC<CardNavProps> = ({
                 Masuk
               </a>
             )}
+
             <a
               href="/keranjang"
               className="card-nav-cta-button flex relative border-0 rounded-[calc(0.75rem-0.2rem)] px-3 items-center h-8.5 font-medium cursor-pointer transition-colors duration-300"
@@ -288,8 +418,8 @@ const CardNav: React.FC<CardNavProps> = ({
 
         <div
           className={`card-nav-content absolute left-0 right-0 top-15 bottom-0 p-3 flex flex-col items-stretch gap-3 justify-start z-1 ${isExpanded
-              ? "visible pointer-events-auto"
-              : "invisible pointer-events-none"
+            ? "visible pointer-events-auto"
+            : "invisible pointer-events-none"
             } md:flex-row md:items-end md:gap-0.6`}
           aria-hidden={!isExpanded}
         >

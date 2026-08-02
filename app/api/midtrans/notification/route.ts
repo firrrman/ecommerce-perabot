@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { createOrderNotification } from "@/app/actions/notification";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -38,6 +39,11 @@ export async function POST(req: Request) {
         paidAt: new Date(),
       },
     });
+
+    // Notifikasi ke customer
+    if (order.customerId) {
+      await createOrderNotification(order.customerId, order.id, "PAID", order.paymentOrderId);
+    }
   }
 
   // jika pembayaran gagal / expired
@@ -53,6 +59,11 @@ export async function POST(req: Request) {
         status: "CANCELLED",
       },
     });
+
+    // Notifikasi ke customer
+    if (order.customerId) {
+      await createOrderNotification(order.customerId, order.id, "CANCELLED", order.paymentOrderId);
+    }
   }
 
   return NextResponse.json({ message: "OK" });

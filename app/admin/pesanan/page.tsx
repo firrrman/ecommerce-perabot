@@ -80,8 +80,23 @@ export default async function PengirimanPage({ searchParams }: Props) {
           {orders.data.map((order) => (
             <div
               key={order.id}
-              className="bg-white rounded-lg border border-slate-200 hover:shadow-md transition-shadow"
+              className={`rounded-xl transition-all duration-200 relative ${
+                order.status === "PENDING" 
+                  ? "bg-white border border-red-200 shadow-sm hover:shadow-md ring-1 ring-red-50" 
+                  : "bg-white border border-slate-200 hover:shadow-md"
+              }`}
             >
+              {order.status === "PENDING" && (
+                <div className="absolute -top-2.5 -right-2 z-10">
+                  <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[10px] font-bold text-red-600 shadow-sm border border-red-200 uppercase tracking-wider">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    Baru
+                  </div>
+                </div>
+              )}
               <div className="p-5">
                 {/* Header Row */}
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-4 pb-4 border-b border-slate-200">

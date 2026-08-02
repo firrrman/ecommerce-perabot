@@ -118,6 +118,28 @@ export async function allProducts(
         include: {
           images: true,
           category: true,
+          variants: {
+            include: {
+              color: true,
+              size: true,
+              orderItems: {
+                where: {
+                  order: {
+                    status: {
+                      in: [
+                        OrderStatus.PAID,
+                        OrderStatus.SHIPPED,
+                        OrderStatus.FINISHED,
+                      ],
+                    },
+                  },
+                },
+                select: {
+                  quantity: true,
+                },
+              },
+            },
+          },
           orderItems: {
             where: {
               order: {
@@ -145,11 +167,24 @@ export async function allProducts(
         0,
       );
 
-      const { orderItems, ...rest } = product;
+      const hasVariants = product.variants && product.variants.length > 0;
+
+      const variants = product.variants.map((v) => {
+        const variantSold = v.orderItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+        const { orderItems, ...vRest } = v;
+        return {
+          ...vRest,
+          sold: variantSold,
+        };
+      });
+
+      const { orderItems, variants: _v, ...rest } = product;
 
       return {
         ...rest,
         sold,
+        hasVariants,
+        variants,
       };
     });
 
