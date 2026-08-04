@@ -137,63 +137,86 @@ export default function LayoutAdmin({
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-slate-50 font-sans antialiased text-slate-900">
       {/* Sidebar */}
       <aside
-        className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transition-transform duration-300 ease-in-out`}
+        className={`${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-200 border-r border-slate-800/80 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xl lg:shadow-none`}
       >
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center space-x-2">
-            <h1 className="text-xl font-extralight">Perabotan</h1>
+        <div>
+          {/* Brand Header */}
+          <div className="flex items-center justify-between p-6 border-b border-slate-800/60">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-indigo-500/30">
+                P
+              </div>
+              <div>
+                <h1 className="text-base font-extrabold tracking-tight text-white leading-tight">Perabotan</h1>
+                <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Admin Panel</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              <X size={20} />
+            </button>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
-            <X size={24} />
-          </button>
+
+          {/* Navigation Items */}
+          <nav className="p-4 space-y-1.5 overflow-y-auto max-h-[calc(100vh-170px)]">
+            <p className="px-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Navigasi Utama</p>
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isOrders = item.id === "orders";
+              const isActive = activeMenu === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (pathname === item.router) return;
+                    setActiveMenu(item.id);
+                    setNavigatingTo(item.id);
+                    setSidebarOpen(false);
+                    router.push(item.router);
+                  }}
+                  className={`w-full flex items-center justify-between cursor-pointer px-3.5 py-2.5 rounded-xl transition-all ${
+                    isActive
+                      ? "text-white font-semibold shadow-md shadow-indigo-600/20 bg-indigo-600"
+                      : "text-slate-400 hover:bg-slate-800/80 hover:text-slate-100 font-medium"
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <Icon size={18} className={isActive ? "text-white" : "text-slate-400"} />
+                    <span className="text-sm">{item.name}</span>
+                  </div>
+                  {isOrders && unreadCount > 0 && (
+                    <span className="bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full animate-pulse shadow-xs">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+            <div className="pt-2">
+              <Logout />
+            </div>
+          </nav>
         </div>
 
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-180px)]">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isOrders = item.id === "orders";
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (pathname === item.router) return;
-                  setActiveMenu(item.id);
-                  setNavigatingTo(item.id);
-                  setSidebarOpen(false);
-                  router.push(item.router);
-                }}
-                className={`w-full flex items-center justify-between cursor-pointer px-4 py-3 rounded-lg transition-all ${activeMenu === item.id
-                    ? "text-white shadow-lg bg-[#2645ff]"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <Icon size={20} />
-                  <span className="text-sm font-medium">{item.name}</span>
-                </div>
-                {isOrders && unreadCount > 0 && (
-                  <span className="bg-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full animate-pulse">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          <Logout />
-        </nav>
-
-        <div className="absolute bottom-0 w-full p-4 border-t border-gray-700 bg-gray-900">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-linear-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center">
-              <span className="font-bold text-sm">FS</span>
+        {/* User Profile Badge at bottom */}
+        <div className="p-4 border-t border-slate-800/60 bg-slate-900/90">
+          <div className="flex items-center space-x-3 bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+            <div className="relative">
+              <div className="w-9 h-9 bg-linear-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center font-black text-slate-900 text-xs shadow-xs">
+                FS
+              </div>
+              <span className="w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full absolute -bottom-0.5 -right-0.5"></span>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium">Admin Perabotan</p>
-              <p className="text-xs text-gray-400">Perabotan1174@gmail.com</p>
+            <div className="flex-1 overflow-hidden">
+              <p className="text-xs font-bold text-slate-200 truncate">Admin Perabotan</p>
+              <p className="text-[10px] text-slate-400 truncate font-mono">perabotan1174@gmail.com</p>
             </div>
           </div>
         </div>
@@ -202,7 +225,7 @@ export default function LayoutAdmin({
       {/* Overlay untuk mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -210,23 +233,22 @@ export default function LayoutAdmin({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
         {navigatingTo && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm">
-            <OrbitProgress dense color="#000000" size="medium" text="" textColor="" />
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-xs">
+            <OrbitProgress dense color="#4f46e5" size="medium" text="" textColor="" />
           </div>
         )}
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 lg:py-4">
-          <div className="flex items-center justify-between px-6 py-2">
-            <div className="flex items-center space-x-4">
+        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 py-3.5 px-2 md:px-4 lg:px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {/* Hamburger — hanya tampil di mobile/tablet */}
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-600 hover:text-gray-900"
+                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                aria-label="Buka sidebar"
               >
-                <Menu size={24} />
+                <Menu size={20} />
               </button>
-              <h2 className="text-sm font-bold text-gray-700 hidden sm:block uppercase tracking-wider">
-                Admin Dashboard
-              </h2>
             </div>
 
             {/* ── Bell Notifikasi Pesanan Masuk ───────────────────── */}

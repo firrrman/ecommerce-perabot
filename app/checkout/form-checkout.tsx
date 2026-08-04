@@ -133,8 +133,7 @@ export default function FormCheckout() {
       }
 
       if (paymentMethod === "cod") {
-        clearCart();
-        localStorage.removeItem("cart");
+        await clearCart();
         window.location.href = `/payment/cod-finish?order_id=${result.orderId!}`;
         return;
       }
@@ -144,7 +143,6 @@ export default function FormCheckout() {
         window.snap.pay(token, {
           onSuccess: function (resultMidtrans: any) {
             clearCart();
-            localStorage.removeItem("cart");
             window.location.href = `/payment/finish?order_id=${resultMidtrans.order_id}`;
           },
           onPending: function () {
@@ -247,7 +245,7 @@ export default function FormCheckout() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
                   <div className="w-full md:col-span-1">
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Nama Lengkap
+                      Nama Lengkap <span className="text-red-500">*</span>
                     </label>
                     <input
                       name="customerName"
@@ -260,7 +258,7 @@ export default function FormCheckout() {
                   </div>
                   <div className="md:col-span-1">
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Email
+                      Email <span className="text-red-500">*</span>
                     </label>
                     <input
                       name="gmail"
@@ -274,7 +272,7 @@ export default function FormCheckout() {
                   </div>
                   <div className="md:col-span-1">
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      No. Telepon
+                      No. Telepon <span className="text-red-500">*</span>
                     </label>
                     <input
                       name="phone"
@@ -301,7 +299,7 @@ export default function FormCheckout() {
                   {/* Search Kecamatan — Realtime dari database */}
                   <div ref={searchRef}>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Cari Kecamatan / Desa
+                      Cari Kecamatan / Desa <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -380,7 +378,7 @@ export default function FormCheckout() {
                   {/* Detail Alamat */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Detail Alamat
+                      Detail Alamat <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       name="address"

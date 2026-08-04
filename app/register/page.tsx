@@ -20,12 +20,12 @@ export default function CustomerRegisterPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-  // Redirect if already logged in
+  // Redirect if already logged in (upon initial page load)
   useEffect(() => {
-    if (customer) {
+    if (customer && !isLoading) {
       router.replace(callbackUrl);
     }
-  }, [customer, router, callbackUrl]);
+  }, [customer, router, callbackUrl, isLoading]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +48,7 @@ export default function CustomerRegisterPage() {
 
       toast.success("Registrasi berhasil!");
       await refreshCustomer();
-      router.push(callbackUrl);
+      window.location.href = callbackUrl;
     } catch (error) {
       console.error("Register client error:", error);
       toast.error("Terjadi kesalahan, silakan coba lagi");

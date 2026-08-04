@@ -9,6 +9,7 @@ import {
   Eye,
   X,
   Calendar,
+  CalendarDays,
   Phone,
   Mail,
   CreditCard,
@@ -32,6 +33,9 @@ interface CustomerMonitoringViewProps {
 }
 
 export default function CustomerMonitoringView({ role }: CustomerMonitoringViewProps) {
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - i);
+
   const [loading, setLoading] = useState(true);
   const [customers, setCustomers] = useState<CustomerMonitoringItem[]>([]);
   const [summary, setSummary] = useState<CustomerMonitoringSummary>({
@@ -43,6 +47,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"newest" | "spending" | "orders">("newest");
+  const [selectedYear, setSelectedYear] = useState<string>("all");
 
   // State Detail Modal
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
@@ -51,7 +56,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
 
   const fetchMonitoringData = async () => {
     setLoading(true);
-    const res = await getCustomersMonitoringData(searchQuery, sortBy);
+    const res = await getCustomersMonitoringData(searchQuery, sortBy, selectedYear);
     if (res.success) {
       setCustomers(res.data);
       setSummary(res.summary);
@@ -64,7 +69,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       fetchMonitoringData();
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, selectedYear]);
 
   const handleOpenDetail = async (id: string) => {
     setSelectedCustomerId(id);
@@ -103,11 +108,10 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-            <Users className="text-indigo-600 w-8 h-8" />
-            Pemantauan Akun Customer
+            Data Pelanggan
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            Pantau aktivitas pelanggan, riwayat belanja, dan analisis nilai pelanggan secara real-time ({role}).
+            Pantau aktivitas pelanggan, riwayat belanja, dan analisis nilai pelanggan secara real-time.
           </p>
         </div>
       </div>
@@ -124,7 +128,9 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
               <h3 className="text-2xl font-black text-slate-900 mt-1">
                 {summary.totalCustomers}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">Terdaftar dalam sistem</p>
+              <p className="text-xs text-slate-400 mt-1">
+                {selectedYear === "all" ? "Terdaftar dalam sistem" : `Periode ${selectedYear}`}
+              </p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
               <Users size={24} />
@@ -188,9 +194,9 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       </div>
 
       {/* Filter & Controls */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
         {/* Search */}
-        <div className="relative w-full">
+        <div className="relative w-full md:w-80">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <input
             type="text"
@@ -209,20 +215,42 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
           )}
         </div>
 
-        {/* Sorting Dropdown */}
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
-            <ArrowUpDown size={14} /> Urutkan:
-          </span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl px-3 py-2 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
-          >
-            <option value="newest">Paling Baru Bergabung</option>
-            <option value="spending">Total Belanja Tertinggi</option>
-            <option value="orders">Pesanan Terbanyak</option>
-          </select>
+        {/* Year & Sorting Dropdowns */}
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+          {/* Select Tahun */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
+              <CalendarDays size={14} /> Tahun:
+            </span>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl px-3 py-2 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+            >
+              <option value="all">Semua Tahun</option>
+              {yearOptions.map((y) => (
+                <option key={y} value={y.toString()}>
+                  Tahun {y}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Select SortBy */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
+              <ArrowUpDown size={14} /> Urutkan:
+            </span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl px-3 py-2 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+            >
+              <option value="newest">Paling Baru Bergabung</option>
+              <option value="spending">Total Belanja Tertinggi</option>
+              <option value="orders">Pesanan Terbanyak</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -418,8 +446,8 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
                             order.status === "FINISHED" || order.status === "PAID" || order.status === "SHIPPED"
                               ? "bg-emerald-100 text-emerald-800"
                               : order.status === "PENDING"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-rose-100 text-rose-800";
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-rose-100 text-rose-800";
 
                           return (
                             <div

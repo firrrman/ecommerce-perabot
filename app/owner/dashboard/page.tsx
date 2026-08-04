@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import LayoutOwner from "../../component/layout-owner";
 import {
-  DollarSign,
+  Banknote,
   Package,
   ShoppingCart,
   TrendingUp,
@@ -39,158 +39,174 @@ export default async function Dashboard({ searchParams }: Props) {
     {
       label: "Total Produk",
       value: products,
-      change: "",
-      color: "bg-orange-500",
+      bg: "bg-indigo-50",
+      color: "text-indigo-600",
       icon: Package,
     },
     {
       label: "Total Pendapatan",
-      value: `Rp ${totalRevenue.toLocaleString()}`,
-      change: "",
-      color: "bg-emerald-500",
-      icon: DollarSign,
+      value: `Rp ${totalRevenue.toLocaleString("id-ID")}`,
+      bg: "bg-emerald-50",
+      color: "text-emerald-600",
+      icon: Banknote,
     },
     {
       label: "Total Pesanan",
       value: orders,
-      change: "",
-      color: "bg-blue-500",
+      bg: "bg-blue-50",
+      color: "text-blue-600",
       icon: ShoppingCart,
     },
     {
       label: "Produk Terjual",
       value: paidOrder,
-      change: "",
-      color: "bg-purple-500",
-      icon: Package,
+      bg: "bg-purple-50",
+      color: "text-purple-600",
+      icon: TrendingUp,
     },
   ];
 
   return (
     <LayoutOwner activeMenuProp="dashboard">
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-800 mb-1">
-            Dashboard E-Commerce
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50">
+        <div className="mb-8">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Executive Dashboard Owner
           </h2>
-          <p className="text-gray-600">
-            Kelola toko perabotan Anda dengan mudah
+          <p className="text-slate-500 text-sm mt-1">
+            Ringkasan eksekutif penjualan dan performa bisnis toko perabotan Anda.
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition"
+                className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center justify-between"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center shadow-lg`}
-                  >
-                    <Icon className="text-white" size={24} />
-                  </div>
-                  <span className="text-green-600 text-sm font-bold bg-green-50 px-2 py-1 rounded">
-                    {stat.change}
-                  </span>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                    {stat.label}
+                  </p>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                    {stat.value}
+                  </h3>
                 </div>
-                <p className="text-gray-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                <div
+                  className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center shrink-0`}
+                >
+                  <Icon size={24} />
+                </div>
               </div>
             );
           })}
         </div>
 
-        <ChartJs key={year} order={orderGrafik} year={Number(year)} />
+        <div className="mb-8">
+          <ChartJs key={year} order={orderGrafik} year={Number(year)} />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Recent Orders - 2 kolom */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-800">
-                Pesanan Terbaru
-              </h3>
-              <TransitionLink
-                href="/owner/pesanan"
-                className="text-amber-600 text-sm font-semibold hover:text-amber-700"
-              >
-                Lihat Semua
-              </TransitionLink>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                      ID Pesanan
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                      Pelanggan
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                      Produk
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                      Total
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {orderItems.map((order, index) => (
-                    <tr key={index} className="hover:bg-gray-50 transition">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {order.order.id}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {order.order.customerName}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {order.product.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                        {`Rp ${(
-                          order.price * order.quantity
-                        ).toLocaleString()}`}
-                      </td>
-                      <td className="px-6 py-4">{order.order.status}</td>
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col justify-between">
+            <div>
+              <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <ShoppingCart size={18} className="text-indigo-600" />
+                  Pesanan Terbaru
+                </h3>
+                <TransitionLink
+                  href="/owner/pesanan"
+                  className="text-indigo-600 hover:text-indigo-800 text-xs font-bold transition-colors"
+                >
+                  Lihat Semua →
+                </TransitionLink>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                    <tr>
+                      <th className="px-5 py-3.5">ID Pesanan</th>
+                      <th className="px-5 py-3.5">Pelanggan</th>
+                      <th className="px-5 py-3.5">Produk</th>
+                      <th className="px-5 py-3.5">Total</th>
+                      <th className="px-5 py-3.5">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {orderItems.map((order, index) => {
+                      const statusBadge =
+                        order.order.status === "PENDING"
+                          ? "bg-amber-100 text-amber-800"
+                          : order.order.status === "PAID" || order.order.status === "FINISHED" || order.order.status === "SHIPPED"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-rose-100 text-rose-800";
+
+                      return (
+                        <tr key={index} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="px-5 py-3.5 text-xs font-mono font-bold text-slate-900">
+                            #{order.order.id.slice(-8).toUpperCase()}
+                          </td>
+                          <td className="px-5 py-3.5 text-slate-800 font-medium">
+                            {order.order.customerName}
+                          </td>
+                          <td className="px-5 py-3.5 text-slate-600 text-xs truncate max-w-44">
+                            {order.product.name}
+                          </td>
+                          <td className="px-5 py-3.5 font-bold text-slate-900">
+                            Rp {(order.price * order.quantity).toLocaleString("id-ID")}
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span
+                              className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full ${statusBadge}`}
+                            >
+                              {order.order.status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
           {/* Top Products - 1 kolom */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-gray-800">
-                Produk Terlaris
-              </h3>
-            </div>
-            <div className="p-6">
-              <div className="space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 flex flex-col justify-between">
+            <div>
+              <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Package size={18} className="text-amber-500" />
+                  Produk Terlaris
+                </h3>
+              </div>
+              <div className="mt-4 space-y-3.5">
                 {bestSellers.map((product, index) => (
-                  <div key={index} className="border-b border-gray-300">
-                    <div className="flex justify-between mb-2">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 font-extrabold text-xs flex items-center justify-center shrink-0">
+                        {index + 1}
+                      </span>
                       <div>
-                        <p className="text-sm font-semibold text-gray-800">
+                        <p className="text-xs font-bold text-slate-900 line-clamp-1">
                           {product.name}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-[10px] text-slate-400 font-medium">
                           {product.category}
                         </p>
                       </div>
-                      <span className="text-sm font-bold text-gray-900">
-                        {product.totalTerjual} Terjual
-                      </span>
                     </div>
+                    <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg shrink-0">
+                      {product.totalTerjual} Terjual
+                    </span>
                   </div>
                 ))}
               </div>
@@ -199,40 +215,54 @@ export default async function Dashboard({ searchParams }: Props) {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <TransitionLink
-            href={"/owner/produk"}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
-          >
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Package className="text-blue-600" size={24} />
-            </div>
-            <span className="text-sm font-semibold text-gray-800">
-              Lihat Produk
-            </span>
-          </TransitionLink>
-          <TransitionLink
-            href={"/owner/pesanan"}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
-          >
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <ShoppingCart className="text-purple-600" size={24} />
-            </div>
-            <span className="text-sm font-semibold text-gray-800">
-              Kelola Pesanan
-            </span>
-          </TransitionLink>
-          <TransitionLink
-            href={"/owner/laporan"}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition flex flex-col items-center space-y-2"
-          >
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="text-green-600" size={24} />
-            </div>
-            <span className="text-sm font-semibold text-gray-800">
-              Lihat Laporan
-            </span>
-          </TransitionLink>
+        <div>
+          <h3 className="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-3">
+            Aksi Cepat
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <TransitionLink
+              href={"/owner/produk"}
+              className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
+            >
+              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Package size={22} />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-900 block">
+                  Katalog Produk
+                </span>
+                <span className="text-xs text-slate-400">Pantau ketersediaan produk</span>
+              </div>
+            </TransitionLink>
+            <TransitionLink
+              href={"/owner/pesanan"}
+              className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
+            >
+              <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <ShoppingCart size={22} />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-900 block">
+                  Lihat Pesanan
+                </span>
+                <span className="text-xs text-slate-400">Pantau transaksi pesanan</span>
+              </div>
+            </TransitionLink>
+            <TransitionLink
+              href={"/owner/laporan"}
+              className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
+            >
+              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <TrendingUp size={22} />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-900 block">
+                  Laporan Finansial
+                </span>
+                <span className="text-xs text-slate-400">Analisis laba dan modal</span>
+              </div>
+            </TransitionLink>
+          </div>
         </div>
       </div>
     </LayoutOwner>

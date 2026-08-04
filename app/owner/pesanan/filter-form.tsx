@@ -17,13 +17,9 @@ export default function FilterForm({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const newStatus = formData.get("status") as string;
-    const newDate = formData.get("date") as string;
-
+  const applyFilter = (newStatus: string, newDate: string) => {
     const params = new URLSearchParams(searchParams.toString());
+
     if (newStatus) params.set("status", newStatus);
     else params.delete("status");
 
@@ -39,17 +35,22 @@ export default function FilterForm({
     router.push(`?${params.toString()}`);
   };
 
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    applyFilter(e.target.value, date || "");
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    applyFilter(status || "", e.target.value);
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col md:flex-row md:items-center gap-3 justify-between"
-    >
+    <div className="flex flex-col md:flex-row md:items-center gap-3 justify-between">
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         {/* STATUS */}
         <select
-          name="status"
-          defaultValue={status || ""}
-          className="px-4 py-2 border border-slate-300 rounded-lg text-sm cursor-pointer"
+          value={status || ""}
+          onChange={handleStatusChange}
+          className="px-3 py-2.5 border border-slate-200 rounded-xl text-sm cursor-pointer bg-slate-50 font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
         >
           <option value="">Semua Status</option>
           <option value="PENDING">Pending</option>
@@ -62,18 +63,10 @@ export default function FilterForm({
         {/* TANGGAL */}
         <input
           type="date"
-          name="date"
-          defaultValue={date || ""}
-          className="px-4 py-2 border border-slate-300 rounded-lg text-sm cursor-pointer"
+          value={date && date !== "last7" && date !== "month" ? date : ""}
+          onChange={handleDateChange}
+          className="px-3 py-2.5 border border-slate-200 rounded-xl text-sm cursor-pointer bg-slate-50 text-slate-700 font-semibold focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
         />
-
-        {/* BUTTON */}
-        <button
-          type="submit"
-          className="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-        >
-          Terapkan
-        </button>
       </div>
 
       <div className="flex gap-2 flex-wrap">
@@ -83,7 +76,7 @@ export default function FilterForm({
             href={`/owner/pesanan?status=${
               status || ""
             }&date=${new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Jakarta" }).format(new Date())}&search=${search || ""}&page=${page || ""}`}
-            className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
+            className="px-3 py-2 bg-emerald-500 text-white rounded-xl text-sm hover:bg-emerald-600 font-semibold transition-all"
           >
             Hari Ini
           </TransitionLink>
@@ -92,7 +85,7 @@ export default function FilterForm({
             href={`/owner/pesanan?status=${
               status || ""
             }&date=last7&search=${search || ""}&page=${page || ""}`}
-            className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"
+            className="px-3 py-2 bg-indigo-500 text-white rounded-xl text-sm hover:bg-indigo-600 font-semibold transition-all"
           >
             7 Hari
           </TransitionLink>
@@ -101,7 +94,7 @@ export default function FilterForm({
             href={`/owner/pesanan?status=${
               status || ""
             }&date=month&search=${search || ""}&page=${page || ""}`}
-            className="px-3 py-2 bg-orange-600 text-white rounded-lg text-sm hover:bg-orange-700"
+            className="px-3 py-2 bg-orange-500 text-white rounded-xl text-sm hover:bg-orange-600 font-semibold transition-all"
           >
             Bulan Ini
           </TransitionLink>
@@ -111,12 +104,12 @@ export default function FilterForm({
         {(status || date) && (
           <TransitionLink
             href="/owner/pesanan"
-            className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm hover:bg-slate-50"
+            className="px-3 py-2 border border-slate-200 text-slate-600 rounded-xl text-sm hover:bg-slate-100 font-semibold transition-all"
           >
             Reset
           </TransitionLink>
         )}
       </div>
-    </form>
+    </div>
   );
 }

@@ -171,27 +171,25 @@ export default function ProdukListAdmin({
 
 
   return (
-    <div className="p-4 md:p-6 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">
-              Manajemen Produk
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Katalog Produk
             </h1>
             <p className="text-slate-500 text-sm mt-1">
-              Kelola dan pantau semua produk perabotan
+              Pantau katalog, ketersediaan stok, dan performa varian produk.
             </p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg border border-slate-200 p-4 flex flex-wrap gap-4 items-center">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 flex flex-wrap gap-4 items-center shadow-xs">
           {/* Search */}
           <div className="flex-1 min-w-70">
-            <div className="relative">
-              <SearchBarAdmin />
-            </div>
+            <SearchBarAdmin />
           </div>
 
           {/* Category Filter */}
@@ -199,7 +197,7 @@ export default function ProdukListAdmin({
             <select
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              className="appearance-none pl-4 pr-10 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white cursor-pointer text-sm"
+              className="appearance-none pl-4 pr-10 py-2.5 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-slate-50 cursor-pointer text-sm font-semibold text-slate-700"
             >
               <option value="all">Semua Kategori</option>
               {categories.map((cat, index) => (
@@ -210,40 +208,32 @@ export default function ProdukListAdmin({
             </select>
 
             <ChevronDown
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-              size={18}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              size={16}
             />
           </div>
 
           {/* View Toggle */}
-          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg ml-auto">
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-xl ml-auto border border-slate-200/60">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded transition-colors ${viewMode === "grid"
-                ? "bg-white shadow-sm"
-                : "hover:bg-slate-200"
-                }`}
+              className={`p-2 rounded-lg transition-all ${
+                viewMode === "grid"
+                  ? "bg-white shadow-xs text-slate-900"
+                  : "hover:bg-slate-200 text-slate-400 cursor-pointer"
+              }`}
             >
-              <Grid
-                size={18}
-                className={
-                  viewMode === "grid" ? "text-slate-700" : "text-slate-500 cursor-pointer"
-                }
-              />
+              <Grid size={16} />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-1.5 rounded transition-colors ${viewMode === "list"
-                ? "bg-white shadow-sm"
-                : "hover:bg-slate-200"
-                }`}
+              className={`p-2 rounded-lg transition-all ${
+                viewMode === "list"
+                  ? "bg-white shadow-xs text-slate-900"
+                  : "hover:bg-slate-200 text-slate-400 cursor-pointer"
+              }`}
             >
-              <List
-                size={18}
-                className={
-                  viewMode === "list" ? "text-slate-700" : "text-slate-500 cursor-pointer"
-                }
-              />
+              <List size={16} />
             </button>
           </div>
         </div>

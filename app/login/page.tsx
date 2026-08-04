@@ -19,12 +19,12 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-  // Redirect if customer is already logged in
+  // Redirect if customer is already logged in (upon initial page load)
   useEffect(() => {
-    if (customer) {
+    if (customer && !isLoading) {
       router.replace(callbackUrl);
     }
-  }, [customer, router, callbackUrl]);
+  }, [customer, router, callbackUrl, isLoading]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,16 +42,15 @@ export default function LoginPage() {
       if (res.role === "CUSTOMER") {
         toast.success("Login berhasil!");
         await refreshCustomer();
-        router.push(callbackUrl);
+        window.location.href = callbackUrl;
       } else {
         // Admin / Owner — redirect ke dashboard
         toast.success("Login berhasil!");
-        router.push(res.redirectTo ?? "/");
+        window.location.href = res.redirectTo ?? "/";
       }
     } catch (error) {
       console.error("Login client error:", error);
       toast.error("Terjadi kesalahan, silakan coba lagi");
-    } finally {
       setIsLoading(false);
     }
   }

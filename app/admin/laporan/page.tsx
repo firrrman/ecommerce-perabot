@@ -16,7 +16,7 @@ import {
   getMonthlyProfit,
   getTotalCostByYear,
 } from "@/app/actions/laporan";
-import { DollarSign, Package, ShoppingCart, Percent, Wallet, TrendingUp, Download } from "lucide-react";
+import { Banknote, Package, ShoppingCart, Percent, Wallet, TrendingUp, Download } from "lucide-react";
 import ChartJs from "./chartjs";
 import YearSelector from "./year-selector";
 import ChartKeuangan from "./chart-keuangan";
@@ -27,7 +27,7 @@ type Props = {
 
 export default async function LaporanPage({ searchParams }: Props) {
   const year = Number((await searchParams).year) || new Date().getFullYear();
-    const [totalCost, monthlyRevenue, monthlyCost, monthlyProfit] = await Promise.all([
+  const [totalCost, monthlyRevenue, monthlyCost, monthlyProfit] = await Promise.all([
     getTotalCostByYear(year),
     getMonthlyRevenue(year),
     getMonthlyCost(year),
@@ -57,85 +57,95 @@ export default async function LaporanPage({ searchParams }: Props) {
     {
       label: "Total Produk",
       value: products,
-      color: "bg-orange-500",
+      bg: "bg-indigo-50",
+      color: "text-indigo-600",
       icon: Package,
     },
     {
       label: "Total Pendapatan",
-      value: `Rp ${totalRevenue.toLocaleString()}`,
-      color: "bg-emerald-500",
-      icon: DollarSign,
+      value: `Rp ${totalRevenue.toLocaleString("id-ID")}`,
+      bg: "bg-emerald-50",
+      color: "text-emerald-600",
+      icon: Banknote,
     },
     {
       label: "Total Pesanan",
       value: orders,
-      color: "bg-blue-500",
+      bg: "bg-blue-50",
+      color: "text-blue-600",
       icon: ShoppingCart,
     },
     {
       label: "Produk Terjual",
       value: paidOrder,
-      color: "bg-purple-500",
-      icon: Package,
+      bg: "bg-purple-50",
+      color: "text-purple-600",
+      icon: TrendingUp,
     },
   ];
   return (
     <LayoutAdmin activeMenuProp="report">
-      <div className="flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50">
         {/* Header with Year Selector */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">
-              Laporan Penjualan
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Laporan Penjualan & Keuangan
             </h1>
             <p className="text-slate-500 text-sm mt-1">
-              Menampilkan data penjualan tahun {year}
+              Menampilkan data analisis performa bisnis tahun {year}.
             </p>
           </div>
           <YearSelector year={year} />
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition"
+                className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center justify-between"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center shadow-lg`}
-                  >
-                    <Icon className="text-white" size={24} />
-                  </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                    {stat.label}
+                  </p>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                    {stat.value}
+                  </h3>
                 </div>
-                <p className="text-gray-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                <div
+                  className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center shrink-0`}
+                >
+                  <Icon size={24} />
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Chart */}
-        <ChartJs
-          key={year}
-          pending={orderPending}
-          paid={orderPaid}
-          shipped={orderShipped}
-          finished={orderFinished}
-          cancelled={orderCancelled}
-          year={year}
-        />
+        <div className="mb-8">
+          <ChartJs
+            key={year}
+            pending={orderPending}
+            paid={orderPaid}
+            shipped={orderShipped}
+            finished={orderFinished}
+            cancelled={orderCancelled}
+            year={year}
+          />
+        </div>
 
         {/* Financial Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
             {
               label: "Pendapatan",
               value: `Rp ${totalRevenue.toLocaleString("id-ID")}`,
-              icon: DollarSign,
+              icon: Banknote,
               color: "text-blue-600",
               bg: "bg-blue-50",
             },
@@ -161,25 +171,23 @@ export default async function LaporanPage({ searchParams }: Props) {
               bg: "bg-purple-50",
             },
           ].map((item, index) => (
-            <div key={index} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className={`${item.bg} ${item.color} p-3 rounded-xl`}>
-                  <item.icon size={24} />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-500">{item.label}</p>
-                  <p className="text-xl font-bold text-slate-900">{item.value}</p>
-                </div>
+            <div key={index} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+              <div className={`${item.bg} ${item.color} p-3 rounded-xl shrink-0`}>
+                <item.icon size={22} />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{item.label}</p>
+                <p className="text-lg font-black text-slate-900 mt-0.5">{item.value}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <ChartKeuangan 
+        <ChartKeuangan
           revenue={monthlyRevenue}
           cost={monthlyCost}
           profit={monthlyProfit}
-          year={year} 
+          year={year}
         />
       </div>
     </LayoutAdmin>

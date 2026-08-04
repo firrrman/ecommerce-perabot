@@ -24,21 +24,56 @@ export interface CustomerMonitoringSummary {
 
 export async function getCustomersMonitoringData(
   searchQuery: string = "",
-  sortBy: "newest" | "spending" | "orders" = "newest"
+  sortBy: "newest" | "spending" | "orders" = "newest",
+  selectedYear: string = "all"
 ) {
   try {
     const searchFilter = searchQuery.trim()
       ? {
-          OR: [
-            { name: { contains: searchQuery, mode: "insensitive" as const } },
-            { email: { contains: searchQuery, mode: "insensitive" as const } },
-            { phone: { contains: searchQuery, mode: "insensitive" as const } },
-          ],
-        }
+        OR: [
+          { name: { contains: searchQuery, mode: "insensitive" as const } },
+          { email: { contains: searchQuery, mode: "insensitive" as const } },
+          { phone: { contains: searchQuery, mode: "insensitive" as const } },
+        ],
+      }
       : {};
 
+    const isYearFiltered = selectedYear !== "all";
+    const yearNum = isYearFiltered ? parseInt(selectedYear, 10) : 0;
+    const yearStart = isYearFiltered ? new Date(yearNum, 0, 1) : null;
+    const yearEnd = isYearFiltered ? new Date(yearNum + 1, 0, 1) : null;
+
+    const yearFilter =
+      isYearFiltered && yearStart && yearEnd
+        ? {
+          OR: [
+            {
+              createdAt: {
+                gte: yearStart,
+                lt: yearEnd,
+              },
+            },
+            {
+              orders: {
+                some: {
+                  createdAt: {
+                    gte: yearStart,
+                    lt: yearEnd,
+                  },
+                },
+              },
+            },
+          ],
+        }
+        : {};
+
+    const whereCondition = {
+      ...searchFilter,
+      ...yearFilter,
+    };
+
     const customers = await prisma.customer.findMany({
-      where: searchFilter,
+      where: whereCondition,
       include: {
         orders: {
           select: {
@@ -55,19 +90,28 @@ export async function getCustomersMonitoringData(
     });
 
     const monitoringList: CustomerMonitoringItem[] = customers.map((cust) => {
-      const totalOrders = cust.orders.length;
-      const completedOrders = cust.orders.filter((o) =>
+      const relevantOrders =
+        isYearFiltered && yearStart && yearEnd
+          ? cust.orders.filter(
+            (o) =>
+              new Date(o.createdAt) >= yearStart &&
+              new Date(o.createdAt) < yearEnd
+          )
+          : cust.orders;
+
+      const totalOrders = relevantOrders.length;
+      const completedOrders = relevantOrders.filter((o) =>
         ["PAID", "SHIPPED", "FINISHED"].includes(o.status)
       ).length;
-      const pendingOrders = cust.orders.filter(
+      const pendingOrders = relevantOrders.filter(
         (o) => o.status === "PENDING"
       ).length;
 
-      const totalSpent = cust.orders
+      const totalSpent = relevantOrders
         .filter((o) => ["PAID", "SHIPPED", "FINISHED"].includes(o.status))
         .reduce((sum, o) => sum + o.totalPrice, 0);
 
-      const sortedOrders = [...cust.orders].sort(
+      const sortedOrders = [...relevantOrders].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       const lastOrderDate = sortedOrders.length > 0 ? sortedOrders[0].createdAt : null;
@@ -93,19 +137,27 @@ export async function getCustomersMonitoringData(
       monitoringList.sort((a, b) => b.totalOrders - a.totalOrders);
     }
 
-    // Calculating Summary Metrics across ALL customers
-    const allCustomersCount = await prisma.customer.count();
-    
-    // Sum total spending across all valid orders
-    const validOrders = await prisma.order.findMany({
-      where: {
-        status: {
-          in: ["PAID", "SHIPPED", "FINISHED"],
-        },
-        customerId: {
-          not: null,
-        },
+    // Calculating Summary Metrics
+    const totalCustomersCount = monitoringList.length;
+
+    const orderWhere: any = {
+      status: {
+        in: ["PAID", "SHIPPED", "FINISHED"],
       },
+      customerId: {
+        not: null,
+      },
+    };
+
+    if (isYearFiltered && yearStart && yearEnd) {
+      orderWhere.createdAt = {
+        gte: yearStart,
+        lt: yearEnd,
+      };
+    }
+
+    const validOrders = await prisma.order.findMany({
+      where: orderWhere,
       select: {
         totalPrice: true,
       },
@@ -113,7 +165,7 @@ export async function getCustomersMonitoringData(
 
     const totalRevenue = validOrders.reduce((sum, o) => sum + o.totalPrice, 0);
     const avgSpentPerCustomer =
-      allCustomersCount > 0 ? Math.round(totalRevenue / allCustomersCount) : 0;
+      totalCustomersCount > 0 ? Math.round(totalRevenue / totalCustomersCount) : 0;
 
     let topCustomerName = "-";
     if (monitoringList.length > 0) {
@@ -126,7 +178,7 @@ export async function getCustomersMonitoringData(
     }
 
     const summary: CustomerMonitoringSummary = {
-      totalCustomers: allCustomersCount,
+      totalCustomers: totalCustomersCount,
       totalRevenue,
       avgSpentPerCustomer,
       topCustomerName,
