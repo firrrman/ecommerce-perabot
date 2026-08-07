@@ -27,8 +27,9 @@ export async function POST(req: Request) {
   }
 
   const oldStatus = order.status;
-  const deductedStatuses = ["PAID", "SHIPPED", "FINISHED"];
-  const nonDeductedStatuses = ["PENDING", "CANCELLED"];
+  // PENDING termasuk di deductedStatuses karena stok dikurangi langsung saat order dibuat
+  const deductedStatuses = ["PENDING", "PAID", "SHIPPED", "FINISHED"];
+  const nonDeductedStatuses = ["CANCELLED"];
 
   // jika pembayaran berhasil
   if (

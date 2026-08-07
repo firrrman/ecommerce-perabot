@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { adjustOrderStock } from "@/lib/stock";
 import { createOrderNotification } from "@/app/actions/notification";
 
 export async function POST(req: Request) {
@@ -51,6 +52,12 @@ export async function POST(req: Request) {
     body.transaction_status === "expire" ||
     body.transaction_status === "cancel"
   ) {
+    // Stok dikurangi saat order dibuat (status PENDING), jadi kembalikan stok
+    const statusesWithDeductedStock = ["PENDING", "PAID", "SHIPPED", "FINISHED"];
+    if (statusesWithDeductedStock.includes(order.status)) {
+      await adjustOrderStock(order.id, "RESTORE");
+    }
+
     await prisma.order.update({
       where: {
         paymentOrderId: body.order_id,
