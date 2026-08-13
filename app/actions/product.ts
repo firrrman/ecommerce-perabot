@@ -1,18 +1,18 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
-export const supabaseAdmin = createClient(
+const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // tambah kategori
 export async function createCategory(formData: FormData) {
-  "use server";
-
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
 
@@ -32,8 +32,6 @@ export async function createCategory(formData: FormData) {
 
 // tambah warna
 export async function createColor(formData: FormData) {
-  "use server";
-
   const name = formData.get("name") as string;
   const hex = formData.get("hex") as string;
 
@@ -53,8 +51,6 @@ export async function createColor(formData: FormData) {
 
 // tambah ukuran
 export async function createSize(formData: FormData) {
-  "use server";
-
   const name = formData.get("name") as string;
 
   if (!name) {
@@ -72,8 +68,6 @@ export async function createSize(formData: FormData) {
 
 // tambah Produk
 export async function createProduct(formData: FormData) {
-  "use server";
-
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
@@ -87,11 +81,23 @@ export async function createProduct(formData: FormData) {
   const is_featured = formData.get("is_featured") === "true";
 
   if (images.length === 0) {
-    throw new Error("Minimal 1 gambar harus diupload");
+    return { error: "Minimal 1 gambar harus diupload" };
   }
 
   if (!name || !slug) {
-    throw new Error("Data belum lengkap");
+    return { error: "Nama dan slug wajib diisi" };
+  }
+
+  // ✅ Cek apakah slug sudah digunakan
+  const existingProduct = await prisma.product.findUnique({
+    where: { slug },
+    select: { id: true, name: true },
+  });
+
+  if (existingProduct) {
+    return {
+      error: `Slug "${slug}" sudah digunakan oleh produk "${existingProduct.name}". Gunakan slug yang berbeda.`,
+    };
   }
 
   // Build variant data dari input dynamic row
@@ -163,7 +169,7 @@ export async function createProduct(formData: FormData) {
 
     if (error) {
       console.error("UPLOAD ERROR:", error);
-      throw new Error("Gagal upload gambar");
+      return { error: "Gagal upload gambar" };
     }
 
     const { data } = supabase.storage.from("products").getPublicUrl(fileName);
@@ -203,7 +209,9 @@ export async function createProduct(formData: FormData) {
   redirect("/admin/produk");
 }
 
+
 // update produk
+
 export async function updateProduct(productId: string, formData: FormData) {
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
@@ -217,7 +225,22 @@ export async function updateProduct(productId: string, formData: FormData) {
   let stock = Number(formData.get("stock")) || 0;
   const is_featured = formData.get("is_featured") === "true";
   if (!name || !slug) {
-    throw new Error("Nama dan slug wajib diisi");
+    return { error: "Nama dan slug wajib diisi" };
+  }
+
+  // Cek apakah slug sudah digunakan oleh produk lain
+  const existingProduct = await prisma.product.findFirst({
+    where: {
+      slug: slug.trim(),
+      NOT: { id: productId },
+    },
+    select: { id: true, name: true },
+  });
+
+  if (existingProduct) {
+    return {
+      error: `Slug "${slug}" sudah digunakan oleh produk "${existingProduct.name}". Gunakan slug yang berbeda.`,
+    };
   }
 
   const product = await prisma.product.findUnique({

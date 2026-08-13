@@ -213,14 +213,14 @@ export default function ProdukListAdmin({
           </div>
           <TransitionLink
             href="/admin/tambah-produk"
-            className="bg-indigo-600 hover:bg-indigo-700 cursor-pointer text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all font-bold text-sm shadow-md shadow-indigo-600/20"
+            className="bg-blueprimary hover:bg-blueprimary/90 cursor-pointer text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all font-bold text-sm shadow-md shadow-indigo-600/20"
           >
             + Tambah Produk
           </TransitionLink>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 flex flex-wrap gap-4 items-center shadow-xs">
+        <div className="bg-white rounded-2xl border border-blackprimary/30 p-4 flex flex-wrap gap-4 items-center shadow">
           {/* Search */}
           <div className="flex-1 min-w-70">
             <SearchBarAdmin />
@@ -289,7 +289,7 @@ export default function ProdukListAdmin({
           {product.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg border border-blackprimary/30 shadow overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="relative h-48 w-48 flex items-center justify-center mx-auto">
                 <img
@@ -358,7 +358,7 @@ export default function ProdukListAdmin({
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-lg border border-blackprimary/30 shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-220 md:w-full">
               <thead className="bg-slate-50 border-b border-slate-200">

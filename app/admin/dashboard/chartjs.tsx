@@ -60,7 +60,7 @@ export default function ChartJs({
       {
         label: `Jumlah Order`,
         data: order,
-        backgroundColor: "#2645ff",
+        backgroundColor: "#134B70",
       },
     ],
   };
@@ -93,7 +93,7 @@ export default function ChartJs({
   };
 
   return (
-    <div className="bg-white shadow rounded-xl p-6 mb-6 relative">
+    <div className="bg-white border border-blackprimary/30 shadow rounded-xl p-6 mb-6 relative">
       {loading && (
         <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex flex-col items-center justify-center rounded-xl z-10">
           <div className="flex items-center gap-2 text-blue-600 font-medium">

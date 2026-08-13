@@ -1,9 +1,13 @@
 "use client";
 export const dynamic = "force-dynamic";
 
+import { useState, useTransition } from "react";
 import SubmitButton from "@/app/component/submit-button";
 import VariantSection, { Variant } from "../tambah-produk/variant-section";
 import { toast } from "react-toastify";
+import { checkSlugExists } from "@/app/actions/slug-check";
+
+type SlugStatus = "idle" | "checking" | "available" | "taken";
 
 export default function EditProductForm({
   product,
@@ -12,6 +16,10 @@ export default function EditProductForm({
   sizes,
   action,
 }: any) {
+  const [slugStatus, setSlugStatus] = useState<SlugStatus>("idle");
+  const [takenByProduct, setTakenByProduct] = useState<string>("");
+  const [, startTransition] = useTransition();
+
   const initialVariants: Variant[] = (product.variants || []).map((v: any) => ({
     localId: v.id,
     sizeId: v.sizeId || "",
@@ -22,19 +30,74 @@ export default function EditProductForm({
     stock: v.stock !== null && v.stock !== undefined ? v.stock.toString() : "",
   }));
 
+  // ── Cek slug saat blur ───────────────────────────────────
+  const handleSlugBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const val = e.target.value.trim();
+    if (!val) {
+      setSlugStatus("idle");
+      return;
+    }
+    setSlugStatus("checking");
+    startTransition(async () => {
+      const res = await checkSlugExists(val, product.id);
+      if (res.exists) {
+        setSlugStatus("taken");
+        setTakenByProduct(res.productName ?? "");
+        toast.error(`Slug "${val}" sudah digunakan oleh produk "${res.productName}". Silakan ganti slug.`, {
+          toastId: "slug-taken",
+        });
+      } else {
+        setSlugStatus("available");
+        setTakenByProduct("");
+      }
+    });
+  };
+
   const clientAction = async (formData: FormData) => {
-    const result = await action(formData);
-    if (result?.error) {
-      toast.error(result.error);
+    if (slugStatus === "taken") {
+      toast.error("Slug sudah digunakan. Harap ganti slug sebelum menyimpan.", { toastId: "slug-taken-submit" });
+      return;
+    }
+
+    const slug = (formData.get("slug") as string)?.trim();
+    if (slug) {
+      const check = await checkSlugExists(slug, product.id);
+      if (check.exists) {
+        setSlugStatus("taken");
+        setTakenByProduct(check.productName ?? "");
+        toast.error(`Slug "${slug}" sudah digunakan oleh produk "${check.productName}". Silakan ganti slug.`, {
+          toastId: "slug-taken-submit-check",
+        });
+        return;
+      }
+    }
+
+    try {
+      const result = await action(formData);
+      if (result && "error" in result && result.error) {
+        toast.error(result.error);
+      }
+    } catch (err: any) {
+      if (err?.digest?.startsWith("NEXT_REDIRECT") || err?.message === "NEXT_REDIRECT") {
+        throw err;
+      }
+      toast.error("Terjadi kesalahan saat menyimpan perubahan.");
     }
   };
+
+  const slugBorderClass =
+    slugStatus === "taken"
+      ? "border-red-400 focus:ring-red-400"
+      : slugStatus === "available"
+        ? "border-green-400 focus:ring-green-400"
+        : "border-gray-300 focus:ring-blue-500";
 
   return (
     <div>
       <div>
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Edit Produk</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">Edit Produk</h1>
           <p className="text-gray-600 mt-1 text-sm">
             Perbarui informasi produk:{" "}
             <span className="font-medium">{product.name}</span>
@@ -42,7 +105,7 @@ export default function EditProductForm({
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-blackprimary/30 p-6">
           <form action={clientAction} className="space-y-6">
             {/* Informasi Dasar */}
             <div className="border-b border-gray-200 pb-6">
@@ -80,12 +143,36 @@ export default function EditProductForm({
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Slug <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    name="slug"
-                    defaultValue={product.slug}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      name="slug"
+                      defaultValue={product.slug}
+                      onBlur={handleSlugBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent pr-9 transition-colors ${slugBorderClass}`}
+                      required
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-base">
+                      {slugStatus === "checking" && (
+                        <svg className="animate-spin w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                        </svg>
+                      )}
+                      {slugStatus === "available" && <span className="text-green-500">✓</span>}
+                      {slugStatus === "taken" && <span className="text-red-500">✗</span>}
+                    </span>
+                  </div>
+                  {slugStatus === "taken" && (
+                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                      <span>⚠️</span>
+                      Slug ini sudah digunakan oleh &ldquo;<strong>{takenByProduct}</strong>&rdquo;
+                    </p>
+                  )}
+                  {slugStatus === "available" && (
+                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                      <span>✓</span> Slug tersedia, bisa digunakan.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -299,7 +386,7 @@ export default function EditProductForm({
               <SubmitButton
                 defaultText="Simpan Perubahan"
                 loadingText="Menyimpan..."
-                className="flex-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-sm hover:shadow-md"
+                className="flex-1 cursor-pointer bg-blueprimary hover:bg-blueprimary/90 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-sm hover:shadow-md"
               />
               <button
                 type="button"

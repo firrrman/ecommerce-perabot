@@ -86,7 +86,7 @@ export default async function Dashboard({ searchParams }: Props) {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center justify-between"
+                className="bg-white rounded-2xl border border-blackprimary/30 p-5 shadow hover:shadow-md transition-all flex items-center justify-between"
               >
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
@@ -112,7 +112,7 @@ export default async function Dashboard({ searchParams }: Props) {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Recent Orders - 2 kolom */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col justify-between">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-blackprimary/30 shadow overflow-hidden flex flex-col justify-between">
             <div>
               <div className="p-5 border-b border-slate-100 flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -177,7 +177,7 @@ export default async function Dashboard({ searchParams }: Props) {
           </div>
 
           {/* Top Products - 1 kolom */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 flex flex-col justify-between">
+          <div className="bg-white rounded-2xl border border-blackprimary/30 shadow p-5 flex flex-col justify-between">
             <div>
               <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -192,7 +192,7 @@ export default async function Dashboard({ searchParams }: Props) {
                     className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 font-extrabold text-xs flex items-center justify-center shrink-0">
+                      <span className="w-6 h-6 rounded-lg bg-indigo-50 text-greenprimary font-extrabold text-xs flex items-center justify-center shrink-0">
                         {index + 1}
                       </span>
                       <div>
@@ -204,7 +204,7 @@ export default async function Dashboard({ searchParams }: Props) {
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg shrink-0">
+                    <span className="text-xs font-black text-greenprimary bg-indigo-50 px-2.5 py-1 rounded-lg shrink-0">
                       {product.totalTerjual} Terjual
                     </span>
                   </div>
@@ -222,7 +222,7 @@ export default async function Dashboard({ searchParams }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <TransitionLink
               href={"/admin/tambah-produk"}
-              className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
+              className="bg-white rounded-2xl border border-blackprimary/30 shadow p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
             >
               <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Package size={22} />
@@ -236,7 +236,7 @@ export default async function Dashboard({ searchParams }: Props) {
             </TransitionLink>
             <TransitionLink
               href={"/admin/pesanan"}
-              className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
+              className="bg-white rounded-2xl border border-blackprimary/30 shadow p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
             >
               <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <ShoppingCart size={22} />
@@ -250,7 +250,7 @@ export default async function Dashboard({ searchParams }: Props) {
             </TransitionLink>
             <TransitionLink
               href={"/admin/laporan"}
-              className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
+              className="bg-white rounded-2xl border border-blackprimary/30 shadow p-4 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group"
             >
               <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <TrendingUp size={22} />

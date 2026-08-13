@@ -1,5 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import PayAgainButton from "./pay-again-button";
+import { adjustOrderStock } from "@/lib/stock";
+import { createOrderNotification } from "@/app/actions/notification";
+import {
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Package,
+  CreditCard,
+  MapPin,
+  Calendar,
+  ShoppingBag,
+  ArrowRight,
+  Home,
+  Receipt,
+} from "lucide-react";
 
 interface Props {
   searchParams: Promise<{
@@ -7,48 +22,342 @@ interface Props {
   }>;
 }
 
+async function checkAndUpdateMidtransStatus<T extends { id: string; status: string; paymentOrderId: string; customerId: string | null; paymentMethod: string | null }>(order: T): Promise<T> {
+  if (order.status !== "PENDING" || !process.env.MIDTRANS_SERVER_KEY) {
+    return order;
+  }
+
+  try {
+    const auth = Buffer.from(process.env.MIDTRANS_SERVER_KEY + ":").toString("base64");
+    const res = await fetch(`https://api.midtrans.com/v2/${order.paymentOrderId}/status`, {
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) return order;
+
+    const body = await res.json();
+    if (body.transaction_status === "settlement" || body.transaction_status === "capture") {
+      const updated = await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          status: "PAID",
+          paidAt: new Date(),
+          paymentMethod: body.payment_type || order.paymentMethod || "midtrans",
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: {
+                  images: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (order.customerId) {
+        await createOrderNotification(order.customerId, order.id, "PAID", order.paymentOrderId);
+      }
+
+      return updated as unknown as T;
+    } else if (body.transaction_status === "expire" || body.transaction_status === "cancel") {
+      await adjustOrderStock(order.id, "RESTORE");
+      const updated = await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          status: "CANCELLED",
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: {
+                  images: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (order.customerId) {
+        await createOrderNotification(order.customerId, order.id, "CANCELLED", order.paymentOrderId);
+      }
+
+      return updated as unknown as T;
+    }
+  } catch (err) {
+    console.error("Failed auto checking Midtrans status:", err);
+  }
+
+  return order;
+}
+
 export default async function FinishPage({ searchParams }: Props) {
-  const params = await searchParams; // 🔥 INI KUNCINYA
+  const params = await searchParams;
   const orderId = params.order_id;
 
   if (!orderId) {
     return <ErrorState message="Order ID tidak ditemukan" />;
   }
 
-  const order = await prisma.order.findUnique({
-    where: { paymentOrderId: orderId },
+  const fetchedOrder = await prisma.order.findFirst({
+    where: {
+      OR: [{ paymentOrderId: orderId }, { id: orderId }],
+    },
+    include: {
+      items: {
+        include: {
+          product: {
+            include: {
+              images: true,
+            },
+          },
+        },
+      },
+    },
   });
 
-  if (!order) {
-    return <ErrorState message="Order tidak ditemukan" />;
+  if (!fetchedOrder) {
+    return <ErrorState message="Pesanan tidak ditemukan" />;
   }
 
+  // Jika status masih PENDING, periksa secara real-time ke Midtrans API
+  const order = fetchedOrder.status === "PENDING"
+    ? await checkAndUpdateMidtransStatus(fetchedOrder)
+    : fetchedOrder;
+
+  const formatRupiah = (amount: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Jakarta",
+    }).format(new Date(date));
+  };
+
+  const subtotal = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
   return (
-    <div className="flex justify-center items-center h-lvh place-items-center px-6 py-24 sm:py-32 lg:px-8">
-      <div className="text-center">
-        <h1 className="mt-4 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
-          {order.status === "PAID"
-            ? "Pembayaran Berhasil"
-            : order.status === "CANCELLED"
-              ? "Pembayaran Dibatalkan"
-              : "Menunggu Pembayaran"}
-        </h1>
-        <p className="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
-          {order.status === "PAID"
-            ? "Terima kasih telah melakukan pembayaran. Pesanan Anda sedang diproses."
-            : order.status === "CANCELLED"
-              ? "Pembayaran Anda telah dibatalkan. Silakan bayar ulang untuk melanjutkan pesanan ini."
-              : "Silakan selesaikan pembayaran Anda untuk memproses pesanan."}
-        </p>
-        <div className="mt-10 flex items-center justify-center gap-x-6">
-          {order.status !== "PAID" && (
-            <PayAgainButton orderId={order.paymentOrderId} />
+    <div className="min-h-screen bg-slate-50/60 pt-16 pb-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Status Header Hero */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 text-center shadow-sm mb-6 relative overflow-hidden">
+          {order.status === "PAID" && (
+            <>
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500" />
+              <div className="w-20 h-20 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4 border border-blue-200/60 shadow-inner">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200 mb-3">
+                <CreditCard className="w-3.5 h-3.5" />
+                Pembayaran Sukses
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Pembayaran Berhasil!
+              </h1>
+              <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">
+                Terima kasih telah melakukan pembayaran. Pesanan Anda telah terverifikasi dan sedang kami siapkan.
+              </p>
+            </>
           )}
+
+          {order.status === "PENDING" && (
+            <>
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600" />
+              <div className="w-20 h-20 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 border border-amber-200/60 shadow-inner">
+                <Clock className="w-10 h-10 animate-pulse" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200 mb-3">
+                <Clock className="w-3.5 h-3.5" />
+                Menunggu Pembayaran
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Menunggu Pembayaran Anda
+              </h1>
+              <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">
+                Silakan selesaikan pembayaran Anda melalui Midtrans agar pesanan dapat segera kami proses.
+              </p>
+
+              {/* Pay Again CTA */}
+              <div className="mt-6">
+                <PayAgainButton orderId={order.paymentOrderId} />
+              </div>
+            </>
+          )}
+
+          {order.status === "CANCELLED" && (
+            <>
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-rose-500 to-red-600" />
+              <div className="w-20 h-20 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4 border border-rose-200/60 shadow-inner">
+                <XCircle className="w-10 h-10" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200 mb-3">
+                <XCircle className="w-3.5 h-3.5" />
+                Pembayaran Dibatalkan / Expired
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Pembayaran Dibatalkan
+              </h1>
+              <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">
+                Waktu pembayaran telah habis atau pembayaran dibatalkan. Silakan bayar ulang atau buat pesanan baru.
+              </p>
+              <div className="mt-6">
+                <PayAgainButton orderId={order.paymentOrderId} />
+              </div>
+            </>
+          )}
+
+          {/* Quick Order Info Pills */}
+          <div className="mt-6 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-xl font-bold">
+              <Receipt className="w-3.5 h-3.5 text-slate-500" />
+              <span>ID: #{order.paymentOrderId}</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-xl font-bold">
+              <Calendar className="w-3.5 h-3.5 text-slate-500" />
+              <span>{formatDate(order.createdAt)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Order Items & Summary Card */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm mb-6 space-y-6">
+
+          {/* Items Section */}
+          <div>
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+              <Package className="w-4 h-4 text-slate-500" />
+              Daftar Produk ({order.items.length})
+            </h3>
+            <div className="divide-y divide-slate-100">
+              {order.items.map((item) => {
+                const imageSrc = item.product?.images?.[0]?.src;
+                return (
+                  <div key={item.id} className="py-3.5 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 shrink-0 overflow-hidden">
+                        {imageSrc ? (
+                          <img src={imageSrc} alt={item.productName || "Product"} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300">
+                            <Package className="w-5 h-5" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                          {item.productName || item.product?.name}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {item.colorName && (
+                            <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                              {item.colorName}
+                            </span>
+                          )}
+                          {item.sizeName && (
+                            <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                              {item.sizeName}
+                            </span>
+                          )}
+                          <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold">
+                            x{item.quantity}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs sm:text-sm font-black text-slate-900">
+                        {formatRupiah(item.price * item.quantity)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Delivery & Address Grid */}
+          <div className="pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-1">
+              <p className="font-black text-slate-800 flex items-center gap-1.5 mb-2">
+                <MapPin className="w-3.5 h-3.5 text-blue-600" /> Alamat Pengiriman
+              </p>
+              <p className="font-bold text-slate-900">{order.customerName}</p>
+              <p className="text-slate-500">{order.phone} • {order.gmail}</p>
+              <p className="text-slate-600 leading-relaxed pt-1">
+                {order.address}, {order.village}, Kec. {order.subdistrict}, {order.city}, {order.province} {order.portalCode}
+              </p>
+              {order.note && (
+                <p className="text-slate-500 italic pt-1 border-t border-slate-200/60 mt-1">
+                  Catatan: "{order.note}"
+                </p>
+              )}
+            </div>
+
+            {/* Payment Summary */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-2">
+              <p className="font-black text-slate-800 flex items-center gap-1.5 mb-2">
+                <CreditCard className="w-3.5 h-3.5 text-blue-600" /> Ringkasan Pembayaran
+              </p>
+              <div className="flex justify-between text-slate-600">
+                <span>Metode Pembayaran</span>
+                <span className="font-bold uppercase text-slate-800">{order.paymentMethod || "Midtrans Gateway"}</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Subtotal Produk</span>
+                <span className="font-bold">{formatRupiah(subtotal)}</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Ongkos Kirim</span>
+                <span className="font-bold">{formatRupiah(order.shippingCost)}</span>
+              </div>
+              <div className="pt-2 border-t border-slate-200/80 flex justify-between items-center text-sm font-black text-slate-900">
+                <span>Total Pembayaran</span>
+                <span className="text-blue-600 text-base">{formatRupiah(order.totalPrice)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
-            href={order.status === "PAID" ? "/produk" : `/keranjang`}
-            className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            href="/riwayat-pesanan"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition shadow-md cursor-pointer"
           >
-            {order.status === "PAID" ? "Belanja Lagi" : "Kembali"}
+            <ShoppingBag className="w-4 h-4" />
+            Cek Riwayat Pesanan
+          </a>
+          <a
+            href="/produk"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition shadow-md cursor-pointer"
+          >
+            Belanja Lagi
+            <ArrowRight className="w-4 h-4" />
+          </a>
+          <a
+            href="/"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl border border-slate-200 transition cursor-pointer"
+          >
+            <Home className="w-4 h-4" />
+            Beranda
           </a>
         </div>
       </div>
@@ -58,21 +367,21 @@ export default async function FinishPage({ searchParams }: Props) {
 
 function ErrorState({ message }: { message: string }) {
   return (
-    <div className="flex justify-center items-center h-lvh place-items-center px-6 py-24 sm:py-32 lg:px-8">
-      <div className="text-center">
-        <p className="text-base font-semibold text-indigo-600">404</p>
-        <h1 className="mt-4 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
-          {message}
-        </h1>
-        <p className="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
-          Ups! Sepertinya kamu belum punya order apapun.
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center max-w-md w-full shadow-sm">
+        <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 border border-rose-200">
+          <Package className="w-8 h-8" />
+        </div>
+        <h1 className="text-xl font-black text-slate-900 mb-2">{message}</h1>
+        <p className="text-xs text-slate-500 mb-6">
+          Maaf, data pesanan tidak ditemukan atau link pembayaran sudah tidak berlaku.
         </p>
-        <div className="mt-10 flex items-center justify-center gap-x-6">
+        <div className="flex justify-center gap-3">
           <a
-            href="#"
-            className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            href="/produk"
+            className="inline-flex items-center justify-center bg-slate-900 text-white text-xs font-bold px-6 py-3 rounded-xl hover:bg-slate-800 transition"
           >
-            Go back home
+            Kembali Belanja
           </a>
         </div>
       </div>

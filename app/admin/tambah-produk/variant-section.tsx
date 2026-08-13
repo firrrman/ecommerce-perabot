@@ -241,7 +241,7 @@ export default function VariantSection({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">
-                    Harga Jual{!!variant.sizeId && <span className="text-red-500 ml-1">*</span>}
+                    Harga Jual <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="number"
@@ -252,12 +252,12 @@ export default function VariantSection({
                     }
                     placeholder="0"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    required={!!variant.sizeId}
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">
-                    Modal{!!variant.sizeId && <span className="text-red-500 ml-1">*</span>}
+                    Modal <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="number"
@@ -268,7 +268,7 @@ export default function VariantSection({
                     }
                     placeholder="0"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    required={!!variant.sizeId}
+                    required
                   />
                 </div>
                 <div>

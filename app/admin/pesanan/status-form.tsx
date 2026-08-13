@@ -28,9 +28,9 @@ export default function StatusForm({ order }: { order: any }) {
 
   return (
     <>
-      <form 
+      <form
         ref={formRef}
-        action={updateOrderStatus} 
+        action={updateOrderStatus}
         className="flex items-center"
         onSubmit={handleSubmit}
       >
@@ -59,7 +59,7 @@ export default function StatusForm({ order }: { order: any }) {
           <SubmitButton
             defaultText="Ubah Status"
             loadingText="Mengubah..."
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg ml-3 hover:bg-blue-700 text-sm cursor-pointer"
+            className="bg-blueprimary text-white px-4 py-2 rounded-lg ml-3 hover:bg-blueprimary/90 text-sm cursor-pointer"
           />
         )}
       </form>
@@ -67,7 +67,7 @@ export default function StatusForm({ order }: { order: any }) {
       <ConfirmModal
         isOpen={isConfirmOpen}
         title="Ubah Status Pesanan"
-        message="Apakah Anda yakin ingin mengubah status pesanan ini? Aksi ini akan mempengaruhi stok produk."
+        message="Apakah Anda yakin ingin mengubah status pesanan ini?"
         onConfirm={handleConfirm}
         onCancel={() => setIsConfirmOpen(false)}
       />

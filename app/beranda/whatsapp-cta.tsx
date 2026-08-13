@@ -13,7 +13,7 @@ export default function WhatsAppCTA() {
         viewport={{ once: true }}
         className="max-w-5xl mx-auto"
       >
-        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-emerald-600 via-emerald-500 to-teal-500 p-8 md:p-12 lg:p-16">
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br border-3 border-blackprimary/10 shadow-xl from-emerald-600 via-emerald-500 to-teal-500 p-8 md:p-12 lg:p-16">
           {/* Background decoration */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-2xl"></div>

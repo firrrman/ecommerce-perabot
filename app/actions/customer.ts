@@ -34,7 +34,7 @@ export async function customerRegisterAction(formData: FormData) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const customer = await prisma.customer.create({
+    await prisma.customer.create({
       data: {
         name,
         email,
@@ -43,15 +43,7 @@ export async function customerRegisterAction(formData: FormData) {
       },
     });
 
-    const cookieStore = await cookies();
-    cookieStore.set("customer_session", customer.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    });
-
-    return { success: true, message: "Registrasi berhasil" };
+    return { success: true, message: "Registrasi berhasil, silakan login dengan akun Anda" };
   } catch (error: any) {
     console.error("Register Error:", error);
     return { success: false, message: "Terjadi kesalahan server saat mendaftar" };

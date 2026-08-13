@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="w-full bg-white p-5 md:px-10 xl:px-20">
+    <footer className="w-full bg-grayprimary p-5 md:px-10 xl:px-20 text-blackprimary">
       <p className="text-center mt-5">
         Menyediakan perabot rumah berkualitas dengan desain modern dan harga
         terjangkau.
@@ -11,12 +11,12 @@ export default function Footer() {
           <h3 className="font-medium mb-3">Menu</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="/" className="hover:text-black">
+              <a href="/" className="hover:text-blackprimary">
                 Beranda
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-black">
+              <a href="#" className="hover:text-blackprimary">
                 Produk
               </a>
             </li>
@@ -27,7 +27,7 @@ export default function Footer() {
         <div>
           <h3 className="font-medium mb-3">Hubungi Kami</h3>
           <p className="text-sm">
-            WhatsApp: 085810542529
+            WhatsApp: 085810642529
             <br />
             Email: perabotan1174@gmail.com
           </p>

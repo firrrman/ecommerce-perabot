@@ -46,6 +46,7 @@ export async function bestSeller() {
       basePrice: true,
       weight: true,
       stock: true,
+      category: true,
     },
   });
 

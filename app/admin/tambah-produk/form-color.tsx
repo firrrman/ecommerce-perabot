@@ -2,7 +2,7 @@ import { createColor } from "../../actions/product";
 
 export default function FormColor() {
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+    <div className="bg-gray-50 rounded-lg border border-blackprimary/30 shadow p-4">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 bg-purple-100 rounded-md flex items-center justify-center">
           <svg

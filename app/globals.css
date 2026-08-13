@@ -5,6 +5,7 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -12,4 +13,12 @@
 
 body {
   font-family: "Montserrat", sans-serif;
+}
+
+@theme {
+  --color-whiteprimary: #FFFFFF;
+  --color-blackprimary: #1a1a1a;
+  --color-redprimary: #DC2F2F;
+  --color-greenprimary: #1B5E20;
+  --color-blueprimary: #134B70;
 }

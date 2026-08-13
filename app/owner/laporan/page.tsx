@@ -106,7 +106,7 @@ export default async function LaporanPage({ searchParams }: Props) {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center justify-between"
+                className="bg-white rounded-2xl border border-blackprimary/30 p-5 shadow hover:shadow-md transition-all flex items-center justify-between"
               >
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
@@ -171,7 +171,7 @@ export default async function LaporanPage({ searchParams }: Props) {
               bg: "bg-purple-50",
             },
           ].map((item, index) => (
-            <div key={index} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+            <div key={index} className="bg-white p-5 rounded-2xl border border-blackprimary/30 shadow flex items-center gap-4">
               <div className={`${item.bg} ${item.color} p-3 rounded-xl shrink-0`}>
                 <item.icon size={22} />
               </div>

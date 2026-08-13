@@ -13,14 +13,14 @@ export default function Pagination({
   }${status ? `&status=${status}` : ""}${date ? `&date=${date}` : ""}`;
 
   return (
-    <div className="flex justify-center items-center gap-2 mb-20 px-5 md:px-10 xl:px-20 flex-wrap text-sm mt-10">
+    <div className="flex justify-center items-center gap-2 mb-20 px-5 md:px-10 xl:px-20 flex-wrap text-sm mt-12">
       {/* Prev */}
       <a
         href={page > 1 ? `?page=${page - 1}${query}` : "#"}
-        className={`px-3 py-1 lg:px-4 lg:py-2 border rounded-md transition-colors ${
+        className={`px-4 py-2 border rounded-xl font-semibold transition-all duration-200 ${
           page > 1
-            ? "hover:bg-gray-100 cursor-pointer"
-            : "text-gray-300 cursor-not-allowed pointer-events-none"
+            ? "bg-white border-black/15 text-blackprimary hover:border-blueprimary/60 hover:text-blueprimary hover:shadow-sm cursor-pointer"
+            : "bg-black/5 border-black/8 text-black/30 cursor-not-allowed pointer-events-none"
         }`}
       >
         Prev
@@ -35,10 +35,10 @@ export default function Pagination({
             <a
               key={pageNumber}
               href={`?page=${pageNumber}${query}`}
-              className={`px-3 py-1 lg:px-4 lg:py-2 border rounded-md min-w-11 text-center transition-colors ${
+              className={`px-4 py-2 border rounded-xl min-w-11 text-center font-bold transition-all duration-200 ${
                 page === pageNumber
-                  ? "bg-black text-white"
-                  : "hover:bg-gray-100"
+                  ? "bg-blueprimary text-white border-blueprimary shadow-md shadow-blueprimary/25"
+                  : "bg-white border-black/15 text-blackprimary hover:border-blueprimary/60 hover:text-blueprimary hover:shadow-sm"
               }`}
             >
               {pageNumber}
@@ -50,10 +50,10 @@ export default function Pagination({
       {/* Next */}
       <a
         href={page < product.meta.totalPage ? `?page=${page + 1}${query}` : "#"}
-        className={`px-3 py-1 lg:px-4 lg:py-2 border rounded-md transition-colors ${
+        className={`px-4 py-2 border rounded-xl font-semibold transition-all duration-200 ${
           page < product.meta.totalPage
-            ? "hover:bg-gray-100 cursor-pointer"
-            : "text-gray-300 cursor-not-allowed pointer-events-none"
+            ? "bg-white border-black/15 text-blackprimary hover:border-blueprimary/60 hover:text-blueprimary hover:shadow-sm cursor-pointer"
+            : "bg-black/5 border-black/8 text-black/30 cursor-not-allowed pointer-events-none"
         }`}
       >
         Next

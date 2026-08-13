@@ -64,7 +64,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
         </div>
 
         {/* FILTER */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 mb-6 shadow-xs">
+        <div className="bg-white rounded-2xl border border-blackprimary/30 shadow p-4 mb-6">
           {/* Search */}
           <div className="flex-1 min-w-70 mb-3">
             <SearchBarAdminOrder />
@@ -88,16 +88,16 @@ export default async function PengirimanPage({ searchParams }: Props) {
                 key={order.id}
                 className={`rounded-2xl transition-all duration-200 relative overflow-hidden bg-white border ${
                   order.status === "PENDING"
-                    ? "border-amber-200 shadow-xs hover:shadow-md ring-1 ring-amber-100/60"
-                    : "border-slate-200/80 shadow-xs hover:shadow-md"
+                    ? "border-redprimary shadow hover:shadow-md ring-1 ring-amber-100/60"
+                    : "border-blackprimary/30 shadow hover:shadow-md"
                 }`}
               >
                 {order.status === "PENDING" && (
                   <div className="absolute top-3 right-3 z-10">
-                    <div className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-[10px] font-extrabold text-amber-700 border border-amber-200 uppercase tracking-wider shadow-xs">
+                    <div className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-[10px] font-extrabold text-redprimary border border-redprimary uppercase tracking-wider shadow-xs">
                       <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-redprimary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-redprimary"></span>
                       </span>
                       Pesanan Baru
                     </div>
@@ -124,7 +124,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
                       </span>
                       <TransitionLink
                         href={`/owner/pesanan/${order.id}`}
-                        className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl text-xs font-bold transition-all"
+                        className="px-4 py-2 bg-indigo-50 text-blueprimary hover:bg-indigo-100 rounded-xl text-xs font-bold transition-all"
                       >
                         Detail Pesanan →
                       </TransitionLink>
@@ -166,7 +166,13 @@ export default async function PengirimanPage({ searchParams }: Props) {
                     <div className="flex items-center gap-3 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
                       <div>
                         <p className="text-[10px] uppercase font-bold text-slate-400">Metode Pembayaran</p>
-                        <p className="text-xs font-bold text-slate-800">{order.paymentMethod || "QRIS / Gateway"}</p>
+                        <p className="text-xs font-bold text-slate-800">
+                          {order.paymentMethod === "cod"
+                            ? "COD (Bayar di Tempat)"
+                            : order.paymentMethod === "midtrans"
+                              ? "Midtrans Gateway"
+                              : order.paymentMethod || "Midtrans Gateway"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -178,7 +184,7 @@ export default async function PengirimanPage({ searchParams }: Props) {
 
         {/* Empty State */}
         {orders.data.length === 0 && (
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center my-6">
+          <div className="bg-white rounded-2xl border border-blackprimary/30 shadow p-12 text-center my-6">
             <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <h3 className="text-base font-bold text-slate-800 mb-1">
               Belum Ada Pesanan

@@ -112,7 +112,7 @@ export default function ChartJs({
   };
 
   return (
-    <div className="bg-white shadow rounded-xl p-6 mb-6">
+    <div className="bg-white shadow rounded-xl p-6 mb-6 border border-blackprimary/30">
       <div className="h-[400px]">
         <Bar data={data} options={options} />
       </div>    </div>

@@ -10,73 +10,103 @@ interface ProductCardProps {
   stock: number;
 }
 
+/* ─────────────────────────────────────────────
+   Card — horizontal carousel (beranda)
+───────────────────────────────────────────── */
 export function Card({ product }: { product: ProductCardProps[] }) {
   return product.map((item, index) => (
     <Link
       href={`/detail-produk/${item.slug}`}
       key={index}
-      className="group relative cursor-pointer snap-start shrink-0 w-50 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
+      className="group relative cursor-pointer snap-start shrink-0 w-44 sm:w-52 flex flex-col rounded-2xl overflow-hidden bg-white border border-blackprimary/80 shadow-md hover:border-blueprimary/40 transition-all duration-300"
     >
-      {/* Image Container */}
-      <div className="relative aspect-4/5 w-full overflow-hidden bg-gray-50">
+      {/* Accent line top */}
+      <div className="absolute top-0 inset-x-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left z-10 rounded-t-2xl" />
+
+      {/* Image */}
+      <div className="relative w-full aspect-square overflow-hidden bg-black/3">
         <img
-          src={item.images[0]?.src}
+          src={item.images[0]?.src || "/placeholder.jpg"}
           alt={item.name}
-          className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale-40 group-hover:scale-105"}`}
+          className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
+            item.stock > 0 ? "group-hover:scale-110" : "grayscale opacity-50"
+          }`}
           loading="lazy"
         />
-        {/* Overlay gradient on hover */}
+
+        {/* Dark overlay on hover */}
         {item.stock > 0 && (
-          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-blueprimary/0 group-hover:bg-blueprimary/10 transition-all duration-400" />
         )}
 
-        {/* Out of Stock Overlay */}
+        {/* Stok habis badge */}
         {item.stock <= 0 && (
-          <div className="absolute inset-0 bg-zinc-950/20 backdrop-blur-[2px] flex items-center justify-center p-3 transition-all duration-500 group-hover:bg-zinc-950/30">
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2.5 rounded-2xl shadow-xl flex flex-col items-center gap-1.5 transform scale-90 group-hover:scale-100 transition-all duration-500">
-              <span className="text-white text-[10px] font-bold tracking-widest uppercase text-center leading-none">
-                Habis Terjual
-              </span>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+            <span className="text-[10px] font-black tracking-[0.15em] uppercase bg-white text-blackprimary px-3 py-1.5 rounded-full shadow-md">
+              Stok Habis
+            </span>
           </div>
         )}
 
-        {/* Quick action button that appears on hover */}
+        {/* Hover action pill */}
         {item.stock > 0 && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-            <span className="bg-white/95 backdrop-blur-sm text-black text-sm font-semibold py-2.5 px-6 rounded-full shadow-lg flex items-center gap-2 transform hover:scale-105 transition-transform">
-              Lihat Detail
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          <div className="absolute bottom-3 inset-x-0 flex justify-center translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+            <span className="bg-blueprimary text-white text-[10px] font-black tracking-widest uppercase px-4 py-1.5 rounded-full shadow-lg shadow-blueprimary/30">
+              Lihat Detail →
             </span>
           </div>
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-4 flex flex-col grow justify-between">
-        <div>
-          <h3 className={`text-base font-medium line-clamp-2 leading-snug transition-colors ${item.stock > 0 ? "text-gray-800 group-hover:text-black" : "text-gray-400"}`}>
-            {item.name}
-          </h3>
-          {item.sold ? (
-            <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
-              Terlaris: Terjual {item.sold}
-            </div>
-          ) : (
-            <div className="mt-2 inline-flex items-center gap-1.5 bg-linear-to-r from-amber-50 to-yellow-50 text-amber-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-amber-200/80">
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" className="text-amber-400">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-              Produk Unggulan
-            </div>
-          )}
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <p className={`text-lg font-bold ${item.stock > 0 ? "text-black" : "text-gray-400"}`}>
-            Rp {item.basePrice.toLocaleString("id-ID")}
+      {/* Info */}
+      <div className="p-3.5 flex flex-col gap-1.5">
+        <h3
+          className={`text-xs font-bold line-clamp-2 leading-snug tracking-tight transition-colors duration-200 ${
+            item.stock > 0
+              ? "text-blackprimary group-hover:text-blueprimary"
+              : "text-black/35"
+          }`}
+        >
+          {item.name}
+        </h3>
+
+        {item.sold && item.sold > 0 ? (
+          <p className="text-[10px] text-black/40 font-medium">
+            Terjual <span className="text-blueprimary font-bold">{item.sold.toLocaleString("id-ID")}</span>
           </p>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${item.stock > 0 ? "bg-gray-100 group-hover:bg-black group-hover:text-white" : "bg-gray-50 text-gray-300"}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        ) : null}
+
+        <div className="flex items-center justify-between mt-1.5 pt-2.5 border-t border-black/8">
+          <div>
+            <p className="text-[9px] uppercase tracking-widest text-black/35 font-bold mb-0.5">Harga</p>
+            <p
+              className={`text-sm font-black leading-none ${
+                item.stock > 0 ? "text-blueprimary" : "text-black/30"
+              }`}
+            >
+              Rp {item.basePrice.toLocaleString("id-ID")}
+            </p>
+          </div>
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+              item.stock > 0
+                ? "bg-black/5 text-blackprimary group-hover:bg-blueprimary group-hover:text-white group-hover:shadow-md group-hover:shadow-blueprimary/30"
+                : "bg-black/5 text-black/25"
+            }`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           </div>
         </div>
       </div>
@@ -84,66 +114,110 @@ export function Card({ product }: { product: ProductCardProps[] }) {
   ));
 }
 
+/* ─────────────────────────────────────────────
+   Card2 — grid (halaman produk)
+───────────────────────────────────────────── */
 export function Card2({ product }: { product: ProductCardProps[] }) {
   return product.map((item, index) => (
     <Link
       href={`/detail-produk/${item.slug}`}
       key={index}
-      className="group relative cursor-pointer snap-start shrink-0 w-full rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
+      className="group relative cursor-pointer w-full flex flex-col rounded-2xl overflow-hidden bg-white border border-blackprimary/80 shadow-md hover:border-blueprimary/40 transition-all duration-300"
     >
-      {/* Image Container */}
-      <div className="relative aspect-4/5 w-full overflow-hidden bg-gray-50">
+      {/* Accent line top */}
+      <div className="absolute top-0 inset-x-0 h-0.5 bg-blueprimary scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left z-10 rounded-t-2xl" />
+
+      {/* Image */}
+      <div className="relative w-full aspect-square overflow-hidden bg-black/3">
         <img
           src={item.images[0]?.src || "/placeholder.jpg"}
           alt={item.name}
-          className={`w-full h-full object-cover transition-transform duration-700 ${item.stock > 0 ? "group-hover:scale-110" : "grayscale-60 group-hover:scale-105"}`}
+          className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
+            item.stock > 0 ? "group-hover:scale-110" : "grayscale opacity-50"
+          }`}
           loading="lazy"
         />
-        {/* Overlay gradient on hover */}
+
+        {/* Dark overlay on hover */}
         {item.stock > 0 && (
-          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-blueprimary/0 group-hover:bg-blueprimary/8 transition-all duration-400" />
         )}
 
-        {/* Out of Stock Overlay */}
+        {/* Stok habis badge */}
         {item.stock <= 0 && (
-          <div className="absolute inset-0 bg-zinc-950/20 backdrop-blur-[2px] flex items-center justify-center p-3 transition-all duration-500 group-hover:bg-zinc-950/30">
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2.5 rounded-2xl shadow-xl flex flex-col items-center gap-1.5 transform scale-90 group-hover:scale-100 transition-all duration-500">
-              <span className="text-white text-[10px] font-bold tracking-widest uppercase text-center leading-none">
-                Habis Terjual
-              </span>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+            <span className="text-[10px] font-black tracking-[0.15em] uppercase bg-white text-blackprimary px-3 py-1.5 rounded-full shadow-md">
+              Stok Habis
+            </span>
           </div>
         )}
 
-        {/* Quick action button that appears on hover */}
+        {/* Hover action pill */}
         {item.stock > 0 && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-            <span className="bg-white/95 backdrop-blur-sm text-black text-sm font-semibold py-2.5 px-6 rounded-full shadow-lg flex items-center gap-2 transform hover:scale-105 transition-transform">
-              Lihat Detail
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          <div className="absolute bottom-3 inset-x-0 flex justify-center translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+            <span className="bg-blueprimary text-white text-[10px] font-black tracking-widest uppercase px-4 py-1.5 rounded-full shadow-lg shadow-blueprimary/30">
+              Lihat Detail →
+            </span>
+          </div>
+        )}
+
+        {/* Stok badge — kanan atas */}
+        {item.stock > 0 && item.stock <= 5 && (
+          <div className="absolute top-2.5 right-2.5">
+            <span className="text-[9px] font-black tracking-wide bg-blackprimary text-white px-2.5 py-1 rounded-full shadow">
+              Sisa {item.stock}
             </span>
           </div>
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-4 flex flex-col grow justify-between">
-        <div>
-          <h3 className={`text-base font-medium line-clamp-2 leading-snug transition-colors ${item.stock > 0 ? "text-gray-800 group-hover:text-black" : "text-gray-400"}`}>
-            {item.name}
-          </h3>
-          {/* {item.sold !== undefined && item.sold > 0 && (
-            <div className="mt-2 inline-flex items-center gap-1 bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-md border border-red-100">
-              Terlaris: Terjual {item.sold}
-            </div>
-          )} */}
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <p className={`text-lg font-bold ${item.stock > 0 ? "text-black" : "text-gray-400"}`}>
-            Rp {item.basePrice.toLocaleString("id-ID")}
-          </p>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${item.stock > 0 ? "bg-gray-100 group-hover:bg-black group-hover:text-white" : "bg-gray-50 text-gray-300"}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      {/* Info */}
+      <div className="p-4 flex flex-col gap-1.5 flex-1">
+        <h3
+          className={`text-xs font-bold line-clamp-2 leading-snug tracking-tight transition-colors duration-200 ${
+            item.stock > 0
+              ? "text-blackprimary group-hover:text-blueprimary"
+              : "text-black/35"
+          }`}
+        >
+          {item.name}
+        </h3>
+
+        <p className="text-[10px] text-black/40 font-medium">
+          Stok: <span className={`font-black ${item.stock > 5 ? "text-blueprimary" : item.stock > 0 ? "text-blackprimary" : "text-black/30"}`}>{item.stock}</span>
+        </p>
+
+        <div className="flex items-center justify-between mt-auto pt-2.5 border-t border-black/8">
+          <div>
+            <p className="text-[9px] uppercase tracking-widest text-black/35 font-bold mb-0.5">Harga</p>
+            <p
+              className={`text-sm font-black leading-none ${
+                item.stock > 0 ? "text-blueprimary" : "text-black/30"
+              }`}
+            >
+              Rp {item.basePrice.toLocaleString("id-ID")}
+            </p>
+          </div>
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+              item.stock > 0
+                ? "bg-black/5 text-blackprimary group-hover:bg-blueprimary group-hover:text-white group-hover:shadow-md group-hover:shadow-blueprimary/30"
+                : "bg-black/5 text-black/25"
+            }`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           </div>
         </div>
       </div>

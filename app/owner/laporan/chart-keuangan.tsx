@@ -140,7 +140,7 @@ export default function ChartKeuangan({
   };
 
   return (
-    <div className="bg-white shadow rounded-xl p-6 mb-8">
+    <div className="bg-white shadow rounded-xl p-6 mb-8 border border-blackprimary/30">
       <div className="h-[400px]">
         <Bar data={data} options={options} />
       </div>

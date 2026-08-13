@@ -119,7 +119,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Card 1: Total Customer */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-blackprimary/30 shadow hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -139,7 +139,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
         </div>
 
         {/* Card 2: Total Revenue */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-blackprimary/30 shadow hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -157,7 +157,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
         </div>
 
         {/* Card 3: Average Spent */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-blackprimary/30 shadow hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -175,7 +175,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
         </div>
 
         {/* Card 4: Top Customer */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-blackprimary/30 shadow hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div className="overflow-hidden">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -194,7 +194,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       </div>
 
       {/* Filter & Controls */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+      <div className="bg-white p-4 rounded-2xl border border-blackprimary/30 shadow mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
         {/* Search */}
         <div className="relative w-full md:w-80">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -255,7 +255,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       </div>
 
       {/* Customer List Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-blackprimary/30 shadow overflow-hidden">
         {loading ? (
           <div className="py-20 text-center text-slate-400 flex flex-col items-center gap-2">
             <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -332,7 +332,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
                       <td className="py-4 px-6 text-center">
                         <button
                           onClick={() => handleOpenDetail(cust.id)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-blueprimary rounded-xl text-xs font-bold transition-all cursor-pointer"
                         >
                           <Eye size={14} />
                           Detail
@@ -352,9 +352,9 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="p-6 bg-slate-900 text-white flex justify-between items-center">
+            <div className="p-6 bg-blackprimary text-white flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-inner">
+                <div className="w-12 h-12 rounded-2xl bg-blueprimary flex items-center justify-center text-white font-black text-xl shadow-inner">
                   {customerDetail?.name ? customerDetail.name.charAt(0).toUpperCase() : "C"}
                 </div>
                 <div>

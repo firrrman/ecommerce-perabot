@@ -11,8 +11,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const items = [
     {
       label: "Beranda",
-      bgColor: "#0D0716",
-      textColor: "#fff",
+      bgColor: "bg-blueprimary",
+      textColor: "text-whiteprimary",
       links: [
         {
           label: "Beranda",
@@ -33,8 +33,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     },
     {
       label: "Kategori",
-      bgColor: "#170D27",
-      textColor: "#fff",
+      bgColor: "bg-blueprimary",
+      textColor: "text-whiteprimary",
       links: [
         {
           label: "Ruang Tamu",
@@ -60,8 +60,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     },
     {
       label: "Kontak",
-      bgColor: "#271E37",
-      textColor: "#fff",
+      bgColor: "bg-blueprimary",
+      textColor: "text-whiteprimary",
       links: [
         {
           label: "Email",
@@ -93,20 +93,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         buttonTextColor="#fff"
         ease="power3.out"
       />
-      <main className="bg-white">{children}</main>
-      <TextPressure
-        text="PERABOTAN"
-        flex={true}
-        alpha={false}
-        stroke={false}
-        width={true}
-        weight={true}
-        italic={true}
-        textColor="#000000"
-        strokeColor="#ff0000"
-        minFontSize={36}
-        className="px-5 md:px-10 xl:px-20"
-      />
+      <main className="bg-whiteprimary">{children}
+        <TextPressure
+          text="PERABOTAN"
+          flex={true}
+          alpha={false}
+          stroke={false}
+          width={true}
+          weight={true}
+          italic={true}
+          textColor="#2C2C2C"
+          strokeColor="#ff0000"
+          minFontSize={36}
+          className="px-5 md:px-10 xl:px-20"
+        /></main>
+
 
       <Footer />
     </div>

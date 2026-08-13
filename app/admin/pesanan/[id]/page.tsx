@@ -235,7 +235,11 @@ export default async function OrderDetailPage({ params }: Props) {
                       Metode Pembayaran
                     </p>
                     <p className="font-semibold text-gray-800">
-                      {order.paymentMethod ?? "-"}
+                      {order.paymentMethod === "cod"
+                        ? "COD (Bayar di Tempat)"
+                        : order.paymentMethod === "midtrans"
+                          ? "Midtrans Payment Gateway"
+                          : order.paymentMethod ?? "-"}
                     </p>
                   </div>
                   <div>
@@ -252,9 +256,9 @@ export default async function OrderDetailPage({ params }: Props) {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                        <span className="font-semibold text-yellow-700">
-                          Menunggu Pembayaran
+                        <span className={`w-2 h-2 rounded-full ${order.paymentMethod === "cod" ? "bg-emerald-500" : "bg-yellow-500"}`}></span>
+                        <span className={`font-semibold ${order.paymentMethod === "cod" ? "text-emerald-700" : "text-yellow-700"}`}>
+                          {order.paymentMethod === "cod" ? "Belum Dibayar (COD)" : "Menunggu Pembayaran"}
                         </span>
                       </div>
                     )}

@@ -140,25 +140,24 @@ export default function LayoutOwner({
     <div className="flex h-screen bg-slate-50 font-sans antialiased text-slate-900">
       {/* Sidebar */}
       <aside
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-200 border-r border-slate-800/80 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xl lg:shadow-none`}
+        className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-blueprimary text-white border-r border-white/10 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xl lg:shadow-none`}
       >
         <div>
           {/* Brand Header */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-800/60">
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-indigo-500/30">
-                P
+              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-md p-1 border border-white/20 overflow-hidden">
+                <img src="/perabotan.png" alt="Logo" className="w-full h-full object-contain drop-shadow-md" />
               </div>
               <div>
                 <h1 className="text-base font-extrabold tracking-tight text-white leading-tight">Perabotan</h1>
-                <p className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Owner Portal</p>
+                <p className="text-[10px] text-white/70 font-bold uppercase tracking-wider">Owner Portal</p>
               </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+              className="lg:hidden text-white/60 hover:text-white p-1 rounded-lg hover:bg-blackprimary/20 transition-colors"
             >
               <X size={20} />
             </button>
@@ -166,7 +165,7 @@ export default function LayoutOwner({
 
           {/* Navigation Items */}
           <nav className="p-4 space-y-1.5 overflow-y-auto max-h-[calc(100vh-170px)]">
-            <p className="px-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Navigasi Utama</p>
+            <p className="px-3 text-[11px] font-bold text-white/50 uppercase tracking-wider mb-2">Navigasi Utama</p>
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isOrders = item.id === "orders";
@@ -181,18 +180,17 @@ export default function LayoutOwner({
                     setSidebarOpen(false);
                     router.push(item.router);
                   }}
-                  className={`w-full flex items-center justify-between cursor-pointer px-3.5 py-2.5 rounded-xl transition-all ${
-                    isActive
-                      ? "text-white font-semibold shadow-md shadow-indigo-600/20 bg-indigo-600"
-                      : "text-slate-400 hover:bg-slate-800/80 hover:text-slate-100 font-medium"
-                  }`}
+                  className={`w-full flex items-center justify-between cursor-pointer px-3.5 py-2.5 rounded-xl transition-all ${isActive
+                    ? "text-white font-semibold shadow-md shadow-blackprimary/30 bg-blackprimary"
+                    : "text-white/70 hover:bg-blackprimary/20 hover:text-white font-medium"
+                    }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <Icon size={18} className={isActive ? "text-white" : "text-slate-400"} />
+                    <Icon size={18} className={isActive ? "text-white" : "text-white/70"} />
                     <span className="text-sm">{item.name}</span>
                   </div>
                   {isOrders && unreadCount > 0 && (
-                    <span className="bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full animate-pulse shadow-xs">
+                    <span className="bg-redprimary text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full animate-pulse shadow-xs">
                       {unreadCount}
                     </span>
                   )}
@@ -206,17 +204,17 @@ export default function LayoutOwner({
         </div>
 
         {/* User Profile Badge at bottom */}
-        <div className="p-4 border-t border-slate-800/60 bg-slate-900/90">
-          <div className="flex items-center space-x-3 bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+        <div className="p-4 border-t border-white/10 bg-blackprimary/30">
+          <div className="flex items-center space-x-3 bg-blackprimary/40 p-2.5 rounded-xl border border-white/10">
             <div className="relative">
-              <div className="w-9 h-9 bg-linear-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center font-black text-slate-900 text-xs shadow-xs">
+              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center font-black text-blueprimary text-xs shadow-xs">
                 FS
               </div>
-              <span className="w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full absolute -bottom-0.5 -right-0.5"></span>
+              <span className="w-2.5 h-2.5 bg-emerald-500 border-2 border-blueprimary rounded-full absolute -bottom-0.5 -right-0.5"></span>
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-xs font-bold text-slate-200 truncate">Owner Perabotan</p>
-              <p className="text-[10px] text-slate-400 truncate font-mono">perabotan1174@gmail.com</p>
+              <p className="text-xs font-bold text-white truncate">Owner Perabotan</p>
+              <p className="text-[10px] text-white/70 truncate font-mono">perabotan1174@gmail.com</p>
             </div>
           </div>
         </div>
@@ -225,7 +223,7 @@ export default function LayoutOwner({
       {/* Overlay untuk mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-blackprimary/60 backdrop-blur-xs z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -238,13 +236,13 @@ export default function LayoutOwner({
           </div>
         )}
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 py-3.5 px-2 md:px-4 lg:px-6">
+        <header className="bg-white/80 backdrop-blur-md border-b border-blackprimary/10 sticky top-0 z-30 py-3.5 px-2 md:px-4 lg:px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {/* Hamburger — hanya tampil di mobile/tablet */}
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-blackprimary/70 hover:text-blackprimary hover:bg-blackprimary/5 transition-all"
                 aria-label="Buka sidebar"
               >
                 <Menu size={20} />
@@ -255,24 +253,24 @@ export default function LayoutOwner({
             <div className="relative" ref={notifRef}>
               <button
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
-                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all cursor-pointer flex items-center justify-center"
+                className="relative p-2 text-blackprimary/70 hover:text-blackprimary hover:bg-blackprimary/5 rounded-full transition-all cursor-pointer flex items-center justify-center"
                 aria-label="Notifikasi Pesanan Masuk"
               >
                 <Bell size={22} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-extrabold animate-bounce shadow-md">
+                  <span className="absolute -top-0.5 -right-0.5 bg-redprimary text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-extrabold animate-bounce shadow-md">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
               </button>
 
               {isNotifOpen && (
-                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-999 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="px-4 pb-3 border-b border-gray-100 flex justify-between items-center">
+                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-blackprimary/10 py-3 z-999 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="px-4 pb-3 border-b border-blackprimary/10 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-900">Pesanan Masuk</span>
+                      <span className="text-sm font-bold text-blackprimary">Pesanan Masuk</span>
                       {unreadCount > 0 && (
-                        <span className="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                        <span className="bg-blueprimary/10 text-blueprimary text-[10px] font-extrabold px-2 py-0.5 rounded-full">
                           {unreadCount} Baru
                         </span>
                       )}
@@ -280,16 +278,16 @@ export default function LayoutOwner({
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllOwnerOrdersAsRead}
-                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+                        className="text-[10px] font-bold text-blueprimary hover:text-blackprimary transition-colors cursor-pointer"
                       >
                         Tandai semua dibaca
                       </button>
                     )}
                   </div>
 
-                  <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
+                  <div className="max-h-80 overflow-y-auto divide-y divide-blackprimary/5">
                     {recentOrders.length === 0 ? (
-                      <div className="px-4 py-8 text-center text-gray-400 text-xs">
+                      <div className="px-4 py-8 text-center text-blackprimary/40 text-xs">
                         Belum ada pesanan masuk.
                       </div>
                     ) : (
@@ -303,39 +301,43 @@ export default function LayoutOwner({
                               setIsNotifOpen(false);
                               router.push("/owner/pesanan");
                             }}
-                            className={`p-3.5 hover:bg-slate-50 transition-colors cursor-pointer text-left ${isUnread ? "bg-amber-50/60" : ""
+                            className={`p-3.5 hover:bg-blackprimary/5 transition-colors cursor-pointer text-left ${isUnread ? "bg-blueprimary/5" : ""
                               }`}
                           >
                             <div className="flex justify-between items-start">
                               <div className="flex items-center gap-1.5">
                                 {isUnread && (
-                                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                                  <span className="w-2 h-2 rounded-full bg-blueprimary shrink-0" />
                                 )}
                                 <div>
-                                  <p className="text-xs font-bold text-slate-900 truncate">
+                                  <p className="text-xs font-bold text-blackprimary truncate">
                                     {order.customerName}
                                   </p>
-                                  <p className="text-[11px] text-gray-500 font-mono mt-0.5">
+                                  <p className="text-[11px] text-blackprimary/60 font-mono mt-0.5">
                                     #{order.paymentOrderId.slice(-8).toUpperCase()}
                                   </p>
                                 </div>
                               </div>
                               <span
                                 className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${order.status === "PENDING"
-                                  ? "bg-amber-100 text-amber-800"
+                                  ? "bg-blueprimary text-white"
                                   : order.status === "PAID"
-                                    ? "bg-emerald-100 text-emerald-800"
-                                    : "bg-gray-100 text-gray-700"
+                                    ? "bg-greenprimary text-white"
+                                    : order.status === "SHIPPED"
+                                    ? "bg-purple-700 text-white"
+                                    :order.status === "FINISHED"
+                                    ?"bg-greenprimary text-white"
+                                    :"bg-redprimary text-white"
                                   }`}
                               >
                                 {order.status}
                               </span>
                             </div>
                             <div className="flex justify-between items-center mt-2 text-[11px]">
-                              <span className="text-gray-500">
+                              <span className="text-blackprimary/60">
                                 {order.items.reduce((acc: number, item: any) => acc + item.quantity, 0)} produk
                               </span>
-                              <span className="font-bold text-slate-900">
+                              <span className="font-bold text-blackprimary">
                                 Rp {order.totalPrice.toLocaleString("id-ID")}
                               </span>
                             </div>
@@ -345,14 +347,14 @@ export default function LayoutOwner({
                     )}
                   </div>
 
-                  <div className="pt-2 px-3 border-t border-gray-100 text-center">
+                  <div className="pt-2 px-3 border-t border-blackprimary/10 text-center">
                     <button
                       onClick={() => {
                         markAllOwnerOrdersAsRead();
                         setIsNotifOpen(false);
                         router.push("/owner/pesanan");
                       }}
-                      className="w-full text-xs font-bold text-indigo-600 hover:text-indigo-800 py-1.5 inline-flex items-center justify-center gap-1 cursor-pointer"
+                      className="w-full text-xs font-bold text-blueprimary hover:text-blackprimary py-1.5 inline-flex items-center justify-center gap-1 cursor-pointer"
                     >
                       Kelola Semua Pesanan <ChevronRight size={14} />
                     </button>

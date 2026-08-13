@@ -5,12 +5,10 @@ import TextPressure from "../component/TextPressure";
 
 interface GridMotionProps {
   items?: (string | ReactNode)[];
-  gradientColor?: string;
 }
 
 const GridMotion: FC<GridMotionProps> = ({
   items = [],
-  gradientColor = "black",
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -67,9 +65,9 @@ const GridMotion: FC<GridMotionProps> = ({
 
   return (
     <div ref={gridRef} className="h-lvh w-full overflow-hidden">
-      <section className="w-full h-full overflow-hidden relative flex items-center justify-center bg-black">
-        <div className="bg-black/70 w-full h-full absolute z-10 flex flex-col items-center justify-center p-5 md:px-10 xl:px-20">
-            <TextPressure
+      <section className="w-full h-full overflow-hidden relative flex items-center justify-center bg-blueprimary">
+        <div className="bg-black/80 w-full h-full absolute z-10 flex flex-col items-center justify-center p-5 md:px-10 xl:px-20">
+          <TextPressure
             text="PERABOTAN"
             flex={true}
             alpha={false}
@@ -77,22 +75,22 @@ const GridMotion: FC<GridMotionProps> = ({
             width={true}
             weight={true}
             italic={true}
-            textColor="#ffffff"
+            textColor="#F4F4F4"
             strokeColor="#ff0000"
             minFontSize={36}
           />
-          <div className="text-white/85 text-sm sm:text-base text-center max-w-2xl leading-relaxed mt-8 md:mt-0">
+          <div className="text-whiteprimary/85 text-sm sm:text-base text-center max-w-2xl leading-relaxed mt-8 md:mt-0">
             Berawal dari toko perabot milik Bapak Eman di Pasar Leuwiliang, kini hadir secara digital untuk tetap melayani kebutuhan rumah tangga anda.          </div>
           <div className="flex flex-col sm:flex-row gap-5 mb-4 mt-8 px-5 items-center justify-center relative z-20">
             <a
               href="#produk-terlaris"
-              className="px-10 py-4 bg-white text-black rounded-full font-bold uppercase tracking-wider text-sm hover:bg-gray-200 transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:-translate-y-1 active:scale-95 text-center w-full sm:w-auto"
+              className="px-10 py-4 bg-blueprimary text-whiteprimary shadow rounded-full font-bold uppercase tracking-wider text-sm  transition-all hover:-translate-y-1 active:scale-95 text-center w-full sm:w-auto"
             >
               Belanja Sekarang
             </a>
             <a
               href="#shopping-method"
-              className="px-10 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-full font-bold uppercase tracking-wider text-sm hover:bg-white/20 transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1 active:scale-95 text-center w-full sm:w-auto"
+              className="px-10 py-4 bg-whiteprimary backdrop-blur-xl text-blackprimary rounded-full font-bold uppercase tracking-wider text-sm transition-all hover:-translate-y-1 active:scale-95 text-center w-full sm:w-auto"
             >
               Lihat Metode Belanja
             </a>
@@ -100,7 +98,7 @@ const GridMotion: FC<GridMotionProps> = ({
         </div>
 
 
-        <div className="absolute bottom-0 text-white z-10 font-extralight w-full flex justify-between p-5 md:px-10 xl:px-20">
+        <div className="absolute bottom-0 text-whiteprimary z-10 font-extralight w-full flex justify-between p-5 md:px-10 xl:px-20">
           <p>
             Perabot <br /> Berkualitas
           </p>
@@ -122,8 +120,8 @@ const GridMotion: FC<GridMotionProps> = ({
               {Array.from({ length: 7 }, (_, itemIndex) => {
                 const content = combinedItems[rowIndex * 7 + itemIndex];
                 return (
-                  <div key={itemIndex} className="relative">
-                    <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-[#111] flex items-center justify-center text-white text-[1.5rem]">
+                  <div key={itemIndex} className="relative shadow-lg shadow-blackprimary rounded-md overflow-hidden">
+                    <div className="relative w-full h-full overflow-hidden bg-[#111] flex items-center justify-center text-white text-[1.5rem]">
                       {typeof content === "string" ? (
                         <img
                           src={content}

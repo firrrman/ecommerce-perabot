@@ -15,6 +15,11 @@ import {
   CreditCard,
   ArrowLeft,
   Bell,
+  Package,
+  Clock,
+  Truck,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 
 interface OrderItem {
@@ -85,44 +90,58 @@ export default function RiwayatPesananClient({
 
   const statuses = [
     { key: "ALL", label: "Semua" },
-    { key: "PENDING", label: "Menunggu Pembayaran" },
+    { key: "PENDING", label: "Menunggu" },
     { key: "PAID", label: "Dibayar" },
     { key: "SHIPPED", label: "Dikirim" },
     { key: "FINISHED", label: "Selesai" },
     { key: "CANCELLED", label: "Dibatalkan" },
   ];
 
-  const getStatusBadgeColor = (status: string) => {
+  const getStatusConfig = (status: string, paymentMethod?: string | null) => {
     switch (status.toUpperCase()) {
       case "PENDING":
-        return "bg-amber-50 text-amber-700 border border-amber-200";
+        if (paymentMethod === "cod") {
+          return {
+            label: "Menunggu Pembayaran (COD / Bayar di Tempat)",
+            badge: "bg-emerald-50 text-emerald-800 border border-emerald-200/80",
+            icon: Clock,
+          };
+        }
+        return {
+          label: "Menunggu Pembayaran (Midtrans)",
+          badge: "bg-amber-50 text-amber-700 border border-amber-200",
+          icon: Clock,
+        };
       case "PAID":
-        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
+        return {
+          label: "Dibayar & Diproses",
+          badge: "bg-blueprimary/8 text-blueprimary border border-blueprimary/20",
+          icon: CheckCircle2,
+        };
       case "SHIPPED":
-        return "bg-blue-50 text-blue-700 border border-blue-200";
+        return {
+          label: "Sedang Dikirim",
+          badge: "bg-blueprimary/15 text-blueprimary border border-blueprimary/25",
+          icon: Truck,
+        };
       case "FINISHED":
-        return "bg-slate-50 text-slate-700 border border-slate-200";
+        return {
+          label: "Selesai",
+          badge: "bg-black/5 text-blackprimary/70 border border-black/10",
+          icon: CheckCircle2,
+        };
       case "CANCELLED":
-        return "bg-rose-50 text-rose-700 border border-rose-200";
+        return {
+          label: "Dibatalkan",
+          badge: "bg-redprimary/8 text-redprimary border border-redprimary/15",
+          icon: XCircle,
+        };
       default:
-        return "bg-gray-50 text-gray-700 border border-gray-200";
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status.toUpperCase()) {
-      case "PENDING":
-        return "Menunggu Pembayaran";
-      case "PAID":
-        return "Dibayar & Diproses";
-      case "SHIPPED":
-        return "Sedang Dikirim";
-      case "FINISHED":
-        return "Selesai";
-      case "CANCELLED":
-        return "Dibatalkan";
-      default:
-        return status;
+        return {
+          label: status,
+          badge: "bg-black/5 text-blackprimary/60 border border-black/10",
+          icon: Package,
+        };
     }
   };
 
@@ -173,56 +192,63 @@ export default function RiwayatPesananClient({
   });
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white pt-28 pb-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+
+        {/* Back Link */}
         <div className="mb-6">
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-black transition-colors uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-blackprimary/50 hover:text-blackprimary transition-colors uppercase tracking-wider group"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <span className="flex items-center justify-center w-7 h-7 rounded-lg border border-black/10 group-hover:bg-blackprimary group-hover:border-blackprimary group-hover:text-white transition-all duration-200">
+              <ArrowLeft className="h-3.5 w-3.5" />
+            </span>
             Kembali ke Beranda
           </a>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs mb-8">
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Riwayat Pesanan
+        {/* Header Card */}
+        <div className="bg-white rounded-2xl border border-black/80 p-6 md:p-8 shadow-sm mb-6">
+
+          <h1 className="text-2xl md:text-3xl font-black text-blackprimary tracking-tight leading-none">
+            Riwayat <span className="text-blueprimary">Pesanan</span>
           </h1>
-          <p className="text-gray-500 mt-2 text-sm md:text-base">
-            Halo, <span className="font-bold text-slate-800">{customer.name}</span>. Pantau status pembayaran dan pengiriman furniture impian Anda di bawah ini.
+          <p className="text-blackprimary/50 mt-2 text-sm">
+            Halo, <span className="font-black text-blackprimary">{customer.name}</span>. Pantau status pembayaran dan pengiriman pesanan Anda di sini.
           </p>
         </div>
 
-        <div className="flex overflow-x-auto gap-2 pb-4 mb-6 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        {/* Status Filter Tabs */}
+        <div className="flex overflow-x-auto gap-2 pb-2 mb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
           {statuses.map((tab) => {
-            const count = tab.key === "ALL"
-              ? initialOrders.length
-              : initialOrders.filter(o => o.status === tab.key).length;
+            const count =
+              tab.key === "ALL"
+                ? initialOrders.length
+                : initialOrders.filter((o) => o.status === tab.key).length;
 
-            const hasUnreadInTab = initialOrders.some(
+            const hasUnread = initialOrders.some(
               (o) => (tab.key === "ALL" || o.status === tab.key) && unreadOrderIds.has(o.id)
             );
+            const isActive = selectedStatus === tab.key;
 
             return (
               <button
                 key={tab.key}
                 onClick={() => setSelectedStatus(tab.key)}
-                className={`relative px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-all cursor-pointer ${selectedStatus === tab.key
-                  ? "bg-slate-950 text-white border-slate-950 shadow-xs"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-black"
+                className={`relative px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap border transition-all cursor-pointer ${isActive
+                  ? "bg-blueprimary text-white border-blueprimary shadow-md shadow-blueprimary/20"
+                  : "bg-white text-blackprimary/60 border-black/80 hover:border-blueprimary/40 hover:text-blueprimary"
                   }`}
               >
-                {hasUnreadInTab && (
-                  <span className="absolute top-0 right-0 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                {hasUnread && (
+                  <span className="absolute top-0.5 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-redprimary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-redprimary border-2 border-white"></span>
                   </span>
                 )}
                 {tab.label}
-                <span className={`ml-2 px-1.5 py-0.5 rounded-full text-[10px] ${selectedStatus === tab.key
-                  ? "bg-white/20 text-white"
-                  : "bg-gray-100 text-gray-500"
+                <span className={`ml-2 px-1.5 py-0.5 rounded-full text-[10px] font-black ${isActive ? "bg-white/25 text-white" : "bg-black/6 text-blackprimary/50"
                   }`}>
                   {count}
                 </span>
@@ -231,77 +257,84 @@ export default function RiwayatPesananClient({
           })}
         </div>
 
+        {/* Empty State */}
         {filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center shadow-xs">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 text-slate-400 mb-4 border border-slate-100">
+          <div className="bg-white rounded-2xl border border-black/80 p-12 text-center shadow-sm">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blueprimary/8 text-blueprimary mb-4 border border-blueprimary/12">
               <ShoppingBag className="h-7 w-7" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">Belum Ada Pesanan</h3>
-            <p className="text-gray-400 text-sm mt-2 max-w-sm mx-auto">
+            <h3 className="text-lg font-black text-blackprimary">Belum Ada Pesanan</h3>
+            <p className="text-blackprimary/45 text-sm mt-2 max-w-sm mx-auto">
               {selectedStatus === "ALL"
                 ? "Anda belum melakukan pemesanan apapun di toko kami."
-                : `Tidak ada pesanan dengan status "${getStatusText(selectedStatus)}".`}
+                : `Tidak ada pesanan dengan status "${getStatusConfig(selectedStatus).label}".`}
             </p>
             <div className="mt-6">
               <a
                 href="/produk"
-                className="inline-flex items-center justify-center bg-slate-950 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl hover:opacity-90 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center justify-center bg-blueprimary text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl hover:bg-blueprimary/90 transition-all cursor-pointer shadow-md shadow-blueprimary/20"
               >
                 Mulai Belanja
               </a>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             {filteredOrders.map((order: Order) => {
               const isExpanded = !!expandedOrders[order.id];
               const isUnread = unreadOrderIds.has(order.id);
+              const statusConfig = getStatusConfig(order.status, order.paymentMethod);
+              const StatusIcon = statusConfig.icon;
 
               return (
                 <div
                   key={order.id}
-                  className={`bg-white rounded-2xl border transition-all overflow-hidden ${isUnread
-                      ? "border-red-300 ring-2 ring-red-500/20 shadow-md"
-                      : "border-slate-100 hover:border-slate-200 shadow-xs"
+                  className={`bg-white rounded-2xl border transition-all overflow-hidden shadow-sm ${isUnread
+                    ? "border-blueprimary/30 ring-2 ring-blueprimary/10 shadow-blueprimary/10"
+                    : "border-blackprimary/80 hover:border-black/15"
                     }`}
                 >
-                  <div className="px-5 py-4 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-3 items-center justify-between">
+                  {/* Order Header */}
+                  <div className="px-5 py-4 bg-black/[0.02] border-b border-black/8 flex flex-wrap gap-3 items-center justify-between">
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${getStatusBadgeColor(order.status)}`}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {/* Status Badge */}
+                        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${statusConfig.badge}`}>
                           {isUnread && (
                             <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-redprimary opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-redprimary"></span>
                             </span>
                           )}
-                          {getStatusText(order.status)}
+                          <StatusIcon className="w-3 h-3" />
+                          {statusConfig.label}
                         </span>
                         {isUnread && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse shadow-xs">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-black bg-blueprimary text-white px-2 py-0.5 rounded-full">
                             <Bell className="w-3 h-3" /> Status Diperbarui
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                        <Calendar className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-1.5 text-xs text-blackprimary/45">
+                        <Calendar className="h-3 w-3" />
                         {formatDate(order.createdAt)}
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Total Pembayaran</p>
-                      <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+                      <p className="text-[10px] text-blackprimary/40 uppercase tracking-wider font-bold">Total Pembayaran</p>
+                      <p className="text-base font-black text-blueprimary mt-0.5">
                         {formatRupiah(order.totalPrice)}
                       </p>
                     </div>
                   </div>
 
+                  {/* Order Items */}
                   <div className="p-5">
                     <div className="flex flex-col gap-4">
                       {order.items.map((item) => (
                         <div key={item.id} className="flex gap-4 items-center">
-                          <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 shrink-0 overflow-hidden relative">
+                          <div className="w-16 h-16 rounded-xl bg-black/4 border border-black/8 shrink-0 overflow-hidden">
                             {item.product.images && item.product.images.length > 0 ? (
                               <img
                                 src={item.product.images[0].src}
@@ -309,36 +342,36 @@ export default function RiwayatPesananClient({
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                                No Image
+                              <div className="w-full h-full flex items-center justify-center text-xs text-blackprimary/30">
+                                <Package className="w-5 h-5" />
                               </div>
                             )}
                           </div>
 
                           <div className="flex-1 min-w-0 text-left">
-                            <h4 className="text-sm font-bold text-slate-900 truncate">
+                            <h4 className="text-sm font-black text-blackprimary truncate">
                               {item.productName}
                             </h4>
-                            <div className="flex flex-wrap gap-2 mt-1">
+                            <div className="flex flex-wrap gap-1.5 mt-1">
                               {item.colorName && (
-                                <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-sm px-1.5 py-0.5">
+                                <span className="inline-block text-[10px] font-bold bg-black/5 border border-black/8 text-blackprimary/60 rounded-lg px-2 py-0.5">
                                   Warna: {item.colorName}
                                 </span>
                               )}
                               {item.sizeName && (
-                                <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-sm px-1.5 py-0.5">
+                                <span className="inline-block text-[10px] font-bold bg-black/5 border border-black/8 text-blackprimary/60 rounded-lg px-2 py-0.5">
                                   Ukuran: {item.sizeName}
                                 </span>
                               )}
-                              <span className="inline-block text-[10px] font-semibold bg-slate-50 border border-slate-200/60 text-slate-600 rounded-sm px-1.5 py-0.5">
-                                Qty: {item.quantity}
+                              <span className="inline-block text-[10px] font-bold bg-blueprimary/8 border border-blueprimary/15 text-blueprimary rounded-lg px-2 py-0.5">
+                                ×{item.quantity}
                               </span>
                             </div>
                           </div>
 
-                          <div className="text-right">
-                            <p className="text-[10px] text-gray-400">Harga</p>
-                            <p className="text-xs font-bold text-slate-800 mt-0.5">
+                          <div className="text-right shrink-0">
+                            <p className="text-[10px] text-blackprimary/40 font-semibold">Harga</p>
+                            <p className="text-sm font-black text-blackprimary mt-0.5">
                               {formatRupiah(item.price)}
                             </p>
                           </div>
@@ -346,85 +379,100 @@ export default function RiwayatPesananClient({
                       ))}
                     </div>
 
+                    {/* Expanded Detail */}
                     {isExpanded && (
-                      <div className="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-6 text-slate-700">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                          <div className="flex flex-col gap-3">
-                            <h5 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                              <MapPin className="h-4 w-4 text-slate-400" />
+                      <div className="mt-6 pt-6 border-t border-black/8 flex flex-col gap-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                          {/* Shipping Address */}
+                          <div className="flex flex-col gap-2.5">
+                            <h5 className="text-[11px] font-black uppercase tracking-wider text-blackprimary flex items-center gap-1.5">
+                              <div className="w-5 h-5 rounded-md bg-blueprimary/10 flex items-center justify-center">
+                                <MapPin className="h-3 w-3 text-blueprimary" />
+                              </div>
                               Alamat Pengiriman
                             </h5>
-                            <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-xs flex flex-col gap-1.5">
-                              <p className="font-bold text-slate-800">{order.customerName}</p>
-                              <p className="text-gray-600">No. HP: {order.phone}</p>
-                              <p className="text-gray-600">Email: {order.gmail}</p>
-                              <p className="text-gray-600 leading-relaxed mt-1">
+                            <div className="bg-black/[0.02] rounded-xl p-4 border border-black/8 text-xs flex flex-col gap-1.5">
+                              <p className="font-black text-blackprimary">{order.customerName}</p>
+                              <p className="text-blackprimary/55">No. HP: {order.phone}</p>
+                              <p className="text-blackprimary/55">Email: {order.gmail}</p>
+                              <p className="text-blackprimary/55 leading-relaxed mt-1">
                                 {order.address}, {order.village}, Kec. {order.subdistrict}, {order.city}, {order.province}, {order.portalCode}
                               </p>
                               {order.note && (
-                                <div className="mt-2 pt-2 border-t border-slate-200/60">
-                                  <span className="font-bold text-slate-700">Catatan:</span>
-                                  <p className="text-gray-600 italic mt-0.5">"{order.note}"</p>
+                                <div className="mt-2 pt-2 border-t border-black/8">
+                                  <span className="font-bold text-blackprimary/70">Catatan:</span>
+                                  <p className="text-blackprimary/55 italic mt-0.5">"{order.note}"</p>
                                 </div>
                               )}
                             </div>
                           </div>
 
-                          <div className="flex flex-col gap-3">
-                            <h5 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                              <CreditCard className="h-4 w-4 text-slate-400" />
+                          {/* Payment Summary */}
+                          <div className="flex flex-col gap-2.5">
+                            <h5 className="text-[11px] font-black uppercase tracking-wider text-blackprimary flex items-center gap-1.5">
+                              <div className="w-5 h-5 rounded-md bg-blueprimary/10 flex items-center justify-center">
+                                <CreditCard className="h-3 w-3 text-blueprimary" />
+                              </div>
                               Rincian Pembayaran
                             </h5>
-                            <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-xs flex flex-col gap-2">
-                              <div className="flex justify-between text-gray-600">
+                            <div className="bg-black/[0.02] rounded-xl p-4 border border-black/8 text-xs flex flex-col gap-2">
+                              <div className="flex justify-between text-blackprimary/60">
                                 <span>Metode Pembayaran</span>
-                                <span className="font-bold text-slate-800">{order.paymentMethod || "Midtrans (Otomatis)"}</span>
+                                <span className="font-bold text-blackprimary">
+                                  {order.paymentMethod === "cod"
+                                    ? "COD (Bayar di Tempat)"
+                                    : order.paymentMethod === "midtrans"
+                                      ? "Midtrans Payment Gateway"
+                                      : order.paymentMethod || "Midtrans Gateway"}
+                                </span>
                               </div>
-                              <div className="border-t border-slate-200/60 my-1"></div>
-                              <div className="flex justify-between text-gray-600">
+                              <div className="h-px bg-black/8" />
+                              <div className="flex justify-between text-blackprimary/60">
                                 <span>Subtotal Produk</span>
                                 <span>{formatRupiah(order.totalPrice - order.shippingCost)}</span>
                               </div>
-                              <div className="flex justify-between text-gray-600">
+                              <div className="flex justify-between text-blackprimary/60">
                                 <span>Ongkos Kirim</span>
                                 <span>{formatRupiah(order.shippingCost)}</span>
                               </div>
-                              <div className="border-t border-slate-200/60 my-1"></div>
-                              <div className="flex justify-between font-bold text-slate-900 text-sm">
+                              <div className="h-px bg-black/8" />
+                              <div className="flex justify-between font-black text-blackprimary text-sm">
                                 <span>Total Pembayaran</span>
-                                <span className="text-indigo-600 font-extrabold">{formatRupiah(order.totalPrice)}</span>
+                                <span className="text-blueprimary">{formatRupiah(order.totalPrice)}</span>
                               </div>
                             </div>
                           </div>
+
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="px-5 py-4 bg-slate-50/30 border-t border-slate-100 flex items-center justify-between">
+                  {/* Order Footer */}
+                  <div className="px-5 py-3.5 bg-black/[0.015] border-t border-black/8 flex items-center justify-between">
                     <button
                       onClick={() => toggleExpand(order.id)}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-black transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-blackprimary/50 hover:text-blueprimary transition-colors cursor-pointer"
                     >
                       {isExpanded ? (
                         <>
-                          Sembunyikan Detail
                           <ChevronUp className="h-4 w-4" />
+                          Sembunyikan Detail
                         </>
                       ) : (
                         <>
-                          Lihat Detail
                           <ChevronDown className="h-4 w-4" />
+                          Lihat Detail
                         </>
                       )}
                     </button>
 
-                    {order.paymentMethod != "cod" && (
-                      order.status === "PENDING" && (
-                        <div className="shrink-0 scale-95 origin-right">
-                          <PayAgainButton orderId={order.paymentOrderId} />
-                        </div>
-                      ))}
+                    {order.paymentMethod !== "cod" && order.status === "PENDING" && (
+                      <div className="shrink-0">
+                        <PayAgainButton orderId={order.paymentOrderId} />
+                      </div>
+                    )}
                   </div>
                 </div>
               );

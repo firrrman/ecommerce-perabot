@@ -61,7 +61,7 @@ export default async function OrderDetailPage({ params }: Props) {
     <LayoutOwner activeMenuProp="orders">
       <main className="overflow-y-auto p-4 md:p-6 space-y-6">
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-lg">
+        <div className="bg-blueprimary text-white p-6 rounded-xl shadow-lg">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-2xl font-bold mb-2">Detail Pesanan</h1>
@@ -97,7 +97,7 @@ export default async function OrderDetailPage({ params }: Props) {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Customer Info */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-blackprimary/30 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                   <User className="w-5 h-5 text-blue-600" />
@@ -153,7 +153,7 @@ export default async function OrderDetailPage({ params }: Props) {
             </div>
 
             {/* Items */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-blackprimary/30 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                   <Package className="w-5 h-5 text-blue-600" />
@@ -198,7 +198,7 @@ export default async function OrderDetailPage({ params }: Props) {
 
           {/* Right Column - Payment Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-6">
+            <div className="bg-white rounded-xl shadow-sm border border-blackprimary/30 overflow-hidden sticky top-6">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-blue-600" />
@@ -223,7 +223,7 @@ export default async function OrderDetailPage({ params }: Props) {
                     <span className="text-lg font-semibold text-gray-800">
                       Total
                     </span>
-                    <span className="text-2xl font-bold text-blue-600">
+                    <span className="text-2xl font-bold text-blueprimary">
                       Rp {order.totalPrice.toLocaleString("id-ID")}
                     </span>
                   </div>
@@ -234,7 +234,11 @@ export default async function OrderDetailPage({ params }: Props) {
                       Metode Pembayaran
                     </p>
                     <p className="font-semibold text-gray-800">
-                      {order.paymentMethod ?? "-"}
+                      {order.paymentMethod === "cod"
+                        ? "COD (Bayar di Tempat)"
+                        : order.paymentMethod === "midtrans"
+                          ? "Midtrans Payment Gateway"
+                          : order.paymentMethod ?? "-"}
                     </p>
                   </div>
                   <div>
@@ -251,9 +255,9 @@ export default async function OrderDetailPage({ params }: Props) {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                        <span className="font-semibold text-yellow-700">
-                          Menunggu Pembayaran
+                        <span className={`w-2 h-2 rounded-full ${order.paymentMethod === "cod" ? "bg-emerald-500" : "bg-yellow-500"}`}></span>
+                        <span className={`font-semibold ${order.paymentMethod === "cod" ? "text-emerald-700" : "text-yellow-700"}`}>
+                          {order.paymentMethod === "cod" ? "Belum Dibayar (COD)" : "Menunggu Pembayaran"}
                         </span>
                       </div>
                     )}

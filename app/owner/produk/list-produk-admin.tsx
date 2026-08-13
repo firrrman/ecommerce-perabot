@@ -186,7 +186,7 @@ export default function ProdukListAdmin({
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 flex flex-wrap gap-4 items-center shadow-xs">
+        <div className="bg-white rounded-2xl border border-blackprimary/30 p-4 flex flex-wrap gap-4 items-center shadow">
           {/* Search */}
           <div className="flex-1 min-w-70">
             <SearchBarAdmin />
@@ -241,7 +241,7 @@ export default function ProdukListAdmin({
 
       {/* Products Grid/List */}
       {product.length === 0 ? (
-        <div className="bg-white rounded-lg border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+        <div className="bg-white rounded-lg border border-blackprimary/30 p-12 flex flex-col items-center justify-center text-center">
           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
             <Package className="w-8 h-8 text-slate-400" />
           </div>
@@ -255,7 +255,7 @@ export default function ProdukListAdmin({
           {product.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg border border-blackprimary/30 shadow overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="relative h-48 w-48 flex items-center justify-center mx-auto">
                 <img
@@ -303,7 +303,7 @@ export default function ProdukListAdmin({
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-lg border border-blackprimary/30 shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-220 md:w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
