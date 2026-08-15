@@ -208,7 +208,7 @@ export default function LayoutOwner({
           <div className="flex items-center space-x-3 bg-blackprimary/40 p-2.5 rounded-xl border border-white/10">
             <div className="relative">
               <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center font-black text-blueprimary text-xs shadow-xs">
-                FS
+                OP
               </div>
               <span className="w-2.5 h-2.5 bg-emerald-500 border-2 border-blueprimary rounded-full absolute -bottom-0.5 -right-0.5"></span>
             </div>

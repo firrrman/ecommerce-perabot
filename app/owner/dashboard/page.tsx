@@ -228,7 +228,7 @@ export default async function Dashboard({ searchParams }: Props) {
               </div>
               <div>
                 <span className="text-sm font-bold text-slate-900 block">
-                  Katalog Produk
+                  Data Produk
                 </span>
                 <span className="text-xs text-slate-400">Pantau ketersediaan produk</span>
               </div>

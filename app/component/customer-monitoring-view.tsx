@@ -145,7 +145,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Total Transaksi Pelanggan
               </p>
-              <h3 className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">
+              <h3 className="text-xl sm:text-2xl font-black text-blackprimary mt-1">
                 {formatCurrency(summary.totalRevenue)}
               </h3>
               <p className="text-xs text-slate-400 mt-1">Dari pesanan berhasil</p>
@@ -163,7 +163,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Rata-Rata Transaksi
               </p>
-              <h3 className="text-xl sm:text-2xl font-black text-blue-600 mt-1">
+              <h3 className="text-xl sm:text-2xl font-black text-blackprimary mt-1">
                 {formatCurrency(summary.avgSpentPerCustomer)}
               </h3>
               <p className="text-xs text-slate-400 mt-1">Per akun pelanggan</p>
@@ -181,7 +181,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Pelanggan Teraktif
               </p>
-              <h3 className="text-lg font-bold text-amber-600 mt-1 truncate">
+              <h3 className="text-lg font-bold text-blackprimary mt-1 truncate">
                 {summary.topCustomerName}
               </h3>
               <p className="text-xs text-slate-400 mt-1">Pengeluaran tertinggi</p>
@@ -291,7 +291,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
                       {/* Name & Email */}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-linear-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-blueprimary text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
                             {initial}
                           </div>
                           <div>
@@ -319,7 +319,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
                       </td>
 
                       {/* Total Spent */}
-                      <td className="py-4 px-6 font-bold text-emerald-600">
+                      <td className="py-4 px-6 font-bold text-greenprimary">
                         {formatCurrency(cust.totalSpent)}
                       </td>
 
@@ -403,7 +403,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
                       <p className="text-xs font-semibold text-slate-400 uppercase">Statistik Belanja</p>
                       <div className="mt-2 space-y-1">
                         <p className="text-xs text-slate-500">Total Pengeluaran Selesai:</p>
-                        <p className="text-xl font-black text-emerald-600">
+                        <p className="text-xl font-black text-blackprimary">
                           {formatCurrency(customerDetail.stats.totalSpent)}
                         </p>
                       </div>

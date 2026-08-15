@@ -62,7 +62,7 @@ export default async function OrderDetailPage({ params }: Props) {
     <LayoutAdmin activeMenuProp="orders">
       <main className="overflow-y-auto p-4 md:p-6 space-y-6">
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-lg">
+        <div className="bg-blueprimary text-whiteprimary p-6 rounded-xl shadow-lg">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-2xl font-bold mb-2">Detail Pesanan</h1>
@@ -98,7 +98,7 @@ export default async function OrderDetailPage({ params }: Props) {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Customer Info */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow border border-blackprimary/30 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                   <User className="w-5 h-5 text-blue-600" />
@@ -154,7 +154,7 @@ export default async function OrderDetailPage({ params }: Props) {
             </div>
 
             {/* Items */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow border border-blackprimary/30 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                   <Package className="w-5 h-5 text-blue-600" />
@@ -199,7 +199,7 @@ export default async function OrderDetailPage({ params }: Props) {
 
           {/* Right Column - Payment Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-6">
+            <div className="bg-white rounded-xl shadow-sm border border-blackprimary/30 overflow-hidden sticky top-6">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-blue-600" />
