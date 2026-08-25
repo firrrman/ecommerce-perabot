@@ -25,7 +25,9 @@ export interface CustomerMonitoringSummary {
 export async function getCustomersMonitoringData(
   searchQuery: string = "",
   sortBy: "newest" | "spending" | "orders" = "newest",
-  selectedYear: string = "all"
+  selectedYear: string = "all",
+  page: number = 1,
+  limit: number = 10
 ) {
   try {
     const searchFilter = searchQuery.trim()
@@ -80,6 +82,7 @@ export async function getCustomersMonitoringData(
             id: true,
             status: true,
             totalPrice: true,
+            shippingCost: true,
             createdAt: true,
           },
         },
@@ -109,7 +112,7 @@ export async function getCustomersMonitoringData(
 
       const totalSpent = relevantOrders
         .filter((o) => ["PAID", "SHIPPED", "FINISHED"].includes(o.status))
-        .reduce((sum, o) => sum + o.totalPrice, 0);
+        .reduce((sum, o) => sum + (o.totalPrice - (o.shippingCost || 0)), 0);
 
       const sortedOrders = [...relevantOrders].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -160,10 +163,11 @@ export async function getCustomersMonitoringData(
       where: orderWhere,
       select: {
         totalPrice: true,
+        shippingCost: true,
       },
     });
 
-    const totalRevenue = validOrders.reduce((sum, o) => sum + o.totalPrice, 0);
+    const totalRevenue = validOrders.reduce((sum, o) => sum + (o.totalPrice - (o.shippingCost || 0)), 0);
     const avgSpentPerCustomer =
       totalCustomersCount > 0 ? Math.round(totalRevenue / totalCustomersCount) : 0;
 
@@ -184,10 +188,21 @@ export async function getCustomersMonitoringData(
       topCustomerName,
     };
 
+    // Pagination
+    const totalItems = monitoringList.length;
+    const totalPages = Math.ceil(totalItems / limit);
+    const paginatedData = monitoringList.slice((page - 1) * limit, page * limit);
+
     return {
       success: true,
-      data: monitoringList,
+      data: paginatedData,
       summary,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit,
+      }
     };
   } catch (error: any) {
     console.error("Get Customers Monitoring Error:", error);
@@ -201,6 +216,12 @@ export async function getCustomersMonitoringData(
         avgSpentPerCustomer: 0,
         topCustomerName: "-",
       },
+      pagination: {
+        totalItems: 0,
+        totalPages: 0,
+        currentPage: 1,
+        limit: 12,
+      }
     };
   }
 }
@@ -241,7 +262,7 @@ export async function getCustomerDetailMonitoring(customerId: string) {
 
     const totalSpent = customer.orders
       .filter((o) => ["PAID", "SHIPPED", "FINISHED"].includes(o.status))
-      .reduce((sum, o) => sum + o.totalPrice, 0);
+      .reduce((sum, o) => sum + (o.totalPrice - (o.shippingCost || 0)), 0);
 
     const completedCount = customer.orders.filter((o) =>
       ["PAID", "SHIPPED", "FINISHED"].includes(o.status)

@@ -20,6 +20,8 @@ import {
   Award,
   ArrowUpDown,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   getCustomersMonitoringData,
@@ -49,6 +51,15 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
   const [sortBy, setSortBy] = useState<"newest" | "spending" | "orders">("newest");
   const [selectedYear, setSelectedYear] = useState<string>("all");
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+  const [pagination, setPagination] = useState({
+    totalItems: 0,
+    totalPages: 1,
+    currentPage: 1,
+    limit: 12,
+  });
+
   // State Detail Modal
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -56,10 +67,11 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
 
   const fetchMonitoringData = async () => {
     setLoading(true);
-    const res = await getCustomersMonitoringData(searchQuery, sortBy, selectedYear);
+    const res = await getCustomersMonitoringData(searchQuery, sortBy, selectedYear, page, limit);
     if (res.success) {
       setCustomers(res.data);
       setSummary(res.summary);
+      if (res.pagination) setPagination(res.pagination);
     }
     setLoading(false);
   };
@@ -69,7 +81,7 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
       fetchMonitoringData();
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery, sortBy, selectedYear]);
+  }, [searchQuery, sortBy, selectedYear, page, limit]);
 
   const handleOpenDetail = async (id: string) => {
     setSelectedCustomerId(id);
@@ -201,13 +213,19 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             placeholder="Cari nama, email, atau no. hp..."
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
           />
           {searchQuery && (
             <button
-              onClick={() => setSearchQuery("")}
+              onClick={() => {
+                setSearchQuery("");
+                setPage(1);
+              }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
             >
               <X size={16} />
@@ -224,7 +242,10 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
             </span>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
+              onChange={(e) => {
+                setSelectedYear(e.target.value);
+                setPage(1);
+              }}
               className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl px-3 py-2 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
             >
               <option value="all">Semua Tahun</option>
@@ -243,7 +264,10 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
             </span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => {
+                setSortBy(e.target.value as any);
+                setPage(1);
+              }}
               className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl px-3 py-2 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
             >
               <option value="newest">Paling Baru Bergabung</option>
@@ -345,7 +369,60 @@ export default function CustomerMonitoringView({ role }: CustomerMonitoringViewP
             </table>
           </div>
         )}
+
+        {/* No Pagination inside table wrapper anymore */}
       </div>
+
+      {/* Pagination Controls */}
+      {!loading && customers.length > 0 && pagination.totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mb-20 px-5 md:px-10 xl:px-20 flex-wrap text-sm mt-12">
+          {/* Prev */}
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className={`px-4 py-2 border rounded-xl font-semibold transition-all duration-200 ${page > 1
+                ? "bg-white border-black/15 text-blackprimary hover:border-blueprimary/60 hover:text-blueprimary hover:shadow-sm cursor-pointer"
+                : "bg-black/5 border-black/8 text-black/30 cursor-not-allowed pointer-events-none"
+              }`}
+          >
+            Prev
+          </button>
+
+          {/* Page Numbers */}
+          <div className="flex gap-2">
+            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+              .filter((p) => p === 1 || p === pagination.totalPages || Math.abs(p - page) <= 1)
+              .map((p, index, array) => (
+                <div key={p} className="flex items-center gap-1">
+                  {index > 0 && p - array[index - 1] > 1 && (
+                    <span className="px-2 text-slate-400">...</span>
+                  )}
+                  <button
+                    onClick={() => setPage(p)}
+                    className={`px-4 py-2 border rounded-xl min-w-11 text-center font-bold transition-all duration-200 ${page === p
+                        ? "bg-blueprimary text-white border-blueprimary shadow-md shadow-blueprimary/25"
+                        : "bg-white border-black/15 text-blackprimary hover:border-blueprimary/60 hover:text-blueprimary hover:shadow-sm"
+                      }`}
+                  >
+                    {p}
+                  </button>
+                </div>
+              ))}
+          </div>
+
+          {/* Next */}
+          <button
+            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+            disabled={page === pagination.totalPages}
+            className={`px-4 py-2 border rounded-xl font-semibold transition-all duration-200 ${page < pagination.totalPages
+                ? "bg-white border-black/15 text-blackprimary hover:border-blueprimary/60 hover:text-blueprimary hover:shadow-sm cursor-pointer"
+                : "bg-black/5 border-black/8 text-black/30 cursor-not-allowed pointer-events-none"
+              }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Detail Customer Modal */}
       {selectedCustomerId && (
