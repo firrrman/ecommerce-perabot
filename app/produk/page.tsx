@@ -49,11 +49,6 @@ export default async function Produk({ searchParams }: Props) {
           })}
         </div>
 
-        {/* Search Bar */}
-        <div className="mt-4 px-1">
-          <SearchBar />
-        </div>
-
         {/* Results Header Info */}
         <div className="flex items-center justify-between mb-6 pt-4 border-t border-black/8 text-xs md:text-sm font-medium text-blackprimary/60">
           <div className="flex items-center gap-2">

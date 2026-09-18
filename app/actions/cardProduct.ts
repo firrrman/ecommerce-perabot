@@ -67,6 +67,83 @@ export async function bestSeller() {
   });
 }
 
+export async function bestSellerByCategory(categoryName: string) {
+  // 0️⃣ Ambil productId yang termasuk kategori tertentu
+  const productsInCategory = await prisma.product.findMany({
+    where: {
+      category: {
+        name: categoryName,
+      },
+    },
+    select: { id: true },
+  });
+
+  const productIds = productsInCategory.map((p) => p.id);
+
+  // Kalau tidak ada produk di kategori ini, langsung return kosong
+  if (productIds.length === 0) return [];
+
+  // 1️⃣ Ambil productId + total terjual, dibatasi hanya productId dalam kategori
+  const bestSeller = await prisma.orderItem.groupBy({
+    by: ["productId"],
+    where: {
+      productId: {
+        in: productIds,
+      },
+      order: {
+        status: {
+          in: [OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.FINISHED],
+        },
+      },
+    },
+    _sum: {
+      quantity: true,
+    },
+    orderBy: {
+      _sum: {
+        quantity: "desc",
+      },
+    },
+    take: 5,
+  });
+
+  // 2️⃣ Ambil data produk (nama, harga, dll)
+  const products = await prisma.product.findMany({
+    where: {
+      id: {
+        in: bestSeller.map((item) => item.productId).filter(Boolean) as string[],
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      images: true,
+      slug: true,
+      basePrice: true,
+      weight: true,
+      stock: true,
+      category: true,
+    },
+  });
+
+  // 3️⃣ Gabungkan hasil
+  return bestSeller.map((item) => {
+    const product = products.find((p) => p.id === item.productId);
+
+    return {
+      id: item.productId,
+      name: product?.name ?? "-",
+      slug: product?.slug ?? "-",
+      images: product?.images?.slice(0, 2) ?? [],
+      basePrice: product?.basePrice ?? 0,
+      weight: product?.weight ?? 0,
+      stock: product?.stock ?? 0,
+      sold: item._sum.quantity ?? 0,
+      category: product?.category ?? null,
+    };
+  });
+}
+
 export async function featuredProducts() {
   return await prisma.product.findMany({
     where: {

@@ -22,6 +22,7 @@ export default function CartPage() {
   const { customer, isLoading: customerLoading } = useCustomer();
   const router = useRouter();
   const [removingKey, setRemovingKey] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<any | null>(null);
 
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -35,7 +36,10 @@ export default function CartPage() {
     return stock === 0 || item.quantity > stock;
   });
 
-  const handleRemove = async (produk: any) => {
+  const confirmRemove = async () => {
+    if (!productToDelete) return;
+    const produk = productToDelete;
+    setProductToDelete(null);
     const key = `${produk.productId}-${produk.variantId ?? "default"}`;
     setRemovingKey(key);
     try {
@@ -212,11 +216,10 @@ export default function CartPage() {
                   return (
                     <div
                       key={itemKey}
-                      className={`flex flex-col sm:flex-row gap-5 p-5 bg-white border border-blackprimary/60 rounded-2xl shadow-md hover:shadow-md transition-all duration-300 ${
-                        isExceedingStock || isOutofStock
+                      className={`flex flex-col sm:flex-row gap-5 p-5 bg-white border border-blackprimary/60 rounded-2xl shadow-md hover:shadow-md transition-all duration-300 ${isExceedingStock || isOutofStock
                           ? "border-redprimary/25 ring-1 ring-redprimary/10"
                           : "border-black/8"
-                      } ${isRemoving ? "opacity-40 pointer-events-none" : ""}`}
+                        } ${isRemoving ? "opacity-40 pointer-events-none" : ""}`}
                     >
                       {/* Product Image */}
                       <div className="shrink-0 w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-black/4 border border-black/6">
@@ -308,7 +311,7 @@ export default function CartPage() {
                             </p>
 
                             <button
-                              onClick={() => handleRemove(produk)}
+                              onClick={() => setProductToDelete(produk)}
                               disabled={isRemoving}
                               className="flex items-center justify-center w-8 h-8 rounded-lg text-blackprimary/40 hover:text-redprimary bg-redprimary text-whiteprimary hover:bg-redprimary/8 border border-black/8 hover:border-redprimary/20 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                               aria-label="Hapus produk"
@@ -328,7 +331,7 @@ export default function CartPage() {
                   className="inline-flex items-center gap-2 text-sm font-semibold text-blackprimary/50 hover:text-blueprimary transition-all duration-200 mt-1"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Lanjut Belanja Perabot Lainnya
+                  Tambah Perabot Lainnya
                 </a>
               </div>
 
@@ -417,6 +420,37 @@ export default function CartPage() {
                 </div>
               </div>
 
+            </div>
+          )}
+
+          {/* ── Modal Konfirmasi Hapus ── */}
+          {productToDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+              <div className="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="flex justify-center items-center">
+                  <div className="w-12 h-12 rounded-full bg-redprimary/10 flex items-center justify-center mb-4">
+                    <Trash2 className="w-6 h-6 text-redprimary" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-black text-blackprimary mb-2">Hapus Produk?</h3>
+                <p className="text-sm text-blackprimary/60 mb-6 leading-relaxed">
+                  Apakah kamu yakin ingin menghapus <strong>{productToDelete.name}</strong> dari keranjang belanja?
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setProductToDelete(null)}
+                    className="flex-1 py-3 px-4 rounded-2xl border-2 border-black/10 font-bold text-blackprimary/70 hover:bg-black/5 hover:text-blackprimary transition-all duration-200 cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={confirmRemove}
+                    className="flex-1 py-3 px-4 rounded-2xl bg-redprimary text-white font-bold shadow-lg shadow-redprimary/25 hover:bg-redprimary/90 active:scale-[0.98] transition-all duration-200 cursor-pointer"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

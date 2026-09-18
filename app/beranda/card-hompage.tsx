@@ -14,9 +14,17 @@ interface productCard {
 export default async function CardHomepage({
   bestSeller,
   featuredProducts,
+  bestLuarRuangan,
+  bestDapur,
+  bestKamarMandi,
+  bestRuangTamu,
 }: {
   bestSeller: productCard[];
   featuredProducts: productCard[];
+  bestLuarRuangan: productCard[];
+  bestDapur: productCard[];
+  bestKamarMandi: productCard[];
+  bestRuangTamu: productCard[];
 }) {
   return (
     <div className="flex flex-col gap-12 my-14 px-5 md:px-10 xl:px-20">
@@ -82,6 +90,134 @@ export default async function CardHomepage({
         {/* Card Carousel */}
         <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-5 no-scrollbar pb-2">
           <Card product={featuredProducts} />
+        </div>
+      </div>
+
+      {/* ── Produk Terlaris ── */}
+      <div id="produk-terlaris" className="relative w-full">
+        {/* Section Header */}
+        <div className="flex items-end justify-between mb-6 pb-4 border-b border-black/8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-5 h-5 rounded-md bg-blueprimary flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-[11px] font-black tracking-widest uppercase text-blueprimary">
+                Best Seller
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-blackprimary leading-none tracking-tight">
+              Produk Dapur <span className="text-blueprimary">Terlaris</span>
+            </h2>
+          </div>
+          <a
+            href="/produk/dapur"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-blackprimary/50 hover:text-blueprimary transition-colors duration-200 group"
+          >
+            Lihat Semua
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+          </a>
+        </div>
+
+        {/* Card Carousel */}
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-5 no-scrollbar pb-2">
+          <Card product={bestDapur} />
+        </div>
+      </div>
+
+      {/* ── Produk Terlaris ── */}
+      <div id="produk-terlaris" className="relative w-full">
+        {/* Section Header */}
+        <div className="flex items-end justify-between mb-6 pb-4 border-b border-black/8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-5 h-5 rounded-md bg-blueprimary flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-[11px] font-black tracking-widest uppercase text-blueprimary">
+                Best Seller
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-blackprimary leading-none tracking-tight">
+              Produk Kamar Mandi <span className="text-blueprimary">Terlaris</span>
+            </h2>
+          </div>
+          <a
+            href="/produk/kamar-mandi"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-blackprimary/50 hover:text-blueprimary transition-colors duration-200 group"
+          >
+            Lihat Semua
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+          </a>
+        </div>
+
+        {/* Card Carousel */}
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-5 no-scrollbar pb-2">
+          <Card product={bestKamarMandi} />
+        </div>
+      </div>
+
+      {/* ── Produk Terlaris ── */}
+      <div id="produk-terlaris" className="relative w-full">
+        {/* Section Header */}
+        <div className="flex items-end justify-between mb-6 pb-4 border-b border-black/8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-5 h-5 rounded-md bg-blueprimary flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-[11px] font-black tracking-widest uppercase text-blueprimary">
+                Best Seller
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-blackprimary leading-none tracking-tight">
+              Produk Ruang Tamu <span className="text-blueprimary">Terlaris</span>
+            </h2>
+          </div>
+          <a
+            href="/produk/ruang-tamu"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-blackprimary/50 hover:text-blueprimary transition-colors duration-200 group"
+          >
+            Lihat Semua
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+          </a>
+        </div>
+
+        {/* Card Carousel */}
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-5 no-scrollbar pb-2">
+          <Card product={bestRuangTamu} />
+        </div>
+      </div>
+
+      {/* ── Produk Terlaris ── */}
+      <div id="produk-terlaris" className="relative w-full">
+        {/* Section Header */}
+        <div className="flex items-end justify-between mb-6 pb-4 border-b border-black/8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-5 h-5 rounded-md bg-blueprimary flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-[11px] font-black tracking-widest uppercase text-blueprimary">
+                Best Seller
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-blackprimary leading-none tracking-tight">
+              Produk Luar Ruangan <span className="text-blueprimary">Terlaris</span>
+            </h2>
+          </div>
+          <a
+            href="/produk/luar-ruangan"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-blackprimary/50 hover:text-blueprimary transition-colors duration-200 group"
+          >
+            Lihat Semua
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+          </a>
+        </div>
+
+        {/* Card Carousel */}
+        <div className="flex overflow-x-auto scroll-smooth gap-4 md:gap-5 no-scrollbar pb-2">
+          <Card product={bestLuarRuangan} />
         </div>
       </div>
 

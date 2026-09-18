@@ -7,6 +7,7 @@ import { createProduct } from "../../actions/product";
 import { checkSlugExists } from "../../actions/slug-check";
 import SubmitButton from "@/app/component/submit-button";
 import TransitionLink from "@/app/component/transition-link";
+import PriceWarningModal, { PriceWarningData } from "@/app/component/price-warning-modal";
 
 type Category = { id: string; name: string };
 type Color = { id: string; name: string; hex: string };
@@ -27,6 +28,8 @@ export default function FormProductClient({ categories, colors, sizes, variantSe
   const [slugStatus, setSlugStatus] = useState<SlugStatus>("idle");
   const [takenByProduct, setTakenByProduct] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [priceWarningData, setPriceWarningData] = useState<PriceWarningData | null>(null);
+  const [isPriceWarningOpen, setIsPriceWarningOpen] = useState(false);
   const [, startTransition] = useTransition();
 
   // ── Cek slug saat blur ───────────────────────────────────
@@ -60,9 +63,48 @@ export default function FormProductClient({ categories, colors, sizes, variantSe
       return;
     }
 
+    const formData = new FormData(e.currentTarget);
+    const basePrice = Number(formData.get("basePrice"));
+    const costPrice = Number(formData.get("costPrice")) || 0;
+
+    // ── Validasi Harga Jual vs Harga Modal Produk Utama ──
+    if (basePrice < costPrice) {
+      setPriceWarningData({
+        sellingPrice: basePrice,
+        costPrice: costPrice,
+      });
+      setIsPriceWarningOpen(true);
+      toast.error("Harga jual tidak boleh lebih rendah dari harga modal!", {
+        toastId: "price-warning-submit",
+      });
+      return;
+    }
+
+    // ── Validasi Harga Jual vs Harga Modal Varian Produk ──
+    const variantCount = Number(formData.get("variantCount")) || 0;
+    for (let i = 0; i < variantCount; i++) {
+      const vPriceRaw = formData.get(`variant_price_${i}`);
+      const vCostRaw = formData.get(`variant_costPrice_${i}`);
+      if (vPriceRaw !== null && vCostRaw !== null && vPriceRaw !== "" && vCostRaw !== "") {
+        const vPrice = Number(vPriceRaw);
+        const vCost = Number(vCostRaw);
+        if (vPrice < vCost) {
+          setPriceWarningData({
+            sellingPrice: vPrice,
+            costPrice: vCost,
+            variantLabel: `Varian #${i + 1}`,
+          });
+          setIsPriceWarningOpen(true);
+          toast.error(`Harga jual varian #${i + 1} tidak boleh lebih rendah dari harga modalnya!`, {
+            toastId: `price-variant-warning-${i}`,
+          });
+          return;
+        }
+      }
+    }
+
     setIsSubmitting(true);
     try {
-      const formData = new FormData(e.currentTarget);
       const slug = (formData.get("slug") as string)?.trim();
 
       // Pengecekan slug saat submit
@@ -313,6 +355,13 @@ export default function FormProductClient({ categories, colors, sizes, variantSe
           Batal
         </TransitionLink>
       </div>
+
+      {/* Pop-up Modal Peringatan Harga Jual < Modal */}
+      <PriceWarningModal
+        isOpen={isPriceWarningOpen}
+        onClose={() => setIsPriceWarningOpen(false)}
+        data={priceWarningData}
+      />
     </form>
   );
 }

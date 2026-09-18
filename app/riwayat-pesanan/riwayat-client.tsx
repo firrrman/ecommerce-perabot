@@ -20,6 +20,7 @@ import {
   Truck,
   CheckCircle2,
   XCircle,
+  Printer,
 } from "lucide-react";
 
 interface OrderItem {
@@ -468,11 +469,26 @@ export default function RiwayatPesananClient({
                       )}
                     </button>
 
-                    {order.paymentMethod !== "cod" && order.status === "PENDING" && (
-                      <div className="shrink-0">
-                        <PayAgainButton orderId={order.paymentOrderId} />
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {/* Cetak Invoice Button */}
+                      {(order.status === "PAID" || order.status === "SHIPPED" || order.status === "FINISHED") && (
+                        <a
+                          href={`/invoice/${order.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-blackprimary/60 hover:text-blueprimary border border-black/15 hover:border-blueprimary/40 px-3 py-1.5 rounded-xl transition-all duration-200"
+                        >
+                          <Printer className="h-3.5 w-3.5" />
+                          Cetak Invoice
+                        </a>
+                      )}
+
+                      {order.paymentMethod !== "cod" && order.status === "PENDING" && (
+                        <div className="shrink-0">
+                          <PayAgainButton orderId={order.paymentOrderId} />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

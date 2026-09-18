@@ -5,8 +5,10 @@ import { useCart } from "../context/cart-context";
 import { useCustomer } from "../context/customer-context";
 import { OrbitProgress } from "react-loading-indicators";
 import { createOrderFromForm } from "../actions/order";
+import { getCustomerLastAddressAction } from "../actions/customer";
 import { createPayment } from "../actions/create-payment";
 import { toast } from "react-toastify";
+import ConfirmModal from "@/app/component/confirm-modal";
 import {
   ShoppingCart,
   User,
@@ -41,14 +43,36 @@ export default function FormCheckout() {
   const [shippingCost, setShippingCost] = useState(0);
   const [getOngkir, setGetOngkir] = useState<any[]>([]);
   const [selectedOngkir, setSelectedOngkir] = useState(0);
+  const [selectedRegionId, setSelectedRegionId] = useState<number | string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "midtrans">("midtrans");
   const [isLoading, setIsLoading] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (customer) {
       setCustomerName(customer.name || "");
       setEmail(customer.email || "");
       setPhone(customer.phone || "");
+
+      getCustomerLastAddressAction().then((lastAddress) => {
+        if (lastAddress) {
+          if (lastAddress.label) {
+            setAlamat(lastAddress.label);
+            setSearch(lastAddress.label);
+          }
+          setDetailAlamat(lastAddress.address || "");
+          setProvince(lastAddress.province || "");
+          setCity(lastAddress.city || "");
+          setSubDistrict(lastAddress.subdistrict || "");
+          setVillage(lastAddress.village || "");
+          setKodepos(lastAddress.portalCode?.toString() || "");
+
+          if (lastAddress.regionId) {
+            setSelectedRegionId(lastAddress.regionId);
+          }
+        }
+      });
     }
   }, [customer]);
 
@@ -92,14 +116,24 @@ export default function FormCheckout() {
   const isFreeShipping =
     alamat === "CIARUTEUN UDIK, CIBUNGBULANG, BOGOR, JAWA BARAT, 16630";
 
-  const handleCheckOngkir = async (id: number | string) => {
-    const res = await fetch("/api/ongkir", {
-      method: "POST",
-      body: JSON.stringify({ idAlamat: id, weight: totalWeight }),
-    });
-    const data = await res.json();
-    setGetOngkir(data.ongkir);
-  };
+  useEffect(() => {
+    if (selectedRegionId && totalWeight > 0) {
+      const fetchOngkir = async () => {
+        try {
+          const res = await fetch("/api/ongkir", {
+            method: "POST",
+            body: JSON.stringify({ idAlamat: selectedRegionId, weight: totalWeight }),
+          });
+          const data = await res.json();
+          setGetOngkir(data.ongkir || []);
+        } catch (error) {
+          console.error("Failed to fetch ongkir:", error);
+          setGetOngkir([]);
+        }
+      };
+      fetchOngkir();
+    }
+  }, [selectedRegionId, totalWeight]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -228,7 +262,7 @@ export default function FormCheckout() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} ref={formRef}>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
 
             {/* ── LEFT: Form ── */}
@@ -346,7 +380,7 @@ export default function FormCheckout() {
                                 setVillage(item.subdistrict);
                                 setShowDropdown(false);
                                 setRegions([]);
-                                handleCheckOngkir(item.id);
+                                setSelectedRegionId(item.id);
                               }}
                             >
                               <span className="font-semibold">
@@ -620,8 +654,9 @@ export default function FormCheckout() {
 
                 {/* Submit Button */}
                 <button
-                  type="submit"
+                  type="button"
                   disabled={isLoading}
+                  onClick={() => setIsConfirmOpen(true)}
                   className="w-full flex items-center justify-center gap-2 bg-blueprimary text-white text-sm font-black py-4 rounded-2xl hover:bg-blueprimary/90 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blueprimary/20"
                 >
                   {isLoading ? (
@@ -652,6 +687,20 @@ export default function FormCheckout() {
           </div>
         </form>
       </div>
+
+      {/* Modal Konfirmasi Pembayaran */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="Konfirmasi Pembayaran"
+        message={`Kamu akan melakukan pembayaran sebesar Rp ${total.toLocaleString("id-ID")} dengan metode ${paymentMethod === "cod" ? "COD (Bayar di Tempat)" : "Midtrans Payment Gateway"}. Pastikan semua informasi sudah benar sebelum melanjutkan.`}
+        confirmText="Lanjut Bayar"
+        cancelText="Periksa Kembali"
+        onConfirm={() => {
+          setIsConfirmOpen(false);
+          setTimeout(() => formRef.current?.requestSubmit(), 50);
+        }}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
     </div>
   );
 }

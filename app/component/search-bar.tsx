@@ -29,7 +29,7 @@ export function SearchBar() {
     }
 
     window.dispatchEvent(new CustomEvent("start-navigation", { detail: "search" }));
-    router.push(`?${params.toString()}`);
+    router.push(`/produk?${params.toString()}`);
   };
 
   const handleClear = () => {
@@ -43,7 +43,7 @@ export function SearchBar() {
   return (
     <form
       onSubmit={handleSearch}
-      className="w-full max-w-2xl mx-auto px-0 mb-8"
+      className="w-full"
     >
       <div
         className="
@@ -52,25 +52,24 @@ export function SearchBar() {
       flex
       items-center
       w-full
-      h-12
-      md:h-14
+      h-9
       bg-white
+      rounded-xl
       border
-      border-black/80
-      rounded-2xl
+      border-black/15
       shadow-sm
       transition-all
       duration-300
       hover:border-black/30
       hover:shadow-md
       focus-within:border-blueprimary
-      focus-within:ring-4
+      focus-within:ring-2
       focus-within:ring-blueprimary/10
     "
       >
         {/* Search Icon */}
-        <div className="pl-3.5 md:pl-5 text-gray-400 group-focus-within:text-blueprimary transition-colors duration-300 shrink-0">
-          <Search className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
+        <div className="pl-3 text-gray-400 group-focus-within:text-blueprimary transition-colors duration-300 shrink-0">
+          <Search className="w-3.5 h-3.5" strokeWidth={2} />
         </div>
 
         {/* Input */}
@@ -83,12 +82,10 @@ export function SearchBar() {
         flex-1
         min-w-0
         h-full
-        px-2.5
-        md:px-4
+        px-2
         bg-transparent
         outline-none
         text-xs
-        md:text-sm
         text-blackprimary
         placeholder:text-gray-400
       "
@@ -126,29 +123,23 @@ export function SearchBar() {
             type="submit"
             aria-label="Cari"
             className="
-          h-8 w-8
-          md:h-10 md:w-auto md:px-5
-          rounded-xl
+          h-7 w-7
+          mr-1
+          rounded-lg
           bg-blueprimary
           text-white
-          font-semibold
-          text-sm
           flex
           items-center
           justify-center
-          gap-2
           cursor-pointer
-          shadow-sm
           hover:opacity-90
-          hover:shadow-md
           active:scale-95
           transition-all
           duration-200
           shrink-0
         "
           >
-            <Search className="w-4 h-4" strokeWidth={2.5} />
-            <span className="hidden md:inline">Cari</span>
+            <Search className="w-3.5 h-3.5" strokeWidth={2.5} />
           </button>
         </div>
       </div>

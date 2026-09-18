@@ -156,3 +156,47 @@ export async function getCustomerOrdersAction() {
     return { success: false, message: "Gagal mengambil data pesanan", orders: [] };
   }
 }
+
+export async function getCustomerLastAddressAction() {
+  try {
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("customer_session")?.value;
+
+    if (!sessionId) {
+      return null;
+    }
+
+    const lastOrder = await prisma.order.findFirst({
+      where: { customerId: sessionId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        province: true,
+        city: true,
+        subdistrict: true,
+        village: true,
+        portalCode: true,
+        address: true,
+      },
+    });
+
+    if (!lastOrder) return null;
+
+    const region = await prisma.regions.findFirst({
+      where: {
+        province: lastOrder.province,
+        city: lastOrder.city,
+        district: lastOrder.subdistrict,
+        subdistrict: lastOrder.village,
+      }
+    });
+
+    return {
+      ...lastOrder,
+      regionId: region?.id,
+      label: region?.label,
+    };
+  } catch (error) {
+    console.error("Get Last Address Error:", error);
+    return null;
+  }
+}

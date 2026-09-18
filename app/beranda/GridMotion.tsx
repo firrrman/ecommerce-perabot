@@ -79,9 +79,7 @@ const GridMotion: FC<GridMotionProps> = ({
             strokeColor="#ff0000"
             minFontSize={36}
           />
-          <div className="text-whiteprimary/85 text-sm sm:text-base text-center max-w-2xl leading-relaxed mt-8 md:mt-0">
-            Berawal dari toko perabot milik Bapak Eman di Pasar Leuwiliang, kini hadir secara digital untuk tetap melayani kebutuhan rumah tangga anda.          </div>
-          <div className="flex flex-col sm:flex-row gap-5 mb-4 mt-8 px-5 items-center justify-center relative z-20">
+          <div className="flex flex-col sm:flex-row gap-5 mb-4 px-5 mt-10 xl:mt-0 items-center justify-center relative z-20">
             <a
               href="#produk-terlaris"
               className="px-10 py-4 bg-blueprimary text-whiteprimary shadow rounded-full font-bold uppercase tracking-wider text-sm  transition-all hover:-translate-y-1 active:scale-95 text-center w-full sm:w-auto"
@@ -95,16 +93,6 @@ const GridMotion: FC<GridMotionProps> = ({
               Lihat Metode Belanja
             </a>
           </div>
-        </div>
-
-
-        <div className="absolute bottom-0 text-whiteprimary z-10 font-extralight w-full flex justify-between p-5 md:px-10 xl:px-20">
-          <p>
-            Perabot <br /> Berkualitas
-          </p>
-          <p>
-            Harga <br /> Terjangkau
-          </p>
         </div>
 
         <div className="gap-4 flex-none relative w-[500vw] sm:w-[200vw] lg:w-[150vw] xl:w-[120vw] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-2">

@@ -100,6 +100,13 @@ export async function createProduct(formData: FormData) {
     };
   }
 
+  // ✅ Cek harga jual tidak boleh lebih rendah dari modal
+  if (basePrice < costPrice) {
+    return {
+      error: `Harga jual (Rp ${basePrice.toLocaleString("id-ID")}) tidak boleh lebih rendah dari harga modal (Rp ${costPrice.toLocaleString("id-ID")}).`,
+    };
+  }
+
   // Build variant data dari input dynamic row
   const variantCount = Number(formData.get("variantCount")) || 0;
   const variantData: {
@@ -137,6 +144,16 @@ export async function createProduct(formData: FormData) {
         weight: isNaN(wght) ? 0 : wght,
         stock: isNaN(stck) ? 0 : stck,
       });
+    }
+  }
+
+  // ✅ Cek harga jual setiap varian tidak boleh lebih rendah dari modalnya
+  for (let i = 0; i < variantData.length; i++) {
+    const v = variantData[i];
+    if (v.price !== undefined && v.price < v.costPrice) {
+      return {
+        error: `Harga jual varian #${i + 1} (Rp ${v.price.toLocaleString("id-ID")}) tidak boleh lebih rendah dari modal varian (Rp ${v.costPrice.toLocaleString("id-ID")}).`,
+      };
     }
   }
 
@@ -243,6 +260,13 @@ export async function updateProduct(productId: string, formData: FormData) {
     };
   }
 
+  // ✅ Cek harga jual tidak boleh lebih rendah dari modal
+  if (basePrice < costPrice) {
+    return {
+      error: `Harga jual (Rp ${basePrice.toLocaleString("id-ID")}) tidak boleh lebih rendah dari harga modal (Rp ${costPrice.toLocaleString("id-ID")}).`,
+    };
+  }
+
   const product = await prisma.product.findUnique({
     where: { id: productId },
     include: { images: true, variants: true },
@@ -299,6 +323,16 @@ export async function updateProduct(productId: string, formData: FormData) {
         weight: isNaN(wght) ? 0 : wght,
         stock: isNaN(stck) ? 0 : stck,
       });
+    }
+  }
+
+  // ✅ Cek harga jual setiap varian tidak boleh lebih rendah dari modalnya
+  for (let i = 0; i < variantData.length; i++) {
+    const v = variantData[i];
+    if (v.price !== undefined && v.price < v.costPrice) {
+      return {
+        error: `Harga jual varian #${i + 1} (Rp ${v.price.toLocaleString("id-ID")}) tidak boleh lebih rendah dari modal varian (Rp ${v.costPrice.toLocaleString("id-ID")}).`,
+      };
     }
   }
 

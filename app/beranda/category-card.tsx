@@ -1,43 +1,26 @@
-import { ArrowRight, LayoutGrid } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function CategoryCard() {
   const categories = [
-    { title: "Ruang Tamu", img: "/kategori/ruangtamu.jpg", link: "/produk/ruang-tamu", count: "Sofa, Meja, Lemari" },
-    { title: "Kamar Mandi", img: "/kategori/kamarmandi.jpg", link: "/produk/kamar-mandi", count: "Rak, Cermin, Gantungan" },
-    { title: "Dapur", img: "/kategori/dapur.jpg", link: "/produk/dapur", count: "Rak, Tempat Bumbu, Wadah" },
-    { title: "Luar Ruangan", img: "/kategori/luarruangan.jpg", link: "/produk/luar-ruangan", count: "Kursi, Meja Taman" },
+    { title: "Ruang Tamu", img: "/kategori/ruangtamu.jpg", link: "/produk/ruang-tamu", count: "Toples, Vas Bunga, Taplak Meja" },
+    { title: "Kamar Mandi", img: "/kategori/kamarmandi.jpg", link: "/produk/kamar-mandi", count: "Keset, Cermin, Gayung" },
+    { title: "Dapur", img: "/kategori/dapur.jpg", link: "/produk/dapur", count: "Gelas, Tempat Bumbu, Wajan" },
+    { title: "Luar Ruangan", img: "/kategori/luarruangan.jpg", link: "/produk/luar-ruangan", count: "Pot Bunga, Gantungan Baju" },
   ];
 
   return (
-    <div className="my-14 px-5 w-full md:px-10 xl:px-20">
-
-      {/* Section Header — konsisten dengan komponen lain */}
-      <div className="mb-8 pb-4 border-b border-black/8">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-5 h-5 rounded-md bg-blackprimary flex items-center justify-center">
-                <LayoutGrid className="w-3 h-3 text-white" />
-              </div>
-              <span className="text-[11px] font-black tracking-widest uppercase text-blackprimary/50">
-                Koleksi
-              </span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-black text-blackprimary leading-none tracking-tight">
-              Jelajahi <span className="text-blueprimary">Kategori</span>
-            </h2>
-          </div>
-        </div>
-      </div>
-
-      {/* Category Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div className="w-full py-6 px-5 md:px-10 xl:px-20">
+      {/* Horizontal Scrollable Strip */}
+      <div className="flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory scroll-smooth no-scrollbar xl:justify-center">
         {categories.map((cat, index) => (
           <a
             key={index}
             href={cat.link}
-            className="group relative overflow-hidden rounded-2xl border-2 border-blackprimary/10 shadow-md hover:shadow-xl hover:shadow-black/15 hover:-translate-y-1.5 transition-all duration-400"
-            style={{ height: "clamp(200px, 30vw, 400px)" }}
+            className="group relative overflow-hidden rounded-2xl border border-blackprimary/10 shadow-md hover:shadow-xl hover:shadow-black/15 transition-all duration-400 snap-start shrink-0"
+            style={{
+              width: "clamp(200px, 38vw, 300px)",
+              height: "clamp(160px, 28vw, 260px)",
+            }}
           >
             {/* Image */}
             <img
@@ -47,7 +30,7 @@ export default function CategoryCard() {
               loading="lazy"
             />
 
-            {/* Gradient overlay — stronger on hover */}
+            {/* Gradient overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-black/5 opacity-80 group-hover:opacity-95 transition-opacity duration-400" />
 
             {/* Blue tint on hover */}
@@ -61,6 +44,7 @@ export default function CategoryCard() {
                 <h3 className="text-white text-lg md:text-xl font-black leading-tight">
                   {cat.title}
                 </h3>
+                <p className="text-white/60 text-xs mt-0.5 font-medium">{cat.count}</p>
               </div>
 
               {/* CTA — slides up from below */}
@@ -74,7 +58,6 @@ export default function CategoryCard() {
           </a>
         ))}
       </div>
-
     </div>
   );
 }

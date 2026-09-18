@@ -3,7 +3,7 @@
 import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { gsap } from "gsap";
 import { ChevronLeftIcon, ShoppingCartIcon } from "@heroicons/react/16/solid";
-import { LogOut, ClipboardList, ChevronDown, Bell, Package } from "lucide-react";
+import { LogOut, ClipboardList, ChevronDown, Bell, Package, Search, X } from "lucide-react";
 import { useCart } from "../context/cart-context";
 import { useCustomer } from "../context/customer-context";
 import {
@@ -11,6 +11,7 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "../actions/notification";
+import { SearchBar } from "./search-bar";
 
 type CardNavLink = {
   label: string;
@@ -53,6 +54,7 @@ const CardNav: React.FC<CardNavProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement | null>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   // ── Notifikasi state ──────────────────────────────────────────────────────
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -225,12 +227,12 @@ const CardNav: React.FC<CardNavProps> = ({
       <nav
         ref={navRef}
         className={`card-nav ${isExpanded ? "open" : ""
-          } block h-15 p-0 rounded-2xl shadow-lg shadow-black/10 relative ${isProfileDropdownOpen || isNotifOpen ? "overflow-visible" : "overflow-hidden"
+          } block h-15 p-0 rounded-2xl shadow-lg shadow-black/10 relative ${isProfileDropdownOpen || isNotifOpen || isMobileSearchOpen ? "overflow-visible" : "overflow-hidden"
           } will-change-[height] border border-blackprimary/80`}
         style={{
           backgroundColor: baseColor,
           backdropFilter: "blur(12px)",
-          overflow: isProfileDropdownOpen || isNotifOpen ? "visible" : undefined
+          overflow: isProfileDropdownOpen || isNotifOpen || isMobileSearchOpen ? "visible" : undefined
         }}
       >
         {/* ── Top Bar ───────────────────────────────────────────────────────── */}
@@ -239,7 +241,24 @@ const CardNav: React.FC<CardNavProps> = ({
             <img src={logo} alt={logoAlt} className="logo h-7.5 md:h-10" loading="lazy" />
           </a>
 
-          <div className="flex justify-center gap-2.5 items-center h-full">
+
+        {/* ── Search Bar (desktop only, centered) ─────────────── */}
+          <div className="hidden md:flex flex-1 w-full mx-4">
+            <SearchBar />
+          </div>
+
+          <div className="flex justify-center gap-2 items-center h-full">
+
+            {/* ── Search icon (mobile only) ──────────────────────── */}
+            <button
+              onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+              className="md:hidden flex items-center justify-center w-9 h-9 rounded-full border border-black/10 hover:border-blueprimary/40 hover:bg-blueprimary/5 transition-all duration-200 cursor-pointer"
+              aria-label="Cari produk"
+            >
+              {isMobileSearchOpen
+                ? <X className="h-4 w-4 text-blackprimary/70" />
+                : <Search className="h-4 w-4 text-blackprimary/70" />}
+            </button>
 
             {/* ── Bell Notifikasi ─────────────────────────────── */}
             {customer && (
@@ -463,6 +482,16 @@ const CardNav: React.FC<CardNavProps> = ({
               />
             </div>
           </div>
+        </div>
+
+        {/* ── Mobile Search Panel ────────────────────────────────────────────── */}
+        <div
+          className={`md:hidden rounded-xl absolute left-0 right-0 top-15 z-50 px-4 overflow-hidden transition-all duration-300 ease-in-out ${
+            isMobileSearchOpen ? "max-h-20 py-2.5 opacity-100" : "max-h-0 py-0 opacity-0 pointer-events-none"
+          } border-t border-black/8 shadow-md rounded-b-2xl`}
+          style={{ backgroundColor: baseColor, backdropFilter: "blur(12px)" }}
+        >
+          <SearchBar />
         </div>
 
         {/* ── Nav Cards (expanded) ──────────────────────────────────────────── */}
